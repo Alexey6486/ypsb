@@ -1,9 +1,6 @@
 import { AppHeader } from '@components/app-header/app-header';
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
-import { COLORS } from '@constants/colors';
-import { withIcon } from '@hocs/withIcon/withIcon';
-import { ViewListSvg } from '@images/svg/view-list';
 import { ingredients } from '@utils/ingredients';
 
 import type { JSX } from 'react';
@@ -11,8 +8,6 @@ import type { JSX } from 'react';
 import styles from './app.module.css';
 
 export const App = (): JSX.Element => {
-  const WithIconHoc = withIcon(ViewListSvg);
-
   return (
     <div className={styles.app}>
       <AppHeader />
@@ -22,7 +17,6 @@ export const App = (): JSX.Element => {
       <main className={`${styles.main} pl-5 pr-5`}>
         <BurgerIngredients ingredients={ingredients} />
         <BurgerConstructor ingredients={ingredients} />
-        <WithIconHoc fill={COLORS.primary} />
       </main>
     </div>
   );

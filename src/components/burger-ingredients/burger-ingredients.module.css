@@ -13,3 +13,7 @@
   text-align: center;
   list-style-type: none;
 }
+
+.burger_ingredients_container {
+  overflow: auto;
+}
