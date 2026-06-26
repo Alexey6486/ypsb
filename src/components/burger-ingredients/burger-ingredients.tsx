@@ -29,7 +29,7 @@ export const BurgerIngredients = ({
   );
 
   return (
-    <section className={styles.burger_ingredients}>
+    <section className={`${styles.burger_ingredients} mb-10`}>
       <nav>
         <ul className={styles.menu}>
           <Tab
@@ -61,7 +61,7 @@ export const BurgerIngredients = ({
           </Tab>
         </ul>
       </nav>
-      <div className={styles.burger_ingredients_container}>
+      <div className={`${styles.burger_ingredients_container} custom-scroll`}>
         <BurgerIngredientsBlock title={BUN}>
           <BurgerIngredientsList list={bun} />
         </BurgerIngredientsBlock>

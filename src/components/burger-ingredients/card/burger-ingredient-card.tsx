@@ -1,4 +1,6 @@
-import { CurrencyIcon, Counter } from '@krgaa/react-developer-burger-ui-components';
+import { Counter } from '@krgaa/react-developer-burger-ui-components';
+
+import { Price } from '@components/price/price';
 
 import type { TIngredient } from '@utils/types';
 import type { JSX } from 'react';
@@ -23,9 +25,12 @@ export const BurgerIngredientCard = ({
       {counter > 0 && <Counter count={counter} size="default" />}
       <div className="pl-4 pr-4">
         <img src={image} alt="ingredient" />
-        <div className={`${styles.burger_ingredient_price} mt-1 mb-2`}>
-          <p className="mr-2 text text_type_digits-default">{price}</p>
-          <CurrencyIcon type="primary" />
+        <div className="mt-1 mb-2">
+          <Price
+            price={price}
+            typographyClass="text_type_digits-default"
+            iconSize="small"
+          />
         </div>
       </div>
       <p className={`${styles.burger_ingredient_name} text text_type_main-default`}>
