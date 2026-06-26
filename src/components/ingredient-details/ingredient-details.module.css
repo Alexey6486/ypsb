@@ -1,0 +1,14 @@
+.ingredient_details_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.ingredient_details_elements {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}

@@ -24,6 +24,10 @@
   cursor: grab;
 }
 
+.burger_constructor_ingredient {
+  width: 100%;
+}
+
 .burger_constructor_footer {
   display: flex;
   justify-content: flex-end;

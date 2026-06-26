@@ -14,20 +14,21 @@ import styles from './app.module.css';
 export const App = (): JSX.Element => {
   const [modalState, setModalState] = useState<{
     type: TModalType | null;
+    ingredient: TIngredient | null;
     isOpened: boolean;
-  }>({ type: null, isOpened: false });
+  }>({ type: null, isOpened: false, ingredient: null });
   const [state, setState] = useState<TAppState>({
     ingredients: null,
     order: null,
     isLoading: true,
   });
 
-  const handleOpenModal = (type: TModalType): void => {
-    setModalState({ type: type, isOpened: true });
+  const handleOpenModal = (type: TModalType, ingredient: TIngredient | null): void => {
+    setModalState({ type: type, isOpened: true, ingredient: ingredient });
   };
 
   const handleCloseModal = (): void => {
-    setModalState({ type: null, isOpened: false });
+    setModalState({ type: null, isOpened: false, ingredient: null });
   };
 
   useEffect(() => {
@@ -69,6 +70,7 @@ export const App = (): JSX.Element => {
         type={modalState.type}
         onClose={handleCloseModal}
         isOpened={modalState.isOpened}
+        ingredient={modalState.ingredient}
       />
     </div>
   );

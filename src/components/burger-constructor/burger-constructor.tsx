@@ -15,7 +15,7 @@ import styles from './burger-constructor.module.css';
 
 type TBurgerConstructorProps = {
   ingredients: TIngredient[] | null;
-  onOpenModal: (type: TModalType) => void; // добавим redux, сделаю управление модальным через него, этот cb удалю
+  onOpenModal: (type: TModalType, ingredient: TIngredient | null) => void; // добавим redux, сделаю управление модальным через него, этот cb удалю
 };
 
 export const BurgerConstructor = ({
@@ -29,11 +29,10 @@ export const BurgerConstructor = ({
   console.log(ingredients);
 
   const handleOpenModal =
-    (type: TModalType) =>
+    (type: TModalType, ingredient: TIngredient | null) =>
     (event: MouseEvent): void => {
-      // event.stopPropagation();
       console.log({ event });
-      onOpenModal(type);
+      onOpenModal(type, ingredient);
     };
 
   useLayoutEffect(() => {
@@ -73,14 +72,18 @@ export const BurgerConstructor = ({
               className={`${styles.burger_constructor_list} custom-scroll`}
               style={{ height: scrollableSize }}
             >
-              {ingredients.map(({ name, price, image_mobile, _id }) => {
+              {ingredients.map((item) => {
+                const { name, price, image_mobile, _id } = item;
                 return (
                   <div
                     key={_id}
                     className={`${styles.burger_constructor_item} mb-4 mr-1`}
                   >
                     <DragIcon type="primary" className={styles.ingredient_drag_icon} />
-                    <div className="ml-2" onClick={handleOpenModal('ingredients')}>
+                    <div
+                      className={`${styles.burger_constructor_ingredient} ml-2`}
+                      onClick={handleOpenModal('ingredients', item)}
+                    >
                       <ConstructorElement
                         handleClose={() => {
                           console.log('delete');
@@ -114,7 +117,7 @@ export const BurgerConstructor = ({
               iconSize="large"
             />
             <Button
-              onClick={handleOpenModal('details')}
+              onClick={handleOpenModal('details', null)}
               size="large"
               type="primary"
               htmlType="button"
