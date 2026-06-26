@@ -28,9 +28,7 @@
       "@hooks/*": ["src/hooks/*"],
       "@pages/*": ["src/pages/*"],
       "@services/*": ["src/services/*"],
-      "@utils/*": ["src/utils/*"],
-      "@images/*": ["src/images/*"],
-      "@types/*": ["src/types/*"]
+      "@utils/*": ["src/utils/*"]
     },
 
     /* Linting */

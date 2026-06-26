@@ -120,9 +120,6 @@ export default defineConfig(
             '^@pages/',
             '^@services/',
             '^@utils/',
-            '^@hocs/',
-            '^@images/',
-            '^@types/',
           ],
           customGroups: {
             value: {
