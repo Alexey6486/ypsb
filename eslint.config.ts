@@ -123,7 +123,6 @@ export default defineConfig(
             '^@hocs/',
             '^@images/',
             '^@types/',
-            '^@constants/',
           ],
           customGroups: {
             value: {

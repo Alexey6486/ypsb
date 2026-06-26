@@ -1,13 +1,47 @@
+import { useEffect, useState } from 'react';
+
 import { AppHeader } from '@components/app-header/app-header';
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
-import { ingredients } from '@utils/ingredients';
+import { GET_INGREDIENTS_URL } from '@utils/constants';
 
+import type { TIngredient, TAppState } from '@utils/types';
 import type { JSX } from 'react';
 
 import styles from './app.module.css';
 
 export const App = (): JSX.Element => {
+  const [state, setState] = useState<TAppState>({
+    ingredients: null,
+    order: null,
+    isLoading: true,
+  });
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    fetch(GET_INGREDIENTS_URL, { signal })
+      .then((res): Promise<{ data: TIngredient[] }> => res.json())
+      .then(({ data }): void => {
+        const { bun, main, sauce } = data.reduce(
+          (acc, item) => {
+            return { ...acc, [item.type]: [...acc[item.type], item] };
+          },
+          { bun: [], main: [], sauce: [] }
+        );
+        setState({ ingredients: { bun, main, sauce }, order: data, isLoading: false });
+      })
+      .catch((error: unknown): void => {
+        console.log({ error });
+        setState({ ingredients: null, order: null, isLoading: false });
+      });
+
+    return (): void => {
+      controller.abort();
+    };
+  }, []);
+
   return (
     <div className={styles.app}>
       <AppHeader />
@@ -15,8 +49,8 @@ export const App = (): JSX.Element => {
         Соберите бургер
       </h1>
       <main className={`${styles.main} pl-5 pr-5`}>
-        <BurgerIngredients ingredients={ingredients} />
-        <BurgerConstructor ingredients={ingredients} />
+        <BurgerIngredients ingredients={state.ingredients} isLoading={state.isLoading} />
+        <BurgerConstructor ingredients={state.order} />
       </main>
     </div>
   );

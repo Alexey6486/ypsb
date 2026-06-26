@@ -30,8 +30,7 @@
       "@services/*": ["src/services/*"],
       "@utils/*": ["src/utils/*"],
       "@images/*": ["src/images/*"],
-      "@types/*": ["src/types/*"],
-      "@constants/*": ["src/constants/*"]
+      "@types/*": ["src/types/*"]
     },
 
     /* Linting */

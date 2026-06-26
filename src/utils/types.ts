@@ -14,3 +14,15 @@ export type TIngredient = {
   image_mobile: string;
   __v: number;
 };
+
+export type TIngredientsSorted = {
+  bun: TIngredient[];
+  main: TIngredient[];
+  sauce: TIngredient[];
+};
+
+export type TAppState = {
+  ingredients: TIngredientsSorted | null;
+  order: TIngredient[] | null;
+  isLoading: boolean;
+};
