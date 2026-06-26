@@ -13,6 +13,7 @@ type TProps = {
   onClick: () => null;
 };
 
+// нужно будет использовать memo, чтобы при изменении counter, перерисовывать только целевые компоненты
 export const BurgerIngredientCard = ({
   data,
   counter = 0,

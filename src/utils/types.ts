@@ -26,3 +26,5 @@ export type TAppState = {
   order: TIngredient[] | null;
   isLoading: boolean;
 };
+
+export type TModalType = 'ingredients' | 'details';

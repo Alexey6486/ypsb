@@ -3,19 +3,32 @@ import { useEffect, useState } from 'react';
 import { AppHeader } from '@components/app-header/app-header';
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
+import { Modal } from '@components/modal/modal';
 import { GET_INGREDIENTS_URL } from '@utils/constants';
 
-import type { TIngredient, TAppState } from '@utils/types';
+import type { TIngredient, TAppState, TModalType } from '@utils/types';
 import type { JSX } from 'react';
 
 import styles from './app.module.css';
 
 export const App = (): JSX.Element => {
+  const [modalState, setModalState] = useState<{
+    type: TModalType | null;
+    isOpened: boolean;
+  }>({ type: null, isOpened: false });
   const [state, setState] = useState<TAppState>({
     ingredients: null,
     order: null,
     isLoading: true,
   });
+
+  const handleOpenModal = (type: TModalType): void => {
+    setModalState({ type: type, isOpened: true });
+  };
+
+  const handleCloseModal = (): void => {
+    setModalState({ type: null, isOpened: false });
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -50,8 +63,13 @@ export const App = (): JSX.Element => {
       </h1>
       <main className={`${styles.main} pl-5 pr-5`}>
         <BurgerIngredients ingredients={state.ingredients} isLoading={state.isLoading} />
-        <BurgerConstructor ingredients={state.order} />
+        <BurgerConstructor ingredients={state.order} onOpenModal={handleOpenModal} />
       </main>
+      <Modal
+        type={modalState.type}
+        onClose={handleCloseModal}
+        isOpened={modalState.isOpened}
+      />
     </div>
   );
 };

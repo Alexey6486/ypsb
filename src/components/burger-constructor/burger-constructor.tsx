@@ -8,23 +8,33 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import { Price } from '@components/price/price';
 import { useWindowSize } from '@hooks/useWindowSize';
 
-import type { TIngredient } from '@utils/types';
-import type { JSX } from 'react';
+import type { TIngredient, TModalType } from '@utils/types';
+import type { JSX, MouseEvent } from 'react';
 
 import styles from './burger-constructor.module.css';
 
 type TBurgerConstructorProps = {
   ingredients: TIngredient[] | null;
+  onOpenModal: (type: TModalType) => void; // добавим redux, сделаю управление модальным через него, этот cb удалю
 };
 
 export const BurgerConstructor = ({
   ingredients,
+  onOpenModal,
 }: TBurgerConstructorProps): JSX.Element => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [scrollableSize, setScrollableSize] = useState(0);
   const windowSize = useWindowSize();
 
   console.log(ingredients);
+
+  const handleOpenModal =
+    (type: TModalType) =>
+    (event: MouseEvent): void => {
+      // event.stopPropagation();
+      console.log({ event });
+      onOpenModal(type);
+    };
 
   useLayoutEffect(() => {
     const { height } = windowSize;
@@ -69,14 +79,18 @@ export const BurgerConstructor = ({
                     key={_id}
                     className={`${styles.burger_constructor_item} mb-4 mr-1`}
                   >
-                    <DragIcon type="primary" />
-                    <ConstructorElement
-                      handleClose={() => null}
-                      price={price}
-                      text={name}
-                      thumbnail={image_mobile}
-                      extraClass="ml-2"
-                    />
+                    <DragIcon type="primary" className={styles.ingredient_drag_icon} />
+                    <div className="ml-2" onClick={handleOpenModal('ingredients')}>
+                      <ConstructorElement
+                        handleClose={() => {
+                          console.log('delete');
+                        }} // разобраться, как блокировать всплытие, чтобы не открывалась модалка и не ругался ts
+                        price={price}
+                        text={name}
+                        thumbnail={image_mobile}
+                        // extraClass="ml-2"
+                      />
+                    </div>
                   </div>
                 );
               })}
@@ -100,7 +114,7 @@ export const BurgerConstructor = ({
               iconSize="large"
             />
             <Button
-              onClick={() => null}
+              onClick={handleOpenModal('details')}
               size="large"
               type="primary"
               htmlType="button"
