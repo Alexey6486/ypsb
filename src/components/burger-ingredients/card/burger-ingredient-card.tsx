@@ -10,7 +10,7 @@ import styles from './burger-ingredient-card.module.css';
 type TProps = {
   data: TIngredient;
   counter: number;
-  onClick: () => null;
+  onClick: (ingredietn: TIngredient) => void;
 };
 
 // нужно будет использовать memo, чтобы при изменении counter, перерисовывать только целевые компоненты
@@ -21,11 +21,15 @@ export const BurgerIngredientCard = ({
 }: TProps): JSX.Element => {
   const { name, price, image } = data;
 
+  const handleClick = (): void => {
+    onClick(data);
+  };
+
   return (
-    <div className={`${styles.burger_ingredient_card} mb-8`} onClick={onClick}>
+    <div className={`${styles.burger_ingredient_card} mb-8`} onClick={handleClick}>
       {counter > 0 && <Counter count={counter} size="default" />}
       <div className="pl-4 pr-4">
-        <img src={image} alt="ingredient" />
+        <img src={image} alt="ingredient-image" />
         <div className="mt-1 mb-2">
           <Price
             price={price}

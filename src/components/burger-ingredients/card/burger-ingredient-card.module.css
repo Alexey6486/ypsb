@@ -2,6 +2,7 @@
   position: relative;
   max-width: 272px;
   text-align: center;
+  cursor: pointer;
 }
 
 .burger_ingredient_name {

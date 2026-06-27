@@ -14,7 +14,7 @@ export const OrderDetails = ({ orderId }: TProps): JSX.Element => {
       <p className="text text_type_digits-large mb-8">{orderId}</p>
       <p className="text text_type_main-medium mb-15">идентификатор заказа</p>
       <div className={`${styles.order_details_graphics} mb-15`}>
-        <img rel="icon" type="image/svg+xml" src="/waves.svg" alt="waves" />
+        <img src="/waves.svg" alt="waves-image" />
         <CheckMarkIcon type="primary" className={styles.order_details_icon} />
       </div>
       <p className="text text_type_main-default mb-2">Ваш заказ начали готовить</p>

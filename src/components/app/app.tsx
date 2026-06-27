@@ -3,51 +3,53 @@ import { useEffect, useState } from 'react';
 import { AppHeader } from '@components/app-header/app-header';
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
-import { Modal } from '@components/modal/modal';
 import { GET_INGREDIENTS_URL } from '@utils/constants';
 
-import type { TIngredient, TAppState, TModalType } from '@utils/types';
+import type { TIngredient, TAppState } from '@utils/types';
 import type { JSX } from 'react';
 
 import styles from './app.module.css';
 
 export const App = (): JSX.Element => {
-  const [modalState, setModalState] = useState<{
-    type: TModalType | null;
-    ingredient: TIngredient | null;
-    isOpened: boolean;
-  }>({ type: null, isOpened: false, ingredient: null });
   const [state, setState] = useState<TAppState>({
     ingredients: null,
     order: null,
     isLoading: true,
   });
 
-  const handleOpenModal = (type: TModalType, ingredient: TIngredient | null): void => {
-    setModalState({ type: type, isOpened: true, ingredient: ingredient });
-  };
-
-  const handleCloseModal = (): void => {
-    setModalState({ type: null, isOpened: false, ingredient: null });
-  };
-
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
 
     fetch(GET_INGREDIENTS_URL, { signal })
-      .then((res): Promise<{ data: TIngredient[] }> => res.json())
-      .then(({ data }): void => {
-        const { bun, main, sauce } = data.reduce(
+      .then((res): Promise<{ data: TIngredient[]; success: boolean }> => {
+        if (!res.ok) {
+          throw Error('Ошибка запроса');
+        }
+
+        return res.json();
+      })
+      .then((jsonRes): void => {
+        if (!jsonRes.success) {
+          throw Error('Ошибка запроса');
+        }
+
+        const { bun, main, sauce } = jsonRes.data.reduce(
           (acc, item) => {
             return { ...acc, [item.type]: [...acc[item.type], item] };
           },
           { bun: [], main: [], sauce: [] }
         );
-        setState({ ingredients: { bun, main, sauce }, order: data, isLoading: false });
+
+        setState({
+          ingredients: { bun, main, sauce },
+          order: jsonRes.data,
+          isLoading: false,
+        });
       })
       .catch((error: unknown): void => {
         console.log({ error });
+
         setState({ ingredients: null, order: null, isLoading: false });
       });
 
@@ -64,14 +66,8 @@ export const App = (): JSX.Element => {
       </h1>
       <main className={`${styles.main} pl-5 pr-5`}>
         <BurgerIngredients ingredients={state.ingredients} isLoading={state.isLoading} />
-        <BurgerConstructor ingredients={state.order} onOpenModal={handleOpenModal} />
+        <BurgerConstructor ingredients={state.order} />
       </main>
-      <Modal
-        type={modalState.type}
-        onClose={handleCloseModal}
-        isOpened={modalState.isOpened}
-        ingredient={modalState.ingredient}
-      />
     </div>
   );
 };
