@@ -5,9 +5,12 @@ import {
   ProfileIcon,
 } from '@krgaa/react-developer-burger-ui-components';
 
+import type { JSX } from 'react';
+
 import styles from './app-header.module.css';
 
-export const AppHeader = (): React.JSX.Element => {
+export const AppHeader = (): JSX.Element => {
+  console.log('AppHeader render');
   return (
     <header className={styles.header}>
       <nav className={`${styles.menu} p-4`}>

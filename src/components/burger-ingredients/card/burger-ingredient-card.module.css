@@ -1,0 +1,10 @@
+.burger_ingredient_card {
+  position: relative;
+  max-width: 272px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.burger_ingredient_name {
+  width: 100%;
+}
