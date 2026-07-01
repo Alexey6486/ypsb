@@ -3,25 +3,22 @@ import { useEffect } from 'react';
 import { AppHeader } from '@components/app-header/app-header';
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
-import { fetchIngredientsThunk, selectIngredients } from '@services/ingredients/slices';
-import { useDispatch, useSelector } from '@services/store';
+import {
+  fetchIngredientsThunk,
+  selectIngredients,
+} from '@services/slices/ingredients-slice';
+import { useAppSelector, useDispatch } from '@services/store';
 
-import type { AppDispatch } from '@services/store';
 import type { JSX } from 'react';
 
 import styles from './app.module.css';
 
 export const App = (): JSX.Element => {
-  const dispatch: AppDispatch = useDispatch();
-  const { ingredients, order, isLoading } = useSelector(selectIngredients);
+  const dispatch = useDispatch();
+  const { ingredients, order, isLoading } = useAppSelector(selectIngredients);
 
   useEffect(() => {
-    dispatch(fetchIngredientsThunk() as undefined);
-    // если здесь убрать undefined, то сначала начинает душить линт:
-    // Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
-    // а затем и TS:
-    // ошибка TS Argument type AsyncThunkAction<{bun: any[], main: any[], sauce: any[]}, void, AsyncThunkConfig> is not assignable to parameter type UnknownAction
-    // разобраться с этим не удалось, в предыдущем проекте точно такая же настройка стора, никаких ошибок
+    void dispatch(fetchIngredientsThunk());
   }, [dispatch]);
 
   return (

@@ -21,8 +21,4 @@ export type TIngredientsSorted = {
   sauce: TIngredient[];
 };
 
-export type TAppState = {
-  ingredients: TIngredientsSorted | null;
-  order: TIngredient[] | null;
-  isLoading: boolean;
-};
+export type TNullable<T> = T | null;
