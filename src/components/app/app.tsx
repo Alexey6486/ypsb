@@ -12,11 +12,16 @@ import type { JSX } from 'react';
 import styles from './app.module.css';
 
 export const App = (): JSX.Element => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch: AppDispatch = useDispatch();
   const { ingredients, order, isLoading } = useSelector(selectIngredients);
 
   useEffect(() => {
-    dispatch(fetchIngredientsThunk());
+    dispatch(fetchIngredientsThunk() as undefined);
+    // если здесь убрать undefined, то сначала начинает душить линт:
+    // Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+    // а затем и TS:
+    // ошибка TS Argument type AsyncThunkAction<{bun: any[], main: any[], sauce: any[]}, void, AsyncThunkConfig> is not assignable to parameter type UnknownAction
+    // разобраться с этим не удалось, в предыдущем проекте точно такая же настройка стора, никаких ошибок
   }, [dispatch]);
 
   return (

@@ -19,52 +19,73 @@ const initialState: IngredientsState = {
   error: null,
 };
 
-export const fetchIngredientsThunk = createAsyncThunk(
-  'ingredients/fetchIngredients',
-  async () => {
-    const response = await fetch(INGREDIENTS_URLS.GET);
+export const fetchIngredientsThunk = createAsyncThunk<
+  {
+    bun: TIngredient[];
+    main: TIngredient[];
+    sauce: TIngredient[];
+  },
+  void
+>('ingredients/fetchIngredients', async () => {
+  const response = await fetch(INGREDIENTS_URLS.GET);
 
-    if (!response.ok) throw new Error('Ошибка запроса');
+  if (!response.ok) throw new Error('Ошибка запроса');
 
-    const json = (await response.json()) as {
-      data: TIngredient[];
-      success: boolean;
-    };
+  const json = (await response.json()) as {
+    data: TIngredient[];
+    success: boolean;
+  };
 
-    if (!json.success) {
-      throw Error('Ошибка запроса');
-    }
-
-    const { bun, main, sauce } = json.data.reduce(
-      (acc, item) => {
-        return { ...acc, [item.type]: [...acc[item.type], item] };
-      },
-      { bun: [], main: [], sauce: [] }
-    );
-
-    return { bun, main, sauce };
+  if (!json.success) {
+    throw Error('Ошибка запроса');
   }
-) as unknown;
+
+  const { bun, main, sauce } = json.data.reduce(
+    (acc, item) => {
+      return { ...acc, [item.type]: [...acc[item.type], item] };
+    },
+    { bun: [], main: [], sauce: [] }
+  );
+
+  return { bun, main, sauce };
+});
 
 const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(
-      fetchIngredientsThunk.fulfilled,
-      (
-        state: IngredientsState,
-        action: PayloadAction<{
-          bun: TIngredient[];
-          main: TIngredient[];
-          sauce: TIngredient[];
-        }>
-      ) => {
-        state.ingredients = action.payload;
-        state.isLoading = false;
-      }
-    );
+    builder
+      .addCase(fetchIngredientsThunk.pending, (state: IngredientsState) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchIngredientsThunk.rejected,
+        (
+          state: IngredientsState,
+          action: PayloadAction<{
+            error: { message: string };
+          }>
+        ) => {
+          state.isLoading = false;
+          state.error = action.payload.error.message;
+        }
+      )
+      .addCase(
+        fetchIngredientsThunk.fulfilled,
+        (
+          state: IngredientsState,
+          action: PayloadAction<{
+            bun: TIngredient[];
+            main: TIngredient[];
+            sauce: TIngredient[];
+          }>
+        ) => {
+          state.ingredients = action.payload;
+          state.isLoading = false;
+        }
+      );
   },
 });
 

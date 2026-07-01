@@ -1,4 +1,4 @@
-import { configureStore, createListenerMiddleware } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import {
   useDispatch as useDispatchBase,
   useSelector as useSelectorBase,
@@ -8,28 +8,27 @@ import { combineReducers } from 'redux';
 
 import { ingredientsReducer } from '@services/ingredients/slices';
 
-export const reducer = combineReducers({
+export const rootReducer = combineReducers({
   ingredients: ingredientsReducer,
 });
 
-export type RootState = ReturnType<typeof reducer>;
-
-export const listenerMiddleware = createListenerMiddleware<RootState>();
+// export const listenerMiddleware = createListenerMiddleware<RootState>();
 
 export const store = configureStore({
-  reducer,
-  preloadedState: {
-    ingredients: {
-      ingredients: null,
-      order: null,
-      isLoading: true,
-      error: null,
-    },
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().prepend(listenerMiddleware.middleware),
+  reducer: rootReducer,
+  // preloadedState: {
+  //   ingredients: {
+  //     ingredients: null,
+  //     order: null,
+  //     isLoading: true,
+  //     error: null,
+  //   },
+  // },
+  // middleware: (getDefaultMiddleware) =>
+  //   getDefaultMiddleware().prepend(listenerMiddleware.middleware),
 });
 
+export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 export const useDispatch: () => AppDispatch = useDispatchBase;
 
