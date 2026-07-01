@@ -1,2 +1,3 @@
-export const GET_INGREDIENTS_URL =
-  'https://new-stellarburgers.education-services.ru/api/ingredients';
+export const INGREDIENTS_URLS = {
+  GET: 'https://new-stellarburgers.education-services.ru/api/ingredients',
+};
