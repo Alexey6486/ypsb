@@ -1,4 +1,5 @@
 import { Counter } from '@krgaa/react-developer-burger-ui-components';
+import { useDrag } from 'react-dnd';
 
 import { Price } from '@components/price/price';
 
@@ -20,13 +21,24 @@ export const BurgerIngredientCard = ({
   onClick,
 }: TProps): JSX.Element => {
   const { name, price, image } = data;
+  const [{ isDrag }, dragRef] = useDrag({
+    type: 'ingredient',
+    item: { ingredient: data },
+    collect: (monitor) => ({
+      isDrag: monitor.isDragging(),
+    }),
+  });
 
   const handleClick = (): void => {
     onClick(data);
   };
 
-  return (
-    <div className={`${styles.burger_ingredient_card} mb-8`} onClick={handleClick}>
+  return !isDrag ? (
+    <div
+      className={`${styles.burger_ingredient_card} mb-8`}
+      onClick={handleClick}
+      ref={dragRef}
+    >
       {counter > 0 && <Counter count={counter} size="default" />}
       <div className="pl-4 pr-4">
         <img src={image} alt="ingredient-image" />
@@ -42,5 +54,7 @@ export const BurgerIngredientCard = ({
         {name}
       </p>
     </div>
+  ) : (
+    <></>
   );
 };

@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import { AppHeader } from '@components/app-header/app-header';
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
-import { fetchIngredientsThunk, selectIngredients } from '@services/ingredients-slice';
-import { useSelector, useDispatch } from '@services/store';
+import { fetchIngredientsThunk } from '@services/ingredients-slice';
+import { useDispatch } from '@services/store';
 
 import type { JSX } from 'react';
 
@@ -12,7 +14,6 @@ import styles from './app.module.css';
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
-  const { ingredients, order, isLoading } = useSelector(selectIngredients);
 
   useEffect(() => {
     void dispatch(fetchIngredientsThunk());
@@ -24,10 +25,12 @@ export const App = (): JSX.Element => {
       <h1 className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}>
         Соберите бургер
       </h1>
-      <main className={`${styles.main} pl-5 pr-5`}>
-        <BurgerIngredients ingredients={ingredients} isLoading={isLoading} />
-        <BurgerConstructor ingredients={order} />
-      </main>
+      <DndProvider backend={HTML5Backend}>
+        <main className={`${styles.main} pl-5 pr-5`}>
+          <BurgerIngredients />
+          <BurgerConstructor />
+        </main>
+      </DndProvider>
     </div>
   );
 };

@@ -13,7 +13,7 @@ export type TIngredientsState = {
 
 const initialState: TIngredientsState = {
   ingredients: null,
-  order: null,
+  order: [],
   isLoading: true,
   error: null,
 };
@@ -48,7 +48,11 @@ export const fetchIngredientsThunk = createAsyncThunk<TNullable<TIngredientsSort
 const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
-  reducers: {},
+  reducers: {
+    setOrderIngredient: (state, { payload }: PayloadAction<TIngredient>) => {
+      state.order = [...state.order, payload];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchIngredientsThunk.pending, (state: TIngredientsState) => {
@@ -80,6 +84,7 @@ const ingredientsSlice = createSlice({
   },
 });
 
+export const { setOrderIngredient } = ingredientsSlice.actions;
 export const selectIngredients = (state: {
   ingredients: TIngredientsState;
 }): TIngredientsState => state.ingredients;

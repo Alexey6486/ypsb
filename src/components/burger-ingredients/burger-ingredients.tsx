@@ -5,6 +5,7 @@ import { BurgerIngredientsBlock } from '@components/burger-ingredients/block/bur
 import { BurgerIngredientsList } from '@components/burger-ingredients/list/burger-ingredients-list';
 import { IngredientDetails } from '@components/ingredient-details/ingredient-details';
 import { Modal } from '@components/modal/modal';
+import { selectIngredients } from '@services/ingredients-slice';
 import {
   selectModalIngredient,
   setModalIngredientData,
@@ -12,24 +13,17 @@ import {
 import { useSelector, useDispatch } from '@services/store';
 
 import type { AppDispatch } from '@services/store';
-import type { TIngredient, TIngredientsSorted, TIngredientType } from '@utils/types';
+import type { TIngredient, TIngredientType } from '@utils/types';
 import type { RefObject, JSX } from 'react';
 
 import styles from './burger-ingredients.module.css';
-
-type TBurgerIngredientsProps = {
-  ingredients: TIngredientsSorted | null;
-  isLoading: boolean;
-};
 
 const BUN = 'Булки';
 const MAIN = 'Начинки';
 const SAUCE = 'Соусы';
 
-export const BurgerIngredients = ({
-  ingredients,
-  isLoading,
-}: TBurgerIngredientsProps): JSX.Element => {
+export const BurgerIngredients = (): JSX.Element => {
+  const { ingredients, isLoading } = useSelector(selectIngredients);
   const mainRef = useRef<HTMLDivElement | null>(null);
   const sauceRef = useRef<HTMLDivElement | null>(null);
   const containerRef: RefObject<HTMLDivElement | null> = useRef(null);
