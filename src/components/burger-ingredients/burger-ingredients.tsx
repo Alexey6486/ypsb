@@ -50,7 +50,15 @@ export const BurgerIngredients = (): JSX.Element => {
 
     if (!container || !main || !sauce) return;
 
-    const cb = (): void => {
+    const handleTabChange = (): void => {
+      if (
+        !('getBoundingClientRect' in main) ||
+        !('getBoundingClientRect' in sauce) ||
+        !('getBoundingClientRect' in container)
+      ) {
+        return;
+      }
+
       const { top: mainTop } = main.getBoundingClientRect();
       const { top: sauceTop } = sauce.getBoundingClientRect();
       const { top: containerTop } = container.getBoundingClientRect();
@@ -65,12 +73,12 @@ export const BurgerIngredients = (): JSX.Element => {
     };
 
     if (container) {
-      container.addEventListener('scroll', cb);
+      container.addEventListener('scroll', handleTabChange);
     }
 
     return (): void => {
       if (container) {
-        container.removeEventListener('scroll', cb);
+        container.removeEventListener('scroll', handleTabChange);
       }
     };
   }, [ingredients]);

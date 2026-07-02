@@ -6,14 +6,20 @@ import type { TIngredient, TNullable, TIngredientsSorted } from '@utils/types';
 
 export type TIngredientsState = {
   ingredients: TNullable<TIngredientsSorted>;
-  order: TNullable<TIngredient[]>;
+  order: {
+    bun: TNullable<TIngredient>;
+    ingredients: TIngredient[];
+  };
   isLoading: boolean;
   error: TNullable<string>;
 };
 
 const initialState: TIngredientsState = {
   ingredients: null,
-  order: [],
+  order: {
+    bun: null,
+    ingredients: [],
+  },
   isLoading: true,
   error: null,
 };
@@ -50,7 +56,14 @@ const ingredientsSlice = createSlice({
   initialState,
   reducers: {
     setOrderIngredient: (state, { payload }: PayloadAction<TIngredient>) => {
-      state.order = [...state.order, payload];
+      state.order = {
+        ...state.order,
+        bun: payload.type === 'bun' ? payload : state.order.bun,
+        ingredients:
+          payload.type !== 'bun'
+            ? [...state.order.ingredients, payload]
+            : state.order.ingredients,
+      };
     },
   },
   extraReducers: (builder) => {

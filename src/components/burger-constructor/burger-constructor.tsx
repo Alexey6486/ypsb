@@ -6,6 +6,7 @@ import {
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useDrop } from 'react-dnd';
 
+import { ConstructorPlaceholder } from '@components/constructor-placeholder/constructor-placeholder';
 import { Modal } from '@components/modal/modal';
 import { OrderDetails } from '@components/order-details/order-details';
 import { Price } from '@components/price/price';
@@ -19,7 +20,9 @@ import type { JSX } from 'react';
 import styles from './burger-constructor.module.css';
 
 export const BurgerConstructor = (): JSX.Element => {
-  const { order } = useSelector(selectIngredients);
+  const {
+    order: { bun, ingredients },
+  } = useSelector(selectIngredients);
   const dispatch = useDispatch();
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -56,37 +59,46 @@ export const BurgerConstructor = (): JSX.Element => {
   }, [windowSize]);
 
   useEffect(() => {
-    if (order) {
-      const price = order
-        ? order.reduce((acc, item) => {
+    if (ingredients) {
+      let price = ingredients
+        ? ingredients.reduce((acc, item) => {
             return acc + item.price;
           }, 0)
         : 0;
+      if (bun) {
+        price += bun.price * 2;
+      }
       setTotalPrice(price);
     }
-  }, [order]);
+  }, [ingredients, bun]);
 
   return (
     <>
       <section className={`${styles.burger_constructor} mb-10 pt-5 pr-4 pb-10 pl-4`}>
         <div className="mb-10" ref={dropTarget}>
-          <div className="mb-4 pl-8 pr-4">
-            <ConstructorElement
-              handleClose={() => null}
-              isLocked
-              price={200}
-              text="Краторная булка N-200i (верх)"
-              thumbnail="https://react-burger-ui-components.education-services.ru/assets/img-CFqVEZmj.png"
-              type="top"
-              extraClass={styles.burger_constructor_item}
-            />
+          <div className={`${styles.burger_constructor_item} mb-4 mr-1`}>
+            <div className={`${styles.burger_constructor_ingredient} ml-2`}>
+              {bun ? (
+                <ConstructorElement
+                  handleClose={() => null}
+                  isLocked
+                  price={bun.price}
+                  text={bun.name}
+                  thumbnail={bun.image_mobile}
+                  type="top"
+                  extraClass={styles.burger_constructor_ingredient}
+                />
+              ) : (
+                <ConstructorPlaceholder type="top" text="Выберете булки" />
+              )}
+            </div>
           </div>
           <div
             className={`${styles.burger_constructor_list} custom-scroll`}
             style={{ height: scrollableSize }}
           >
-            {order ? (
-              order
+            {ingredients.length > 0 ? (
+              ingredients
                 .filter((item) => item.type !== 'bun')
                 .map((item) => {
                   const { name, price, image_mobile, _id } = item;
@@ -110,19 +122,29 @@ export const BurgerConstructor = (): JSX.Element => {
                   );
                 })
             ) : (
-              <></>
+              <div className={`${styles.burger_constructor_item} mb-4 mr-1`}>
+                <div className={`${styles.burger_constructor_ingredient} ml-2`}>
+                  <ConstructorPlaceholder type="middle" text="Выберете начинку" />
+                </div>
+              </div>
             )}
           </div>
-          <div className="mb-4 pl-8 pr-4">
-            <ConstructorElement
-              handleClose={() => null}
-              isLocked
-              price={200}
-              text="Краторная булка N-200i (низ)"
-              thumbnail="https://react-burger-ui-components.education-services.ru/assets/img-CFqVEZmj.png"
-              type="bottom"
-              extraClass={styles.burger_constructor_item}
-            />
+          <div className={`${styles.burger_constructor_item} mb-4 mr-1`}>
+            <div className={`${styles.burger_constructor_ingredient} ml-2`}>
+              {bun ? (
+                <ConstructorElement
+                  handleClose={() => null}
+                  isLocked
+                  price={bun.price}
+                  text={bun.name}
+                  thumbnail={bun.image_mobile}
+                  type="bottom"
+                  extraClass={styles.burger_constructor_item}
+                />
+              ) : (
+                <ConstructorPlaceholder type="bottom" text="Выберете булки" />
+              )}
+            </div>
           </div>
         </div>
         <div className={`${styles.burger_constructor_footer} mb-3`}>
