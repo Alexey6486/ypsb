@@ -1,13 +1,19 @@
 import { Tab, Preloader } from '@krgaa/react-developer-burger-ui-components';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { BurgerIngredientsBlock } from '@components/burger-ingredients/block/burger-ingredients-block';
 import { BurgerIngredientsList } from '@components/burger-ingredients/list/burger-ingredients-list';
 import { IngredientDetails } from '@components/ingredient-details/ingredient-details';
 import { Modal } from '@components/modal/modal';
+import {
+  selectModalIngredient,
+  setModalIngredientData,
+} from '@services/modal-ingredient-slice';
+import { useSelector, useDispatch } from '@services/store';
 
-import type { TIngredient, TIngredientsSorted } from '@utils/types';
-import type { JSX } from 'react';
+import type { AppDispatch } from '@services/store';
+import type { TIngredient, TIngredientsSorted, TIngredientType } from '@utils/types';
+import type { RefObject, JSX } from 'react';
 
 import styles from './burger-ingredients.module.css';
 
@@ -24,20 +30,56 @@ export const BurgerIngredients = ({
   ingredients,
   isLoading,
 }: TBurgerIngredientsProps): JSX.Element => {
-  const [modalState, setModalState] = useState<{
-    isVisible: boolean;
-    ingredient: TIngredient | null;
-  }>({ isVisible: false, ingredient: null });
+  const mainRef = useRef<HTMLDivElement | null>(null);
+  const sauceRef = useRef<HTMLDivElement | null>(null);
+  const containerRef: RefObject<HTMLDivElement | null> = useRef(null);
+
+  const [tab, setTab] = useState<TIngredientType>('bun');
+
+  const dispatch = useDispatch<AppDispatch>();
+  const { ingredient } = useSelector(selectModalIngredient);
 
   console.log('BurgerIngredients render');
 
   const handleOpenModal = (ingredient: TIngredient): void => {
-    setModalState({ isVisible: true, ingredient: ingredient });
+    dispatch(setModalIngredientData(ingredient));
   };
 
   const handleCloseModal = (): void => {
-    setModalState({ isVisible: false, ingredient: null });
+    dispatch(setModalIngredientData(null));
   };
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const main = mainRef.current;
+    const sauce = sauceRef.current;
+
+    if (!container || !main || !sauce) return;
+
+    const cb = (): void => {
+      const { top: mainTop } = main.getBoundingClientRect();
+      const { top: sauceTop } = sauce.getBoundingClientRect();
+      const { top: containerTop } = container.getBoundingClientRect();
+
+      if (mainTop < containerTop && sauceTop > containerTop) {
+        setTab((prev) => (prev !== 'main' ? 'main' : prev));
+      } else if (sauceTop < containerTop) {
+        setTab((prev) => (prev !== 'sauce' ? 'sauce' : prev));
+      } else {
+        setTab((prev) => (prev !== 'bun' ? 'bun' : prev));
+      }
+    };
+
+    if (container) {
+      container.addEventListener('scroll', cb);
+    }
+
+    return (): void => {
+      if (container) {
+        container.removeEventListener('scroll', cb);
+      }
+    };
+  }, [ingredients]);
 
   return (
     <>
@@ -46,7 +88,7 @@ export const BurgerIngredients = ({
           <ul className={styles.menu}>
             <Tab
               value="bun"
-              active={true}
+              active={tab === 'bun'}
               onClick={() => {
                 /* TODO */
               }}
@@ -55,7 +97,7 @@ export const BurgerIngredients = ({
             </Tab>
             <Tab
               value="main"
-              active={false}
+              active={tab === 'main'}
               onClick={() => {
                 /* TODO */
               }}
@@ -64,7 +106,7 @@ export const BurgerIngredients = ({
             </Tab>
             <Tab
               value="sauce"
-              active={false}
+              active={tab === 'sauce'}
               onClick={() => {
                 /* TODO */
               }}
@@ -75,14 +117,17 @@ export const BurgerIngredients = ({
         </nav>
         {isLoading && <Preloader />}
         {!isLoading && ingredients && (
-          <div className={`${styles.burger_ingredients_container} custom-scroll`}>
+          <div
+            className={`${styles.burger_ingredients_container} custom-scroll`}
+            ref={containerRef}
+          >
             <BurgerIngredientsBlock title={BUN}>
               <BurgerIngredientsList list={ingredients.bun} onClick={handleOpenModal} />
             </BurgerIngredientsBlock>
-            <BurgerIngredientsBlock title={MAIN}>
+            <BurgerIngredientsBlock title={MAIN} ref={mainRef}>
               <BurgerIngredientsList list={ingredients.main} onClick={handleOpenModal} />
             </BurgerIngredientsBlock>
-            <BurgerIngredientsBlock title={SAUCE}>
+            <BurgerIngredientsBlock title={SAUCE} ref={sauceRef}>
               <BurgerIngredientsList
                 list={ingredients.sauce}
                 onClick={handleOpenModal}
@@ -91,9 +136,9 @@ export const BurgerIngredients = ({
           </div>
         )}
       </section>
-      {modalState.isVisible && modalState.ingredient && (
+      {ingredient && (
         <Modal title="Детали ингредиента" onClose={handleCloseModal}>
-          <IngredientDetails ingredient={modalState.ingredient} />
+          <IngredientDetails ingredient={ingredient} />
         </Modal>
       )}
     </>

@@ -3,11 +3,8 @@ import { useEffect } from 'react';
 import { AppHeader } from '@components/app-header/app-header';
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
-import {
-  fetchIngredientsThunk,
-  selectIngredients,
-} from '@services/slices/ingredients-slice';
-import { useAppSelector, useDispatch } from '@services/store';
+import { fetchIngredientsThunk, selectIngredients } from '@services/ingredients-slice';
+import { useSelector, useDispatch } from '@services/store';
 
 import type { JSX } from 'react';
 
@@ -15,7 +12,7 @@ import styles from './app.module.css';
 
 export const App = (): JSX.Element => {
   const dispatch = useDispatch();
-  const { ingredients, order, isLoading } = useAppSelector(selectIngredients);
+  const { ingredients, order, isLoading } = useSelector(selectIngredients);
 
   useEffect(() => {
     void dispatch(fetchIngredientsThunk());
