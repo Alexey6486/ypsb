@@ -1,9 +1,9 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-import type { TIngredient } from '@utils/types';
+import type { TIngredientUI } from '@utils/types';
 
 export type TModalIngredientState = {
-  ingredient: TIngredient | null;
+  ingredient: TIngredientUI | null;
 };
 
 const initialState: TModalIngredientState = {
@@ -14,7 +14,10 @@ const modalIngredientSlice = createSlice({
   name: 'modalIngredient',
   initialState,
   reducers: {
-    setModalIngredientData: (state, { payload }: PayloadAction<TIngredient | null>) => {
+    setModalIngredientData: (
+      state,
+      { payload }: PayloadAction<TIngredientUI | null>
+    ) => {
       state.ingredient = payload;
     },
   },

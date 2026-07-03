@@ -2,13 +2,19 @@ import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/tool
 
 import { INGREDIENTS_URLS } from '@utils/constants';
 
-import type { TIngredient, TNullable, TIngredientsSorted } from '@utils/types';
+import type {
+  TIngredientUI,
+  TIngredientDto,
+  TNullable,
+  TIngredientsSorted,
+  TIngredientType,
+} from '@utils/types';
 
 export type TIngredientsState = {
   ingredients: TNullable<TIngredientsSorted>;
   order: {
-    bun: TNullable<TIngredient>;
-    ingredients: TIngredient[];
+    bun: TNullable<TIngredientUI>;
+    ingredients: TIngredientUI[];
   };
   isLoading: boolean;
   error: TNullable<string>;
@@ -32,7 +38,7 @@ export const fetchIngredientsThunk = createAsyncThunk<TNullable<TIngredientsSort
     if (!response.ok) throw new Error('Ошибка запроса');
 
     const json = (await response.json()) as {
-      data: TIngredient[];
+      data: TIngredientDto[];
       success: boolean;
     };
 
@@ -42,7 +48,10 @@ export const fetchIngredientsThunk = createAsyncThunk<TNullable<TIngredientsSort
 
     const { bun, main, sauce } = json.data.reduce(
       (acc, item) => {
-        return { ...acc, [item.type]: [...acc[item.type], item] };
+        return {
+          ...acc,
+          [item.type]: [...acc[item.type], { ...item, nanoid: '', counter: 0 }],
+        };
       },
       { bun: [], main: [], sauce: [] }
     );
@@ -55,7 +64,7 @@ const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
   reducers: {
-    setOrderIngredient: (state, { payload }: PayloadAction<TIngredient>) => {
+    setOrderIngredient: (state, { payload }: PayloadAction<TIngredientUI>) => {
       state.order = {
         ...state.order,
         bun: payload.type === 'bun' ? payload : state.order.bun,
@@ -63,6 +72,39 @@ const ingredientsSlice = createSlice({
           payload.type !== 'bun'
             ? [...state.order.ingredients, payload]
             : state.order.ingredients,
+      };
+      state.ingredients = {
+        ...state.ingredients,
+        [payload.type]: state.ingredients[payload.type].map((el) => {
+          if (el._id === payload._id) {
+            return { ...el, counter: payload.type === 'bun' ? 2 : el.counter + 1 };
+          } else if (
+            payload.type === 'bun' &&
+            el.type === 'bun' &&
+            el._id !== payload._id
+          ) {
+            return { ...el, counter: 0 };
+          } else {
+            return el;
+          }
+        }),
+      };
+    },
+    removeIngredient: (
+      state,
+      { payload }: PayloadAction<{ id: string; nanoid: string; type: TIngredientType }>
+    ) => {
+      state.order = {
+        ...state.order,
+        ingredients: state.order.ingredients.filter(
+          (el) => el.nanoid !== payload.nanoid
+        ),
+      };
+      state.ingredients = {
+        ...state.ingredients,
+        [payload.type]: state.ingredients[payload.type].map((el) =>
+          el._id === payload.id ? { ...el, counter: el.counter - 1 } : el
+        ),
       };
     },
   },
@@ -97,7 +139,7 @@ const ingredientsSlice = createSlice({
   },
 });
 
-export const { setOrderIngredient } = ingredientsSlice.actions;
+export const { setOrderIngredient, removeIngredient } = ingredientsSlice.actions;
 export const selectIngredients = (state: {
   ingredients: TIngredientsState;
 }): TIngredientsState => state.ingredients;

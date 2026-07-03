@@ -3,6 +3,7 @@ import {
   ConstructorElement,
   DragIcon,
 } from '@krgaa/react-developer-burger-ui-components';
+import { nanoid } from '@reduxjs/toolkit';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useDrop } from 'react-dnd';
 
@@ -11,10 +12,14 @@ import { Modal } from '@components/modal/modal';
 import { OrderDetails } from '@components/order-details/order-details';
 import { Price } from '@components/price/price';
 import { useWindowSize } from '@hooks/useWindowSize';
-import { selectIngredients, setOrderIngredient } from '@services/ingredients-slice';
+import {
+  selectIngredients,
+  setOrderIngredient,
+  removeIngredient,
+} from '@services/ingredients-slice';
 import { useDispatch, useSelector } from '@services/store';
 
-import type { TIngredient } from '@utils/types';
+import type { TIngredientType, TIngredientUI } from '@utils/types';
 import type { JSX } from 'react';
 
 import styles from './burger-constructor.module.css';
@@ -32,10 +37,12 @@ export const BurgerConstructor = (): JSX.Element => {
   // const [{ isHover }, dropTarget] = useDrop({
   const [, dropTarget] = useDrop({
     accept: 'ingredient',
-    drop({ ingredient }: { ingredient: TIngredient }) {
+    drop({ ingredient }: { ingredient: TIngredientUI }) {
       console.log({ ingredient });
-
-      dispatch(setOrderIngredient(ingredient));
+      if (bun && bun._id === ingredient._id) {
+        return;
+      }
+      dispatch(setOrderIngredient({ ...ingredient, nanoid: nanoid() }));
     },
     // collect: (monitor) => ({
     //   isHover: monitor.isOver(),
@@ -50,6 +57,14 @@ export const BurgerConstructor = (): JSX.Element => {
 
   const handleCloseModal = (): void => {
     setIsModalVisible(false);
+  };
+
+  const handleRemoveIngredient = (
+    id: string,
+    nanoid: string,
+    type: TIngredientType
+  ): void => {
+    dispatch(removeIngredient({ id, nanoid, type }));
   };
 
   useLayoutEffect(() => {
@@ -101,18 +116,16 @@ export const BurgerConstructor = (): JSX.Element => {
               ingredients
                 .filter((item) => item.type !== 'bun')
                 .map((item) => {
-                  const { name, price, image_mobile, _id } = item;
+                  const { name, price, image_mobile, _id, type, nanoid } = item;
                   return (
                     <div
-                      key={_id}
+                      key={nanoid}
                       className={`${styles.burger_constructor_item} mb-4 mr-1`}
                     >
                       <DragIcon type="primary" className={styles.ingredient_drag_icon} />
                       <div className={`${styles.burger_constructor_ingredient} ml-2`}>
                         <ConstructorElement
-                          handleClose={() => {
-                            console.log('delete');
-                          }}
+                          handleClose={() => handleRemoveIngredient(_id, nanoid, type)}
                           price={price}
                           text={name}
                           thumbnail={image_mobile}

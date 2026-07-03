@@ -13,7 +13,7 @@ import {
 import { useSelector, useDispatch } from '@services/store';
 
 import type { AppDispatch } from '@services/store';
-import type { TIngredient, TIngredientType } from '@utils/types';
+import type { TIngredientUI, TIngredientType } from '@utils/types';
 import type { RefObject, JSX } from 'react';
 
 import styles from './burger-ingredients.module.css';
@@ -35,7 +35,7 @@ export const BurgerIngredients = (): JSX.Element => {
 
   console.log('BurgerIngredients render');
 
-  const handleOpenModal = (ingredient: TIngredient): void => {
+  const handleOpenModal = (ingredient: TIngredientUI): void => {
     dispatch(setModalIngredientData(ingredient));
   };
 

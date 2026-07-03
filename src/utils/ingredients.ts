@@ -1,6 +1,6 @@
-import type { TIngredient } from './types.ts';
+import type { TIngredientDto } from './types.ts';
 
-export const ingredients: TIngredient[] = [
+export const ingredients: TIngredientDto[] = [
   {
     _id: '60666c42cc7b410027a1a9b1',
     name: 'Краторная булка N-200i',

@@ -1,6 +1,6 @@
 export type TIngredientType = 'bun' | 'main' | 'sauce';
 
-export type TIngredient = {
+export type TIngredientDto = {
   _id: string;
   name: string;
   type: TIngredientType;
@@ -15,10 +15,15 @@ export type TIngredient = {
   __v: number;
 };
 
+export type TIngredientUI = {
+  nanoid: string;
+  counter: number;
+} & TIngredientDto;
+
 export type TIngredientsSorted = {
-  bun: TIngredient[];
-  main: TIngredient[];
-  sauce: TIngredient[];
+  bun: TIngredientUI[];
+  main: TIngredientUI[];
+  sauce: TIngredientUI[];
 };
 
 export type TNullable<T> = T | null;

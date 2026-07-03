@@ -3,24 +3,19 @@ import { useDrag } from 'react-dnd';
 
 import { Price } from '@components/price/price';
 
-import type { TIngredient } from '@utils/types';
+import type { TIngredientUI } from '@utils/types';
 import type { JSX } from 'react';
 
 import styles from './burger-ingredient-card.module.css';
 
 type TProps = {
-  data: TIngredient;
-  counter: number;
-  onClick: (ingredietn: TIngredient) => void;
+  data: TIngredientUI;
+  onClick: (ingredietn: TIngredientUI) => void;
 };
 
 // нужно будет использовать memo, чтобы при изменении counter, перерисовывать только целевые компоненты
-export const BurgerIngredientCard = ({
-  data,
-  counter = 0,
-  onClick,
-}: TProps): JSX.Element => {
-  const { name, price, image } = data;
+export const BurgerIngredientCard = ({ data, onClick }: TProps): JSX.Element => {
+  const { name, price, image, counter } = data;
   const [{ isDrag }, dragRef] = useDrag({
     type: 'ingredient',
     item: { ingredient: data },
