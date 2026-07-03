@@ -16,10 +16,16 @@ import {
   selectIngredients,
   setOrderIngredient,
   removeIngredient,
+  resetOrder,
 } from '@services/ingredients-slice';
+import {
+  selectModalOrder,
+  setModalOrderData,
+  sendOrderThunk,
+} from '@services/modal-order-slice';
 import { useDispatch, useSelector } from '@services/store';
 
-import type { TIngredientType, TIngredientUI } from '@utils/types';
+import type { TIngredientType, TIngredientUI, TOrder } from '@utils/types';
 import type { JSX } from 'react';
 
 import styles from './burger-constructor.module.css';
@@ -28,8 +34,10 @@ export const BurgerConstructor = (): JSX.Element => {
   const {
     order: { bun, ingredients },
   } = useSelector(selectIngredients);
+  const { details, isLoading } = useSelector(selectModalOrder);
+
   const dispatch = useDispatch();
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+
   const [totalPrice, setTotalPrice] = useState(0);
   const [scrollableSize, setScrollableSize] = useState(0);
   const windowSize = useWindowSize();
@@ -51,12 +59,19 @@ export const BurgerConstructor = (): JSX.Element => {
 
   console.log('BurgerConstructor render');
 
-  const handleOpenModal = (): void => {
-    setIsModalVisible(true);
+  const handleSendOrder = (): void => {
+    if (!bun || !ingredients.length) return;
+
+    const data: TOrder = {
+      ingredients: [bun._id, ...ingredients.map((el) => el._id), bun._id],
+    };
+
+    void dispatch(sendOrderThunk(data));
   };
 
   const handleCloseModal = (): void => {
-    setIsModalVisible(false);
+    dispatch(setModalOrderData(null));
+    dispatch(resetOrder());
   };
 
   const handleRemoveIngredient = (
@@ -167,7 +182,7 @@ export const BurgerConstructor = (): JSX.Element => {
             iconSize="large"
           />
           <Button
-            onClick={handleOpenModal}
+            onClick={handleSendOrder}
             size="large"
             type="primary"
             htmlType="button"
@@ -177,9 +192,9 @@ export const BurgerConstructor = (): JSX.Element => {
           </Button>
         </div>
       </section>
-      {isModalVisible && (
+      {details && (
         <Modal title="" onClose={handleCloseModal}>
-          <OrderDetails orderId="123456" />
+          <OrderDetails orderId={details.order.number} isLoading={isLoading} />
         </Modal>
       )}
     </>

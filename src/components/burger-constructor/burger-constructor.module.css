@@ -13,12 +13,6 @@
   overflow: auto;
 }
 
-.burger_constructor_bun {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-}
-
 .burger_constructor_item {
   display: flex;
   align-items: center;

@@ -27,3 +27,15 @@ export type TIngredientsSorted = {
 };
 
 export type TNullable<T> = T | null;
+
+export type TOrderDetails = {
+  name: string;
+  order: {
+    number: number;
+  };
+  success: boolean;
+};
+
+export type TOrder = {
+  ingredients: string[];
+};

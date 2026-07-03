@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-import { INGREDIENTS_URLS } from '@utils/constants';
+import { URLS } from '@utils/constants';
 
 import type {
   TIngredientUI,
@@ -33,7 +33,7 @@ const initialState: TIngredientsState = {
 export const fetchIngredientsThunk = createAsyncThunk<TNullable<TIngredientsSorted>>(
   'ingredients/fetchIngredients',
   async () => {
-    const response = await fetch(INGREDIENTS_URLS.GET);
+    const response = await fetch(URLS.GET_INGREDIENTS);
 
     if (!response.ok) throw new Error('Ошибка запроса');
 
@@ -107,6 +107,17 @@ const ingredientsSlice = createSlice({
         ),
       };
     },
+    resetOrder: (state) => {
+      state.order = {
+        bun: null,
+        ingredients: [],
+      };
+      state.ingredients = {
+        bun: state.ingredients.bun.map((el) => ({ ...el, counter: 0 })),
+        main: state.ingredients.main.map((el) => ({ ...el, counter: 0 })),
+        sauce: state.ingredients.sauce.map((el) => ({ ...el, counter: 0 })),
+      };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -139,7 +150,8 @@ const ingredientsSlice = createSlice({
   },
 });
 
-export const { setOrderIngredient, removeIngredient } = ingredientsSlice.actions;
+export const { setOrderIngredient, removeIngredient, resetOrder } =
+  ingredientsSlice.actions;
 export const selectIngredients = (state: {
   ingredients: TIngredientsState;
 }): TIngredientsState => state.ingredients;

@@ -24,14 +24,14 @@ const SAUCE = 'Соусы';
 
 export const BurgerIngredients = (): JSX.Element => {
   const { ingredients, isLoading } = useSelector(selectIngredients);
+  const { ingredient } = useSelector(selectModalIngredient);
   const mainRef = useRef<HTMLDivElement | null>(null);
   const sauceRef = useRef<HTMLDivElement | null>(null);
+
   const containerRef: RefObject<HTMLDivElement | null> = useRef(null);
 
   const [tab, setTab] = useState<TIngredientType>('bun');
-
   const dispatch = useDispatch<AppDispatch>();
-  const { ingredient } = useSelector(selectModalIngredient);
 
   console.log('BurgerIngredients render');
 
