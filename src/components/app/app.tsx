@@ -5,7 +5,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { AppHeader } from '@components/app-header/app-header';
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
-import { fetchIngredientsThunk } from '@services/ingredients-slice';
+import { fetchIngredientsThunk } from '@services/slices/ingredients-slice';
 import { useDispatch } from '@services/store';
 
 import type { JSX } from 'react';

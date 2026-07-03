@@ -5,11 +5,11 @@ import { BurgerIngredientsBlock } from '@components/burger-ingredients/block/bur
 import { BurgerIngredientsList } from '@components/burger-ingredients/list/burger-ingredients-list';
 import { IngredientDetails } from '@components/ingredient-details/ingredient-details';
 import { Modal } from '@components/modal/modal';
-import { selectIngredients } from '@services/ingredients-slice';
+import { selectIngredients } from '@services/slices/ingredients-slice';
 import {
   selectModalIngredient,
   setModalIngredientData,
-} from '@services/modal-ingredient-slice';
+} from '@services/slices/modal-ingredient-slice';
 import { useSelector, useDispatch } from '@services/store';
 
 import type { AppDispatch } from '@services/store';
@@ -32,8 +32,6 @@ export const BurgerIngredients = (): JSX.Element => {
 
   const [tab, setTab] = useState<TIngredientType>('bun');
   const dispatch = useDispatch<AppDispatch>();
-
-  console.log('BurgerIngredients render');
 
   const handleOpenModal = (ingredient: TIngredientUI): void => {
     dispatch(setModalIngredientData(ingredient));

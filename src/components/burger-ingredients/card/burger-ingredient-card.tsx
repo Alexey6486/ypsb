@@ -13,22 +13,18 @@ type TProps = {
   onClick: (ingredietn: TIngredientUI) => void;
 };
 
-// нужно будет использовать memo, чтобы при изменении counter, перерисовывать только целевые компоненты
 export const BurgerIngredientCard = ({ data, onClick }: TProps): JSX.Element => {
   const { name, price, image, counter } = data;
-  const [{ isDrag }, dragRef] = useDrag({
+  const [, dragRef] = useDrag({
     type: 'ingredient',
     item: { ingredient: data },
-    collect: (monitor) => ({
-      isDrag: monitor.isDragging(),
-    }),
   });
 
   const handleClick = (): void => {
     onClick(data);
   };
 
-  return !isDrag ? (
+  return (
     <div
       className={`${styles.burger_ingredient_card} mb-8`}
       onClick={handleClick}
@@ -49,7 +45,5 @@ export const BurgerIngredientCard = ({ data, onClick }: TProps): JSX.Element => 
         {name}
       </p>
     </div>
-  ) : (
-    <></>
   );
 };

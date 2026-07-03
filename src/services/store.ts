@@ -9,9 +9,9 @@ import {
   useDispatch as useDispatchBase,
 } from 'react-redux';
 
-import ingredientsReducer from './ingredients-slice';
-import modalIngredientReducer from './modal-ingredient-slice';
-import modalOrderReducer from './modal-order-slice';
+import ingredientsReducer from './slices/ingredients-slice';
+import modalIngredientReducer from './slices/modal-ingredient-slice';
+import modalOrderReducer from './slices/modal-order-slice';
 
 export const reducer = combineReducers({
   ingredients: ingredientsReducer,

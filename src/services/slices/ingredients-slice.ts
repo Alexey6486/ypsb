@@ -118,6 +118,14 @@ const ingredientsSlice = createSlice({
         sauce: state.ingredients.sauce.map((el) => ({ ...el, counter: 0 })),
       };
     },
+    moveOrderIngredient: (
+      state,
+      { payload }: PayloadAction<{ from: number; to: number }>
+    ) => {
+      const { from, to } = payload;
+      const item = state.order.ingredients.splice(from, 1)[0];
+      state.order.ingredients.splice(to, 0, item);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -150,7 +158,7 @@ const ingredientsSlice = createSlice({
   },
 });
 
-export const { setOrderIngredient, removeIngredient, resetOrder } =
+export const { setOrderIngredient, removeIngredient, resetOrder, moveOrderIngredient } =
   ingredientsSlice.actions;
 export const selectIngredients = (state: {
   ingredients: TIngredientsState;

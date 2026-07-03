@@ -1,12 +1,10 @@
-import {
-  Button,
-  ConstructorElement,
-  DragIcon,
-} from '@krgaa/react-developer-burger-ui-components';
+import { Button, ConstructorElement } from '@krgaa/react-developer-burger-ui-components';
 import { nanoid } from '@reduxjs/toolkit';
+import { clsx } from 'clsx';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useDrop } from 'react-dnd';
 
+import { OrderIngredient } from '@components/burger-constructor/order-ingredient/order-ingredient';
 import { ConstructorPlaceholder } from '@components/constructor-placeholder/constructor-placeholder';
 import { Modal } from '@components/modal/modal';
 import { OrderDetails } from '@components/order-details/order-details';
@@ -17,17 +15,19 @@ import {
   setOrderIngredient,
   removeIngredient,
   resetOrder,
-} from '@services/ingredients-slice';
+  moveOrderIngredient,
+} from '@services/slices/ingredients-slice';
 import {
   selectModalOrder,
   setModalOrderData,
   sendOrderThunk,
-} from '@services/modal-order-slice';
+} from '@services/slices/modal-order-slice';
 import { useDispatch, useSelector } from '@services/store';
 
 import type { TIngredientType, TIngredientUI, TOrder } from '@utils/types';
 import type { JSX } from 'react';
 
+import commonStyles from './burger-constructor-common.module.css';
 import styles from './burger-constructor.module.css';
 
 export const BurgerConstructor = (): JSX.Element => {
@@ -42,22 +42,18 @@ export const BurgerConstructor = (): JSX.Element => {
   const [scrollableSize, setScrollableSize] = useState(0);
   const windowSize = useWindowSize();
 
-  // const [{ isHover }, dropTarget] = useDrop({
-  const [, dropTarget] = useDrop({
+  const [{ isOver }, dropTarget] = useDrop({
     accept: 'ingredient',
     drop({ ingredient }: { ingredient: TIngredientUI }) {
-      console.log({ ingredient });
       if (bun && bun._id === ingredient._id) {
         return;
       }
       dispatch(setOrderIngredient({ ...ingredient, nanoid: nanoid() }));
     },
-    // collect: (monitor) => ({
-    //   isHover: monitor.isOver(),
-    // }),
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
   });
-
-  console.log('BurgerConstructor render');
 
   const handleSendOrder = (): void => {
     if (!bun || !ingredients.length) return;
@@ -80,6 +76,10 @@ export const BurgerConstructor = (): JSX.Element => {
     type: TIngredientType
   ): void => {
     dispatch(removeIngredient({ id, nanoid, type }));
+  };
+
+  const handleOrderIngredientMove = (dragIndex: number, hoverIndex: number): void => {
+    dispatch(moveOrderIngredient({ from: dragIndex, to: hoverIndex }));
   };
 
   useLayoutEffect(() => {
@@ -105,9 +105,12 @@ export const BurgerConstructor = (): JSX.Element => {
   return (
     <>
       <section className={`${styles.burger_constructor} mb-10 pt-5 pr-4 pb-10 pl-4`}>
-        <div className="mb-10" ref={dropTarget}>
-          <div className={`${styles.burger_constructor_item} mb-4 mr-1`}>
-            <div className={`${styles.burger_constructor_ingredient} ml-2`}>
+        <div
+          className={`${clsx({ [styles.burger_constructor_hover]: isOver })} mb-10`}
+          ref={dropTarget}
+        >
+          <div className={`${commonStyles.burger_constructor_item} mb-4 mr-1`}>
+            <div className={`${commonStyles.burger_constructor_ingredient} ml-2`}>
               {bun ? (
                 <ConstructorElement
                   handleClose={() => null}
@@ -116,7 +119,6 @@ export const BurgerConstructor = (): JSX.Element => {
                   text={bun.name}
                   thumbnail={bun.image_mobile}
                   type="top"
-                  extraClass={styles.burger_constructor_ingredient}
                 />
               ) : (
                 <ConstructorPlaceholder type="top" text="Выберете булки" />
@@ -128,37 +130,28 @@ export const BurgerConstructor = (): JSX.Element => {
             style={{ height: scrollableSize }}
           >
             {ingredients.length > 0 ? (
-              ingredients
-                .filter((item) => item.type !== 'bun')
-                .map((item) => {
-                  const { name, price, image_mobile, _id, type, nanoid } = item;
-                  return (
-                    <div
-                      key={nanoid}
-                      className={`${styles.burger_constructor_item} mb-4 mr-1`}
-                    >
-                      <DragIcon type="primary" className={styles.ingredient_drag_icon} />
-                      <div className={`${styles.burger_constructor_ingredient} ml-2`}>
-                        <ConstructorElement
-                          handleClose={() => handleRemoveIngredient(_id, nanoid, type)}
-                          price={price}
-                          text={name}
-                          thumbnail={image_mobile}
-                        />
-                      </div>
-                    </div>
-                  );
-                })
+              ingredients.map((item, index) => {
+                const { nanoid } = item;
+                return (
+                  <OrderIngredient
+                    key={nanoid}
+                    ingredient={item}
+                    index={index}
+                    onRemove={handleRemoveIngredient}
+                    onMove={handleOrderIngredientMove}
+                  />
+                );
+              })
             ) : (
-              <div className={`${styles.burger_constructor_item} mb-4 mr-1`}>
-                <div className={`${styles.burger_constructor_ingredient} ml-2`}>
+              <div className={`${commonStyles.burger_constructor_item} mb-4 mr-1`}>
+                <div className={`${commonStyles.burger_constructor_ingredient} ml-2`}>
                   <ConstructorPlaceholder type="middle" text="Выберете начинку" />
                 </div>
               </div>
             )}
           </div>
-          <div className={`${styles.burger_constructor_item} mb-4 mr-1`}>
-            <div className={`${styles.burger_constructor_ingredient} ml-2`}>
+          <div className={`${commonStyles.burger_constructor_item} mb-4 mr-1`}>
+            <div className={`${commonStyles.burger_constructor_ingredient} ml-2`}>
               {bun ? (
                 <ConstructorElement
                   handleClose={() => null}
@@ -167,7 +160,6 @@ export const BurgerConstructor = (): JSX.Element => {
                   text={bun.name}
                   thumbnail={bun.image_mobile}
                   type="bottom"
-                  extraClass={styles.burger_constructor_item}
                 />
               ) : (
                 <ConstructorPlaceholder type="bottom" text="Выберете булки" />
