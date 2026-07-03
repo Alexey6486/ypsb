@@ -13,6 +13,9 @@ const initialState: TModalIngredientState = {
 const modalIngredientSlice = createSlice({
   name: 'modalIngredient',
   initialState,
+  selectors: {
+    selectModalIngredient: (state) => state.ingredient,
+  },
   reducers: {
     setModalIngredientData: (
       state,
@@ -24,7 +27,5 @@ const modalIngredientSlice = createSlice({
 });
 
 export const { setModalIngredientData } = modalIngredientSlice.actions;
-export const selectModalIngredient = (state: {
-  modalIngredient: TModalIngredientState;
-}): TModalIngredientState => state.modalIngredient;
+export const { selectModalIngredient } = modalIngredientSlice.selectors;
 export default modalIngredientSlice.reducer;

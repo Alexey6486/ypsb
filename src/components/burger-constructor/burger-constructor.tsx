@@ -11,11 +11,11 @@ import { OrderDetails } from '@components/order-details/order-details';
 import { Price } from '@components/price/price';
 import { useWindowSize } from '@hooks/useWindowSize';
 import {
-  selectIngredients,
   setOrderIngredient,
   removeIngredient,
   resetOrder,
   moveOrderIngredient,
+  selectOrder,
 } from '@services/slices/ingredients-slice';
 import {
   selectModalOrder,
@@ -31,10 +31,8 @@ import commonStyles from './burger-constructor-common.module.css';
 import styles from './burger-constructor.module.css';
 
 export const BurgerConstructor = (): JSX.Element => {
-  const {
-    order: { bun, ingredients },
-  } = useSelector(selectIngredients);
-  const { details, isLoading } = useSelector(selectModalOrder);
+  const { bun, ingredients } = useSelector(selectOrder);
+  const details = useSelector(selectModalOrder);
 
   const dispatch = useDispatch();
 
@@ -116,7 +114,7 @@ export const BurgerConstructor = (): JSX.Element => {
                   handleClose={() => null}
                   isLocked
                   price={bun.price}
-                  text={bun.name}
+                  text={`${bun.name} (верх)`}
                   thumbnail={bun.image_mobile}
                   type="top"
                 />
@@ -157,7 +155,7 @@ export const BurgerConstructor = (): JSX.Element => {
                   handleClose={() => null}
                   isLocked
                   price={bun.price}
-                  text={bun.name}
+                  text={`${bun.name} (низ)`}
                   thumbnail={bun.image_mobile}
                   type="bottom"
                 />
@@ -186,7 +184,7 @@ export const BurgerConstructor = (): JSX.Element => {
       </section>
       {details && (
         <Modal title="" onClose={handleCloseModal}>
-          <OrderDetails orderId={details.order.number} isLoading={isLoading} />
+          <OrderDetails orderId={details.order.number} />
         </Modal>
       )}
     </>

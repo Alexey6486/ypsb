@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-import { URLS } from '@utils/constants';
+import { request } from '@utils/api';
+import { INGREDIENTS, URLS } from '@utils/constants';
 
 import type {
   TIngredientUI,
@@ -33,20 +34,11 @@ const initialState: TIngredientsState = {
 export const fetchIngredientsThunk = createAsyncThunk<TNullable<TIngredientsSorted>>(
   'ingredients/fetchIngredients',
   async () => {
-    const response = await fetch(URLS.GET_INGREDIENTS);
+    const response: { data: TIngredientDto[]; success: boolean } = await request(
+      URLS.GET_INGREDIENTS
+    );
 
-    if (!response.ok) throw new Error('Ошибка запроса');
-
-    const json = (await response.json()) as {
-      data: TIngredientDto[];
-      success: boolean;
-    };
-
-    if (!json.success) {
-      throw Error('Ошибка запроса');
-    }
-
-    const { bun, main, sauce } = json.data.reduce(
+    const { bun, main, sauce } = response.data.reduce(
       (acc, item) => {
         return {
           ...acc,
@@ -63,13 +55,18 @@ export const fetchIngredientsThunk = createAsyncThunk<TNullable<TIngredientsSort
 const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
+  selectors: {
+    selectIngredients: (state) => state.ingredients,
+    selectOrder: (state) => state.order,
+    selectIsLoading: (state) => state.isLoading,
+  },
   reducers: {
     setOrderIngredient: (state, { payload }: PayloadAction<TIngredientUI>) => {
       state.order = {
         ...state.order,
-        bun: payload.type === 'bun' ? payload : state.order.bun,
+        bun: payload.type === INGREDIENTS.BUN ? payload : state.order.bun,
         ingredients:
-          payload.type !== 'bun'
+          payload.type !== INGREDIENTS.BUN
             ? [...state.order.ingredients, payload]
             : state.order.ingredients,
       };
@@ -77,10 +74,13 @@ const ingredientsSlice = createSlice({
         ...state.ingredients,
         [payload.type]: state.ingredients[payload.type].map((el) => {
           if (el._id === payload._id) {
-            return { ...el, counter: payload.type === 'bun' ? 2 : el.counter + 1 };
+            return {
+              ...el,
+              counter: payload.type === INGREDIENTS.BUN ? 2 : el.counter + 1,
+            };
           } else if (
-            payload.type === 'bun' &&
-            el.type === 'bun' &&
+            payload.type === INGREDIENTS.BUN &&
+            el.type === INGREDIENTS.BUN &&
             el._id !== payload._id
           ) {
             return { ...el, counter: 0 };
@@ -160,7 +160,6 @@ const ingredientsSlice = createSlice({
 
 export const { setOrderIngredient, removeIngredient, resetOrder, moveOrderIngredient } =
   ingredientsSlice.actions;
-export const selectIngredients = (state: {
-  ingredients: TIngredientsState;
-}): TIngredientsState => state.ingredients;
+export const { selectIngredients, selectOrder, selectIsLoading } =
+  ingredientsSlice.selectors;
 export default ingredientsSlice.reducer;

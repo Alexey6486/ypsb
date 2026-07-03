@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
+import { request } from '@utils/api';
 import { URLS } from '@utils/constants';
 
 import type { TOrder, TOrderDetails, TNullable } from '@utils/types';
@@ -19,7 +20,7 @@ const initialState: TModalOrderState = {
 export const sendOrderThunk = createAsyncThunk<TOrderDetails, TOrder>(
   'modalOrder/sendOrder',
   async (data: TOrder) => {
-    const response = await fetch(URLS.POST_ORDER, {
+    const response: TOrderDetails = await request(URLS.POST_ORDER, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -29,21 +30,16 @@ export const sendOrderThunk = createAsyncThunk<TOrderDetails, TOrder>(
       }),
     });
 
-    if (!response.ok) throw new Error('Ошибка запроса');
-
-    const json = (await response.json()) as TOrderDetails;
-
-    if (!json.success) {
-      throw Error('Ошибка запроса');
-    }
-
-    return json;
+    return response;
   }
 );
 
 const modalOrderSlice = createSlice({
   name: 'modalOrder',
   initialState,
+  selectors: {
+    selectModalOrder: (state) => state.details,
+  },
   reducers: {
     setModalOrderData: (state, { payload }: PayloadAction<TOrderDetails | null>) => {
       state.details = payload;
@@ -78,7 +74,5 @@ const modalOrderSlice = createSlice({
 });
 
 export const { setModalOrderData } = modalOrderSlice.actions;
-export const selectModalOrder = (state: {
-  modalOrder: TModalOrderState;
-}): TModalOrderState => state.modalOrder;
+export const { selectModalOrder } = modalOrderSlice.selectors;
 export default modalOrderSlice.reducer;

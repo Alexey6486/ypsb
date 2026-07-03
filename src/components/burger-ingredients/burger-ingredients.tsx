@@ -5,14 +5,14 @@ import { BurgerIngredientsBlock } from '@components/burger-ingredients/block/bur
 import { BurgerIngredientsList } from '@components/burger-ingredients/list/burger-ingredients-list';
 import { IngredientDetails } from '@components/ingredient-details/ingredient-details';
 import { Modal } from '@components/modal/modal';
-import { selectIngredients } from '@services/slices/ingredients-slice';
+import { selectIngredients, selectIsLoading } from '@services/slices/ingredients-slice';
 import {
   selectModalIngredient,
   setModalIngredientData,
 } from '@services/slices/modal-ingredient-slice';
 import { useSelector, useDispatch } from '@services/store';
+import { INGREDIENTS } from '@utils/constants';
 
-import type { AppDispatch } from '@services/store';
 import type { TIngredientUI, TIngredientType } from '@utils/types';
 import type { RefObject, JSX } from 'react';
 
@@ -23,15 +23,16 @@ const MAIN = 'Начинки';
 const SAUCE = 'Соусы';
 
 export const BurgerIngredients = (): JSX.Element => {
-  const { ingredients, isLoading } = useSelector(selectIngredients);
-  const { ingredient } = useSelector(selectModalIngredient);
+  const ingredients = useSelector(selectIngredients);
+  const isLoading = useSelector(selectIsLoading);
+  const ingredient = useSelector(selectModalIngredient);
   const mainRef = useRef<HTMLDivElement | null>(null);
   const sauceRef = useRef<HTMLDivElement | null>(null);
 
   const containerRef: RefObject<HTMLDivElement | null> = useRef(null);
 
-  const [tab, setTab] = useState<TIngredientType>('bun');
-  const dispatch = useDispatch<AppDispatch>();
+  const [tab, setTab] = useState<TIngredientType>(INGREDIENTS.BUN);
+  const dispatch = useDispatch();
 
   const handleOpenModal = (ingredient: TIngredientUI): void => {
     dispatch(setModalIngredientData(ingredient));
@@ -62,11 +63,11 @@ export const BurgerIngredients = (): JSX.Element => {
       const { top: containerTop } = container.getBoundingClientRect();
 
       if (mainTop < containerTop && sauceTop > containerTop) {
-        setTab((prev) => (prev !== 'main' ? 'main' : prev));
+        setTab((prev) => (prev !== INGREDIENTS.MAIN ? INGREDIENTS.MAIN : prev));
       } else if (sauceTop < containerTop) {
-        setTab((prev) => (prev !== 'sauce' ? 'sauce' : prev));
+        setTab((prev) => (prev !== INGREDIENTS.SAUCE ? INGREDIENTS.SAUCE : prev));
       } else {
-        setTab((prev) => (prev !== 'bun' ? 'bun' : prev));
+        setTab((prev) => (prev !== INGREDIENTS.BUN ? INGREDIENTS.BUN : prev));
       }
     };
 
@@ -87,8 +88,8 @@ export const BurgerIngredients = (): JSX.Element => {
         <nav>
           <ul className={styles.menu}>
             <Tab
-              value="bun"
-              active={tab === 'bun'}
+              value={INGREDIENTS.BUN}
+              active={tab === INGREDIENTS.BUN}
               onClick={() => {
                 /* TODO */
               }}
@@ -96,8 +97,8 @@ export const BurgerIngredients = (): JSX.Element => {
               {BUN}
             </Tab>
             <Tab
-              value="main"
-              active={tab === 'main'}
+              value={INGREDIENTS.MAIN}
+              active={tab === INGREDIENTS.MAIN}
               onClick={() => {
                 /* TODO */
               }}
@@ -105,8 +106,8 @@ export const BurgerIngredients = (): JSX.Element => {
               {MAIN}
             </Tab>
             <Tab
-              value="sauce"
-              active={tab === 'sauce'}
+              value={INGREDIENTS.SAUCE}
+              active={tab === INGREDIENTS.SAUCE}
               onClick={() => {
                 /* TODO */
               }}
