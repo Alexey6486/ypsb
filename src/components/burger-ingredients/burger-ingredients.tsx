@@ -1,43 +1,86 @@
 import { Tab, Preloader } from '@krgaa/react-developer-burger-ui-components';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { BurgerIngredientsBlock } from '@components/burger-ingredients/block/burger-ingredients-block';
 import { BurgerIngredientsList } from '@components/burger-ingredients/list/burger-ingredients-list';
 import { IngredientDetails } from '@components/ingredient-details/ingredient-details';
 import { Modal } from '@components/modal/modal';
+import { selectIngredients, selectIsLoading } from '@services/slices/ingredients-slice';
+import {
+  selectModalIngredient,
+  setModalIngredientData,
+} from '@services/slices/modal-ingredient-slice';
+import { useSelector, useDispatch } from '@services/store';
+import { INGREDIENTS } from '@utils/constants';
 
-import type { TIngredient, TIngredientsSorted } from '@utils/types';
-import type { JSX } from 'react';
+import type { TIngredientUI, TIngredientType } from '@utils/types';
+import type { RefObject, JSX } from 'react';
 
 import styles from './burger-ingredients.module.css';
-
-type TBurgerIngredientsProps = {
-  ingredients: TIngredientsSorted | null;
-  isLoading: boolean;
-};
 
 const BUN = 'Булки';
 const MAIN = 'Начинки';
 const SAUCE = 'Соусы';
 
-export const BurgerIngredients = ({
-  ingredients,
-  isLoading,
-}: TBurgerIngredientsProps): JSX.Element => {
-  const [modalState, setModalState] = useState<{
-    isVisible: boolean;
-    ingredient: TIngredient | null;
-  }>({ isVisible: false, ingredient: null });
+export const BurgerIngredients = (): JSX.Element => {
+  const ingredients = useSelector(selectIngredients);
+  const isLoading = useSelector(selectIsLoading);
+  const ingredient = useSelector(selectModalIngredient);
+  const mainRef = useRef<HTMLDivElement | null>(null);
+  const sauceRef = useRef<HTMLDivElement | null>(null);
 
-  console.log('BurgerIngredients render');
+  const containerRef: RefObject<HTMLDivElement | null> = useRef(null);
 
-  const handleOpenModal = (ingredient: TIngredient): void => {
-    setModalState({ isVisible: true, ingredient: ingredient });
+  const [tab, setTab] = useState<TIngredientType>(INGREDIENTS.BUN);
+  const dispatch = useDispatch();
+
+  const handleOpenModal = (ingredient: TIngredientUI): void => {
+    dispatch(setModalIngredientData(ingredient));
   };
 
   const handleCloseModal = (): void => {
-    setModalState({ isVisible: false, ingredient: null });
+    dispatch(setModalIngredientData(null));
   };
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const main = mainRef.current;
+    const sauce = sauceRef.current;
+
+    if (!container || !main || !sauce) return;
+
+    const handleTabChange = (): void => {
+      if (
+        !('getBoundingClientRect' in main) ||
+        !('getBoundingClientRect' in sauce) ||
+        !('getBoundingClientRect' in container)
+      ) {
+        return;
+      }
+
+      const { top: mainTop } = main.getBoundingClientRect();
+      const { top: sauceTop } = sauce.getBoundingClientRect();
+      const { top: containerTop } = container.getBoundingClientRect();
+
+      if (mainTop < containerTop && sauceTop > containerTop) {
+        setTab((prev) => (prev !== INGREDIENTS.MAIN ? INGREDIENTS.MAIN : prev));
+      } else if (sauceTop < containerTop) {
+        setTab((prev) => (prev !== INGREDIENTS.SAUCE ? INGREDIENTS.SAUCE : prev));
+      } else {
+        setTab((prev) => (prev !== INGREDIENTS.BUN ? INGREDIENTS.BUN : prev));
+      }
+    };
+
+    if (container) {
+      container.addEventListener('scroll', handleTabChange);
+    }
+
+    return (): void => {
+      if (container) {
+        container.removeEventListener('scroll', handleTabChange);
+      }
+    };
+  }, [ingredients]);
 
   return (
     <>
@@ -45,8 +88,8 @@ export const BurgerIngredients = ({
         <nav>
           <ul className={styles.menu}>
             <Tab
-              value="bun"
-              active={true}
+              value={INGREDIENTS.BUN}
+              active={tab === INGREDIENTS.BUN}
               onClick={() => {
                 /* TODO */
               }}
@@ -54,8 +97,8 @@ export const BurgerIngredients = ({
               {BUN}
             </Tab>
             <Tab
-              value="main"
-              active={false}
+              value={INGREDIENTS.MAIN}
+              active={tab === INGREDIENTS.MAIN}
               onClick={() => {
                 /* TODO */
               }}
@@ -63,8 +106,8 @@ export const BurgerIngredients = ({
               {MAIN}
             </Tab>
             <Tab
-              value="sauce"
-              active={false}
+              value={INGREDIENTS.SAUCE}
+              active={tab === INGREDIENTS.SAUCE}
               onClick={() => {
                 /* TODO */
               }}
@@ -75,14 +118,17 @@ export const BurgerIngredients = ({
         </nav>
         {isLoading && <Preloader />}
         {!isLoading && ingredients && (
-          <div className={`${styles.burger_ingredients_container} custom-scroll`}>
+          <div
+            className={`${styles.burger_ingredients_container} custom-scroll`}
+            ref={containerRef}
+          >
             <BurgerIngredientsBlock title={BUN}>
               <BurgerIngredientsList list={ingredients.bun} onClick={handleOpenModal} />
             </BurgerIngredientsBlock>
-            <BurgerIngredientsBlock title={MAIN}>
+            <BurgerIngredientsBlock title={MAIN} ref={mainRef}>
               <BurgerIngredientsList list={ingredients.main} onClick={handleOpenModal} />
             </BurgerIngredientsBlock>
-            <BurgerIngredientsBlock title={SAUCE}>
+            <BurgerIngredientsBlock title={SAUCE} ref={sauceRef}>
               <BurgerIngredientsList
                 list={ingredients.sauce}
                 onClick={handleOpenModal}
@@ -91,9 +137,9 @@ export const BurgerIngredients = ({
           </div>
         )}
       </section>
-      {modalState.isVisible && modalState.ingredient && (
+      {ingredient && (
         <Modal title="Детали ингредиента" onClose={handleCloseModal}>
-          <IngredientDetails ingredient={modalState.ingredient} />
+          <IngredientDetails ingredient={ingredient} />
         </Modal>
       )}
     </>

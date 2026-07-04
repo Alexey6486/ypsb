@@ -1,32 +1,35 @@
 import { Counter } from '@krgaa/react-developer-burger-ui-components';
+import { useDrag } from 'react-dnd';
 
 import { Price } from '@components/price/price';
 
-import type { TIngredient } from '@utils/types';
+import type { TIngredientUI } from '@utils/types';
 import type { JSX } from 'react';
 
 import styles from './burger-ingredient-card.module.css';
 
 type TProps = {
-  data: TIngredient;
-  counter: number;
-  onClick: (ingredietn: TIngredient) => void;
+  data: TIngredientUI;
+  onClick: (ingredietn: TIngredientUI) => void;
 };
 
-// нужно будет использовать memo, чтобы при изменении counter, перерисовывать только целевые компоненты
-export const BurgerIngredientCard = ({
-  data,
-  counter = 0,
-  onClick,
-}: TProps): JSX.Element => {
-  const { name, price, image } = data;
+export const BurgerIngredientCard = ({ data, onClick }: TProps): JSX.Element => {
+  const { name, price, image, counter } = data;
+  const [, dragRef] = useDrag({
+    type: 'ingredient',
+    item: { ingredient: data },
+  });
 
   const handleClick = (): void => {
     onClick(data);
   };
 
   return (
-    <div className={`${styles.burger_ingredient_card} mb-8`} onClick={handleClick}>
+    <div
+      className={`${styles.burger_ingredient_card} mb-8`}
+      onClick={handleClick}
+      ref={dragRef}
+    >
       {counter > 0 && <Counter count={counter} size="default" />}
       <div className="pl-4 pr-4">
         <img src={image} alt="ingredient-image" />

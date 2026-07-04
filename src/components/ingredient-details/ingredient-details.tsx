@@ -1,10 +1,10 @@
-import type { TIngredient } from '@utils/types';
+import type { TIngredientUI } from '@utils/types';
 import type { JSX } from 'react';
 
 import styles from './ingredient-details.module.css';
 
 type TProps = {
-  ingredient: TIngredient;
+  ingredient: TIngredientUI;
 };
 
 export const IngredientDetails = ({ ingredient }: TProps): JSX.Element => {

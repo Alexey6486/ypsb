@@ -1,40 +1,83 @@
-import {
-  Button,
-  ConstructorElement,
-  DragIcon,
-} from '@krgaa/react-developer-burger-ui-components';
+import { Button, ConstructorElement } from '@krgaa/react-developer-burger-ui-components';
+import { nanoid } from '@reduxjs/toolkit';
+import { clsx } from 'clsx';
 import { useEffect, useLayoutEffect, useState } from 'react';
+import { useDrop } from 'react-dnd';
 
+import { OrderIngredient } from '@components/burger-constructor/order-ingredient/order-ingredient';
+import { ConstructorPlaceholder } from '@components/constructor-placeholder/constructor-placeholder';
 import { Modal } from '@components/modal/modal';
 import { OrderDetails } from '@components/order-details/order-details';
 import { Price } from '@components/price/price';
 import { useWindowSize } from '@hooks/useWindowSize';
+import {
+  setOrderIngredient,
+  removeIngredient,
+  resetOrder,
+  moveOrderIngredient,
+  selectOrder,
+} from '@services/slices/ingredients-slice';
+import {
+  selectModalOrder,
+  setModalOrderData,
+  sendOrderThunk,
+} from '@services/slices/modal-order-slice';
+import { useDispatch, useSelector } from '@services/store';
 
-import type { TIngredient } from '@utils/types';
+import type { TIngredientType, TIngredientUI, TOrder } from '@utils/types';
 import type { JSX } from 'react';
 
+import commonStyles from './burger-constructor-common.module.css';
 import styles from './burger-constructor.module.css';
 
-type TBurgerConstructorProps = {
-  ingredients: TIngredient[] | null;
-};
+export const BurgerConstructor = (): JSX.Element => {
+  const { bun, ingredients } = useSelector(selectOrder);
+  const details = useSelector(selectModalOrder);
 
-export const BurgerConstructor = ({
-  ingredients,
-}: TBurgerConstructorProps): JSX.Element => {
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const dispatch = useDispatch();
+
   const [totalPrice, setTotalPrice] = useState(0);
   const [scrollableSize, setScrollableSize] = useState(0);
   const windowSize = useWindowSize();
 
-  console.log('BurgerConstructor render');
+  const [{ isOver }, dropTarget] = useDrop({
+    accept: 'ingredient',
+    drop({ ingredient }: { ingredient: TIngredientUI }) {
+      if (bun && bun._id === ingredient._id) {
+        return;
+      }
+      dispatch(setOrderIngredient({ ...ingredient, nanoid: nanoid() }));
+    },
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  });
 
-  const handleOpenModal = (): void => {
-    setIsModalVisible(true);
+  const handleSendOrder = (): void => {
+    if (!bun || !ingredients.length) return;
+
+    const data: TOrder = {
+      ingredients: [bun._id, ...ingredients.map((el) => el._id), bun._id],
+    };
+
+    void dispatch(sendOrderThunk(data));
   };
 
   const handleCloseModal = (): void => {
-    setIsModalVisible(false);
+    dispatch(setModalOrderData(null));
+    dispatch(resetOrder());
+  };
+
+  const handleRemoveIngredient = (
+    id: string,
+    nanoid: string,
+    type: TIngredientType
+  ): void => {
+    dispatch(removeIngredient({ id, nanoid, type }));
+  };
+
+  const handleOrderIngredientMove = (dragIndex: number, hoverIndex: number): void => {
+    dispatch(moveOrderIngredient({ from: dragIndex, to: hoverIndex }));
   };
 
   useLayoutEffect(() => {
@@ -45,97 +88,103 @@ export const BurgerConstructor = ({
 
   useEffect(() => {
     if (ingredients) {
-      const price = ingredients
+      let price = ingredients
         ? ingredients.reduce((acc, item) => {
             return acc + item.price;
           }, 0)
         : 0;
+      if (bun) {
+        price += bun.price * 2;
+      }
       setTotalPrice(price);
     }
-  }, [ingredients]);
+  }, [ingredients, bun]);
 
   return (
     <>
       <section className={`${styles.burger_constructor} mb-10 pt-5 pr-4 pb-10 pl-4`}>
-        {ingredients && (
-          <>
-            <div className="mb-10">
-              <div className="mb-4 pl-8 pr-4">
+        <div
+          className={`${clsx({ [styles.burger_constructor_hover]: isOver })} mb-10`}
+          ref={dropTarget}
+        >
+          <div className={`${commonStyles.burger_constructor_item} mb-4 mr-1`}>
+            <div className={`${commonStyles.burger_constructor_ingredient} ml-2`}>
+              {bun ? (
                 <ConstructorElement
                   handleClose={() => null}
                   isLocked
-                  price={200}
-                  text="Краторная булка N-200i (верх)"
-                  thumbnail="https://react-burger-ui-components.education-services.ru/assets/img-CFqVEZmj.png"
+                  price={bun.price}
+                  text={`${bun.name} (верх)`}
+                  thumbnail={bun.image_mobile}
                   type="top"
-                  extraClass={styles.burger_constructor_item}
                 />
+              ) : (
+                <ConstructorPlaceholder type="top" text="Выберете булки" />
+              )}
+            </div>
+          </div>
+          <div
+            className={`${styles.burger_constructor_list} custom-scroll`}
+            style={{ height: scrollableSize }}
+          >
+            {ingredients.length > 0 ? (
+              ingredients.map((item, index) => {
+                const { nanoid } = item;
+                return (
+                  <OrderIngredient
+                    key={nanoid}
+                    ingredient={item}
+                    index={index}
+                    onRemove={handleRemoveIngredient}
+                    onMove={handleOrderIngredientMove}
+                  />
+                );
+              })
+            ) : (
+              <div className={`${commonStyles.burger_constructor_item} mb-4 mr-1`}>
+                <div className={`${commonStyles.burger_constructor_ingredient} ml-2`}>
+                  <ConstructorPlaceholder type="middle" text="Выберете начинку" />
+                </div>
               </div>
-              <div
-                className={`${styles.burger_constructor_list} custom-scroll`}
-                style={{ height: scrollableSize }}
-              >
-                {ingredients
-                  .filter((item) => item.type !== 'bun')
-                  .map((item) => {
-                    const { name, price, image_mobile, _id } = item;
-                    return (
-                      <div
-                        key={_id}
-                        className={`${styles.burger_constructor_item} mb-4 mr-1`}
-                      >
-                        <DragIcon
-                          type="primary"
-                          className={styles.ingredient_drag_icon}
-                        />
-                        <div className={`${styles.burger_constructor_ingredient} ml-2`}>
-                          <ConstructorElement
-                            handleClose={() => {
-                              console.log('delete');
-                            }}
-                            price={price}
-                            text={name}
-                            thumbnail={image_mobile}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-              </div>
-              <div className="mb-4 pl-8 pr-4">
+            )}
+          </div>
+          <div className={`${commonStyles.burger_constructor_item} mb-4 mr-1`}>
+            <div className={`${commonStyles.burger_constructor_ingredient} ml-2`}>
+              {bun ? (
                 <ConstructorElement
                   handleClose={() => null}
                   isLocked
-                  price={200}
-                  text="Краторная булка N-200i (низ)"
-                  thumbnail="https://react-burger-ui-components.education-services.ru/assets/img-CFqVEZmj.png"
+                  price={bun.price}
+                  text={`${bun.name} (низ)`}
+                  thumbnail={bun.image_mobile}
                   type="bottom"
-                  extraClass={styles.burger_constructor_item}
                 />
-              </div>
+              ) : (
+                <ConstructorPlaceholder type="bottom" text="Выберете булки" />
+              )}
             </div>
-            <div className={`${styles.burger_constructor_footer} mb-3`}>
-              <Price
-                price={totalPrice}
-                typographyClass="text_type_digits-medium"
-                iconSize="large"
-              />
-              <Button
-                onClick={handleOpenModal}
-                size="large"
-                type="primary"
-                htmlType="button"
-                extraClass="ml-10"
-              >
-                Оформить заказ
-              </Button>
-            </div>
-          </>
-        )}
+          </div>
+        </div>
+        <div className={`${styles.burger_constructor_footer} mb-3`}>
+          <Price
+            price={totalPrice}
+            typographyClass="text_type_digits-medium"
+            iconSize="large"
+          />
+          <Button
+            onClick={handleSendOrder}
+            size="large"
+            type="primary"
+            htmlType="button"
+            extraClass="ml-10"
+          >
+            Оформить заказ
+          </Button>
+        </div>
       </section>
-      {isModalVisible && (
+      {details && (
         <Modal title="" onClose={handleCloseModal}>
-          <OrderDetails orderId="123456" />
+          <OrderDetails orderId={details.order.number} />
         </Modal>
       )}
     </>

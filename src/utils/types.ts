@@ -1,6 +1,6 @@
 export type TIngredientType = 'bun' | 'main' | 'sauce';
 
-export type TIngredient = {
+export type TIngredientDto = {
   _id: string;
   name: string;
   type: TIngredientType;
@@ -15,14 +15,27 @@ export type TIngredient = {
   __v: number;
 };
 
+export type TIngredientUI = {
+  nanoid: string;
+  counter: number;
+} & TIngredientDto;
+
 export type TIngredientsSorted = {
-  bun: TIngredient[];
-  main: TIngredient[];
-  sauce: TIngredient[];
+  bun: TIngredientUI[];
+  main: TIngredientUI[];
+  sauce: TIngredientUI[];
 };
 
-export type TAppState = {
-  ingredients: TIngredientsSorted | null;
-  order: TIngredient[] | null;
-  isLoading: boolean;
+export type TNullable<T> = T | null;
+
+export type TOrderDetails = {
+  name: string;
+  order: {
+    number: number;
+  };
+  success: boolean;
+};
+
+export type TOrder = {
+  ingredients: string[];
 };

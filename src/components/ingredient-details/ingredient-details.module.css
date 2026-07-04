@@ -6,6 +6,10 @@
   text-align: center;
 }
 
+.ingredient_details_container img {
+  min-height: 240px;
+}
+
 .ingredient_details_elements {
   display: flex;
   justify-content: center;
