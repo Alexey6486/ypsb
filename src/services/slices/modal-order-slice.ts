@@ -19,15 +19,19 @@ const initialState: TModalOrderState = {
 
 export const sendOrderThunk = createAsyncThunk<TOrderDetails, TOrder>(
   'modalOrder/sendOrder',
-  async (data: TOrder) => {
-    const response: TOrderDetails = await request(URLS.POST_ORDER, {
-      ...defaultRequestOptions,
-      body: JSON.stringify({
-        ingredients: data.ingredients,
-      }),
-    });
+  async (data: TOrder, thunkApi) => {
+    try {
+      const response: TOrderDetails = await request(URLS.POST_ORDER, {
+        ...defaultRequestOptions,
+        body: JSON.stringify({
+          ingredients: data.ingredients,
+        }),
+      });
 
-    return response;
+      return response;
+    } catch (error: unknown) {
+      return thunkApi.rejectWithValue(error?.message ?? 'Не удалось отправить заказ.');
+    }
   }
 );
 

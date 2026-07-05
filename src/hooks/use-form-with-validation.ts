@@ -1,6 +1,6 @@
 import { type ChangeEvent, useState } from 'react';
 
-import { validators } from '@utils/validators.js';
+import { validators } from '@utils/validators';
 
 export const useFormWithValidation = <T>(
   initialValues: T

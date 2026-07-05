@@ -33,22 +33,28 @@ const initialState: TIngredientsState = {
 
 export const fetchIngredientsThunk = createAsyncThunk<TNullable<TIngredientsSorted>>(
   'ingredients/fetchIngredients',
-  async () => {
-    const response: { data: TIngredientDto[]; success: boolean } = await request(
-      URLS.GET_INGREDIENTS
-    );
+  async (_, thunkApi) => {
+    try {
+      const response: { data: TIngredientDto[]; success: boolean } = await request(
+        URLS.GET_INGREDIENTS
+      );
 
-    const { bun, main, sauce } = response.data.reduce(
-      (acc, item) => {
-        return {
-          ...acc,
-          [item.type]: [...acc[item.type], { ...item, nanoid: '', counter: 0 }],
-        };
-      },
-      { bun: [], main: [], sauce: [] }
-    );
+      const { bun, main, sauce } = response.data.reduce(
+        (acc, item) => {
+          return {
+            ...acc,
+            [item.type]: [...acc[item.type], { ...item, nanoid: '', counter: 0 }],
+          };
+        },
+        { bun: [], main: [], sauce: [] }
+      );
 
-    return { bun, main, sauce };
+      return { bun, main, sauce };
+    } catch (error: unknown) {
+      return thunkApi.rejectWithValue(
+        error?.message ?? 'Не удалось получить ингредиенты.'
+      );
+    }
   }
 );
 

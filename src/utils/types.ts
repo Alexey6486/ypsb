@@ -45,7 +45,36 @@ export type TLoginForm = {
   password: string;
 };
 
+export type TRegisterForm = {
+  email: string;
+  password: string;
+  name: string;
+};
+
 export type TUser = {
   name: string;
   email: string;
+};
+
+export type TUserResponse = {
+  success: boolean;
+  user: TUser;
+};
+
+export type TLoginResponse = {
+  success: boolean;
+  accessToken: string;
+  refreshToken: string;
+  user: TUser;
+};
+
+export type TRefreshTokenResponse = {
+  success: boolean;
+  accessToken: string;
+  refreshToken: string;
+};
+
+export type TAuthServiceResponse = {
+  success: boolean;
+  message: string;
 };

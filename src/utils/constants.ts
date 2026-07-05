@@ -5,6 +5,8 @@ export const URLS = {
   POST_ORDER: 'orders',
   LOGIN: 'auth/login',
   GET_USER: 'auth/user',
+  REGISTER: 'auth/register',
+  REFRESH_TOKEN: 'auth/token',
 } as const;
 
 export const INGREDIENTS: Record<string, TIngredientType> = {

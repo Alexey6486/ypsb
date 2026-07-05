@@ -1,3 +1,7 @@
+import { URLS } from '@utils/constants';
+
+import type { TRefreshTokenResponse } from '@utils/types';
+
 export const BASE_URL = 'https://norma.education-services.ru/api/';
 
 export const defaultRequestOptions = {
@@ -29,3 +33,38 @@ const checkSuccess = <T>(res: T): Promise<T> | T => {
 export const request = <T>(endpoint: string, options?: RequestInit): Promise<T> => {
   return fetch(`${BASE_URL}${endpoint}`, options).then(checkResponse).then(checkSuccess);
 };
+
+export async function refreshToken(): Promise<TRefreshTokenResponse> {
+  const token = localStorage.getItem('refreshToken');
+
+  const response: TRefreshTokenResponse = await request(URLS.REFRESH_TOKEN, {
+    body: JSON.stringify({ token }),
+  });
+
+  localStorage.setItem('accessToken', response.accessToken);
+  localStorage.setItem('refreshToken', response.refreshToken);
+
+  return response;
+}
+
+export async function fetchWithRefresh<T>(
+  endpoint: string,
+  options: RequestInit
+): Promise<T> {
+  try {
+    return await request(endpoint, options);
+  } catch (error) {
+    if (error.statusCode === 401 || error.statusCode === 403) {
+      const refreshData = await refreshToken();
+      const headers = new Headers(options?.headers);
+      headers.set('authorization', refreshData.accessToken);
+
+      return request(endpoint, {
+        ...options,
+        headers,
+      });
+    } else {
+      throw error;
+    }
+  }
+}
