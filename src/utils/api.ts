@@ -1,5 +1,12 @@
 export const BASE_URL = 'https://norma.education-services.ru/api/';
 
+export const defaultRequestOptions = {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+};
+
 const checkResponse = <T>(res: Response): Promise<T> => {
   if (res?.ok) {
     return res.json();

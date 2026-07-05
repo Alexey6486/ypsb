@@ -12,11 +12,13 @@ import {
 import ingredientsReducer from './slices/ingredients-slice';
 import modalIngredientReducer from './slices/modal-ingredient-slice';
 import modalOrderReducer from './slices/modal-order-slice';
+import userReducer from './slices/user-slice';
 
 export const reducer = combineReducers({
   ingredients: ingredientsReducer,
   modalIngredient: modalIngredientReducer,
   modalOrder: modalOrderReducer,
+  user: userReducer,
 });
 
 export type RootState = ReturnType<typeof reducer>;

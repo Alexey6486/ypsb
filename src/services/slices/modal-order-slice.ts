@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-import { request } from '@utils/api';
+import { defaultRequestOptions, request } from '@utils/api';
 import { URLS } from '@utils/constants';
 
 import type { TOrder, TOrderDetails, TNullable } from '@utils/types';
@@ -21,10 +21,7 @@ export const sendOrderThunk = createAsyncThunk<TOrderDetails, TOrder>(
   'modalOrder/sendOrder',
   async (data: TOrder) => {
     const response: TOrderDetails = await request(URLS.POST_ORDER, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      ...defaultRequestOptions,
       body: JSON.stringify({
         ingredients: data.ingredients,
       }),
