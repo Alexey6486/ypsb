@@ -7,6 +7,7 @@ export const URLS = {
   GET_USER: 'auth/user',
   REGISTER: 'auth/register',
   REFRESH_TOKEN: 'auth/token',
+  LOGOUT: 'auth/logout',
 } as const;
 
 export const INGREDIENTS: Record<string, TIngredientType> = {

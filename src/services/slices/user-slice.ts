@@ -1,4 +1,9 @@
-import { createSlice, createAsyncThunk, type UnknownAction } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  type UnknownAction,
+  type PayloadAction,
+} from '@reduxjs/toolkit';
 
 import { defaultRequestOptions, fetchWithRefresh, request } from '@utils/api';
 import { URLS } from '@utils/constants';
@@ -9,22 +14,25 @@ import type {
   TUser,
   TLoginResponse,
   TUserResponse,
+  TAuthServiceResponse,
 } from '@utils/types';
 
 type TUserState = {
   user: TNullable<TUser>;
+  isAuthChecked: boolean;
   isLoading: boolean;
   error: TNullable<string>;
 };
 
 const initialState: TUserState = {
   user: null,
+  isAuthChecked: false,
   isLoading: false,
   error: null,
 };
 
-export const getUserDataThunk = createAsyncThunk<TUser | null>(
-  'user/getUserDat',
+export const checkUserAuthThunk = createAsyncThunk<TUser | null>(
+  'user/checkUserAuth',
   async (_, thunkApi) => {
     try {
       const token = localStorage.getItem('accessToken');
@@ -71,7 +79,7 @@ export const loginThunk = createAsyncThunk<TUser, TLoginForm>(
   }
 );
 
-export const registerThunk = createAsyncThunk<TLoginResponse, TLoginForm>(
+export const registerThunk = createAsyncThunk<TUser, TLoginForm>(
   'user/register',
   async (data: TLoginForm, thunkApi) => {
     try {
@@ -94,12 +102,42 @@ export const registerThunk = createAsyncThunk<TLoginResponse, TLoginForm>(
   }
 );
 
+export const logoutThunk = createAsyncThunk<TAuthServiceResponse>(
+  'user/logout',
+  async (_, thunkApi) => {
+    try {
+      const token = localStorage.getItem('refreshToken');
+      const response: TAuthServiceResponse = await request(URLS.LOGOUT, {
+        ...defaultRequestOptions,
+        body: JSON.stringify({
+          token,
+        }),
+      });
+
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+
+      return response;
+    } catch (error: unknown) {
+      return thunkApi.rejectWithValue(error?.message ?? 'Не удалось выйти из профиля.');
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    setIsAuthChecked: (state, { payload }: PayloadAction<boolean>) => {
+      state.isAuthChecked = payload;
+    },
+    setUser: (state, { payload }: PayloadAction<TUser>) => {
+      state.user = payload;
+    },
+  },
   selectors: {
     selectIsLoading: (state) => state.isLoading,
+    selectIsAuthChecked: (state) => state.isAuthChecked,
     selectError: (state) => state.error,
     selectUser: (state) => state.user,
   },
@@ -107,8 +145,39 @@ const userSlice = createSlice({
     builder
       .addCase(loginThunk.fulfilled, (state: TUserState, { payload }) => {
         state.isLoading = false;
+        state.isAuthChecked = true;
         state.user = payload;
+        state.error = null;
       })
+      .addCase(registerThunk.fulfilled, (state: TUserState, { payload }) => {
+        state.isLoading = false;
+        state.isAuthChecked = true;
+        state.user = payload;
+        state.error = null;
+      })
+      .addCase(logoutThunk.fulfilled, (state: TUserState) => {
+        state.isLoading = false;
+        state.isAuthChecked = false;
+        state.user = null;
+        state.error = null;
+      })
+      .addCase(checkUserAuthThunk.fulfilled, (state: TUserState, { payload }) => {
+        state.isLoading = false;
+        state.isAuthChecked = true;
+        state.user = payload;
+        state.error = null;
+      })
+      .addCase(
+        checkUserAuthThunk.rejected,
+        (
+          state: TUserState,
+          { payload }: PayloadAction<{ error: { message: string } }>
+        ) => {
+          state.isLoading = false;
+          state.isAuthChecked = true;
+          state.error = payload.error.message;
+        }
+      )
       .addMatcher(
         (action: UnknownAction) => action.type.endsWith('/pending'),
         (state: TUserState) => {
@@ -126,5 +195,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { selectIsLoading } = userSlice.selectors;
+export const { setIsAuthChecked, setUser } = userSlice.actions;
+export const { selectIsLoading, selectIsAuthChecked, selectUser } = userSlice.selectors;
 export default userSlice.reducer;
