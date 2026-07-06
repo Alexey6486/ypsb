@@ -5,12 +5,12 @@ import { selectUser, editUserThunk } from '@services/slices/user-slice';
 import { useDispatch, useSelector } from '@services/store';
 import { validators } from '@utils/validators';
 
-import type { TRegisterForm, TUser } from '@utils/types';
+import type { TProfileSettingsForm, TUser } from '@utils/types';
 import type { JSX, FormEvent } from 'react';
 
 import styles from './profile-settings.module.css';
 
-const checkChanges = (prev: TUser | null, form: TRegisterForm): boolean => {
+const checkChanges = (prev: TUser | null, form: TProfileSettingsForm): boolean => {
   if (!prev) {
     return false;
   }
@@ -18,7 +18,7 @@ const checkChanges = (prev: TUser | null, form: TRegisterForm): boolean => {
   const { name: prevName, email: prevEmail } = prev;
   const { name: newName, email: newEmail } = form;
 
-  return !!(prevName !== newName || prevEmail !== newEmail || form.password.length);
+  return !!(prevName !== newName || prevEmail !== newEmail || form.newPassword.length);
 };
 
 export const ProfileSettingsPage = (): JSX.Element => {
@@ -26,32 +26,50 @@ export const ProfileSettingsPage = (): JSX.Element => {
   const user = useSelector(selectUser);
 
   const { values, handleChange, errors, isValid, handleReset } =
-    useFormWithValidation<TRegisterForm>(
+    useFormWithValidation<TProfileSettingsForm>(
       {
         name: user?.name ?? '',
         email: user?.email ?? '',
-        password: '',
+        newPassword: '',
       },
-      false
+      true
     );
 
   const isChanged = checkChanges(user, values);
-  console.log({ isChanged, user, values, errors, isValid });
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-    console.log(1, { isChanged, user, values, errors, isValid });
-    if (!isValid) return;
-    console.log(2, { isChanged, user, values, errors, isValid });
-    void dispatch(editUserThunk(values));
-  };
-
-  const handleCancel = (): void => {
+  const handleResetForm = (): void => {
     handleReset({
       name: user?.name ?? '',
       email: user?.email ?? '',
-      password: '',
+      newPassword: '',
     });
+  };
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+
+    if (!isValid) return;
+
+    void (async (): Promise<void> => {
+      try {
+        const { name, email, newPassword } = values;
+        await dispatch(
+          editUserThunk({
+            name,
+            email,
+            password: newPassword,
+          })
+        ).unwrap();
+
+        handleReset({
+          name,
+          email,
+          newPassword: '',
+        });
+      } catch (error: unknown) {
+        console.log({ error });
+      }
+    })();
   };
 
   return (
@@ -77,17 +95,22 @@ export const ProfileSettingsPage = (): JSX.Element => {
       />
       <Input
         icon="EditIcon"
-        name="password"
+        name="newPassword"
         onChange={handleChange}
         placeholder="Пароль"
         type="password"
-        value={values.password}
-        errorText={!errors.password ? validators.password.message : ''}
+        value={values.newPassword}
+        errorText={!errors.newPassword ? validators.newPassword.message : ''}
         extraClass="mb-6"
       />
       {isChanged && (
         <div className={styles.buttons}>
-          <Button onClick={handleCancel} size="large" type="secondary" htmlType="button">
+          <Button
+            onClick={handleResetForm}
+            size="large"
+            type="secondary"
+            htmlType="button"
+          >
             Отмена
           </Button>
           <Button onClick={handleSubmit} size="large" type="primary" htmlType="submit">

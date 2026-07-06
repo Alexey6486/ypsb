@@ -247,7 +247,7 @@ const userSlice = createSlice({
       })
       .addCase(logoutThunk.fulfilled, (state: TUserState) => {
         state.isLoading = false;
-        state.isAuthChecked = false;
+        state.isAuthChecked = true;
         state.user = null;
         state.error = null;
       })
@@ -274,6 +274,12 @@ const userSlice = createSlice({
       })
       .addCase(resetPasswordThunk.fulfilled, (state: TUserState) => {
         state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(editUserThunk.fulfilled, (state: TUserState, { payload }) => {
+        state.isLoading = false;
+        state.isAuthChecked = true;
+        state.user = payload;
         state.error = null;
       })
       .addMatcher(

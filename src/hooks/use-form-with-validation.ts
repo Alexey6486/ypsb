@@ -16,18 +16,20 @@ export const useFormWithValidation = <T>(
   const [errors, setErrors] = useState<Record<string, boolean>>(
     initErrors(initialValues, isValidOnInit)
   );
-  const [isValid, setIsValid] = useState<boolean>(false);
+  const [isValid, setIsValid] = useState<boolean>(Boolean(isValidOnInit));
 
   function handleReset(values: T): void {
     setValues(values);
     setErrors(initErrors(values, isValidOnInit));
-    setIsValid(false);
+    setIsValid(Boolean(isValidOnInit));
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>): void {
     const input = event.target;
     const value = input.value;
     const name = input.name;
+    const targetValidator = validators[name];
+    let isValueValid = true;
 
     const newValues = {
       ...values,
@@ -36,9 +38,19 @@ export const useFormWithValidation = <T>(
 
     setValues(newValues);
 
+    if (targetValidator) {
+      const { validator, isRequired } = targetValidator;
+
+      if (isRequired) {
+        isValueValid = validator(value);
+      } else if (!isRequired && value.length) {
+        isValueValid = validator(value);
+      }
+    }
+
     const newErrors = {
       ...errors,
-      [name]: validators[name]?.validator(value) ?? true,
+      [name]: isValueValid,
     };
 
     setErrors(newErrors);

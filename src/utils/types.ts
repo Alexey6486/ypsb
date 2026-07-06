@@ -87,3 +87,9 @@ export type TAuthServiceResponse = {
   success: boolean;
   message: string;
 };
+
+export type TProfileSettingsForm = {
+  email: string;
+  name: string;
+  newPassword: string;
+};
