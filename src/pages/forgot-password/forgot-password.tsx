@@ -1,36 +1,36 @@
-import {
-  PasswordInput,
-  EmailInput,
-  Input,
-  Button,
-} from '@krgaa/react-developer-burger-ui-components';
+import { EmailInput, Button } from '@krgaa/react-developer-burger-ui-components';
 import { useNavigate } from 'react-router-dom';
 
 import { useFormWithValidation } from '@hooks/use-form-with-validation';
-import { registerThunk, selectIsLoading } from '@services/slices/user-slice';
+import { forgotPasswordThunk, selectIsLoading } from '@services/slices/user-slice';
 import { useDispatch, useSelector } from '@services/store';
 import { validators } from '@utils/validators';
 
-import type { TRegisterForm } from '@utils/types';
+import type { TForgotPasswordForm } from '@utils/types';
 import type { FormEvent, JSX } from 'react';
 
-export const RegisterPage = (): JSX.Element => {
+export const ForgotPasswordPage = (): JSX.Element => {
   const dispatch = useDispatch();
   const navigation = useNavigate();
   const isLoading = useSelector(selectIsLoading);
 
-  const { values, handleChange, errors, isValid } = useFormWithValidation<TRegisterForm>(
-    {
-      name: '',
+  const { values, handleChange, errors, isValid } =
+    useFormWithValidation<TForgotPasswordForm>({
       email: '',
-      password: '',
-    }
-  );
+    });
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (!isValid) return;
-    void dispatch(registerThunk(values));
+    void (async (): Promise<void> => {
+      try {
+        await dispatch(forgotPasswordThunk(values)).unwrap();
+
+        void navigation('/reset-password');
+      } catch (error: unknown) {
+        console.log({ error });
+      }
+    })();
   };
 
   const handleToLogin = (): void => {
@@ -39,30 +39,13 @@ export const RegisterPage = (): JSX.Element => {
 
   return (
     <form noValidate onSubmit={handleSubmit} className="form-container">
-      <div className="text text_type_main-medium mb-6">Регистрация</div>
-      <Input
-        name="name"
-        onChange={handleChange}
-        placeholder="Имя"
-        value={values.name}
-        errorText={!errors.name ? validators.name.message : ''}
-        extraClass="mb-6"
-      />
+      <div className="text text_type_main-medium mb-6">Восстановление пароля</div>
       <EmailInput
         name="email"
         onChange={handleChange}
-        placeholder="E-mail"
+        placeholder="Укажите e-mail"
         value={values.email}
         errorText={!errors.email ? validators.email.message : ''}
-        extraClass="mb-6"
-      />
-      <PasswordInput
-        icon="ShowIcon"
-        name="password"
-        placeholder="Пароль"
-        onChange={handleChange}
-        value={values.password}
-        errorText={!errors.password ? validators.password.message : ''}
         extraClass="mb-6"
       />
       <Button
@@ -72,10 +55,10 @@ export const RegisterPage = (): JSX.Element => {
         disabled={isLoading}
         extraClass="mb-20"
       >
-        Зарегистрироваться
+        Восстановить
       </Button>
       <div className="text text_type_main-default text_color_inactive">
-        Уже зарегистрированы?
+        Вспомнили пароль?
         <Button
           onClick={handleToLogin}
           size="medium"

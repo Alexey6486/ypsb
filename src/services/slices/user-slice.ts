@@ -9,6 +9,8 @@ import { defaultRequestOptions, fetchWithRefresh, request } from '@utils/api';
 import { URLS } from '@utils/constants';
 
 import type {
+  TForgotPasswordForm,
+  TResetPasswordForm,
   TLoginForm,
   TNullable,
   TUser,
@@ -123,6 +125,42 @@ export const logoutThunk = createAsyncThunk<TAuthServiceResponse>(
     }
   }
 );
+
+export const forgotPasswordThunk = createAsyncThunk<
+  TAuthServiceResponse,
+  TForgotPasswordForm
+>('user/forgotPassword', async (data: TForgotPasswordForm, thunkApi) => {
+  try {
+    await request(URLS.FORGOT_PSW, {
+      ...defaultRequestOptions,
+      body: JSON.stringify({
+        data,
+      }),
+    });
+  } catch (error: unknown) {
+    return thunkApi.rejectWithValue(
+      error?.message ?? 'Не удалось запросить сброс пароля.'
+    );
+  }
+});
+
+export const resetPasswordThunk = createAsyncThunk<
+  TAuthServiceResponse,
+  TResetPasswordForm
+>('user/resetPassword', async (data: TResetPasswordForm, thunkApi) => {
+  try {
+    const response: TAuthServiceResponse = await request(URLS.RESET_PSW, {
+      ...defaultRequestOptions,
+      body: JSON.stringify({
+        data,
+      }),
+    });
+
+    return response.message;
+  } catch (error: unknown) {
+    return thunkApi.rejectWithValue(error?.message ?? 'Не удалось сбросить пароль.');
+  }
+});
 
 const userSlice = createSlice({
   name: 'user',

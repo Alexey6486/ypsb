@@ -4,9 +4,11 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AppLayout } from '@components/app-layout/app-layout';
 import { ModalOrderDetails } from '@components/order-details/modal-order-details';
 import { ProtectedRoute } from '@components/protected-route/protected-route';
+import { ForgotPasswordPage } from '@pages/forgot-password/forgot-password';
 import { HomePage } from '@pages/home/home';
 import { LoginPage } from '@pages/login/login';
 import { RegisterPage } from '@pages/register/register';
+import { ResetPasswordPage } from '@pages/reset-password/reset-password';
 import { checkUserAuthThunk } from '@services/slices/user-slice';
 import { useDispatch } from '@services/store';
 
@@ -28,6 +30,16 @@ const router = createBrowserRouter([
         children: [{ index: true, element: <RegisterPage /> }],
       },
       {
+        path: '/forgot-password',
+        element: <ProtectedRoute onlyUnAuth={true} />,
+        children: [{ index: true, element: <ForgotPasswordPage /> }],
+      },
+      {
+        path: '/reset-password',
+        element: <ProtectedRoute onlyUnAuth={true} />,
+        children: [{ index: true, element: <ResetPasswordPage /> }],
+      },
+      {
         path: '/',
         element: <HomePage />,
         children: [
@@ -35,14 +47,6 @@ const router = createBrowserRouter([
           { path: 'ingredients/:id', element: <ModalOrderDetails /> },
         ],
       },
-      // {
-      //   path: '/',
-      //   element: <HomePage />,
-      // },
-      // {
-      //   path: '/ingredients/:id',
-      //   element: <HomePage />,
-      // },
       // {
       //   path: 'profile',
       //   element: <ProtectedRoute />,

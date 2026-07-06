@@ -51,6 +51,15 @@ export type TRegisterForm = {
   name: string;
 };
 
+export type TForgotPasswordForm = {
+  email: string;
+};
+
+export type TResetPasswordForm = {
+  password: string;
+  token: string;
+};
+
 export type TUser = {
   name: string;
   email: string;

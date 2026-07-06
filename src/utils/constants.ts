@@ -8,6 +8,8 @@ export const URLS = {
   REGISTER: 'auth/register',
   REFRESH_TOKEN: 'auth/token',
   LOGOUT: 'auth/logout',
+  FORGOT_PSW: 'password-reset',
+  RESET_PSW: 'password-reset/reset',
 } as const;
 
 export const INGREDIENTS: Record<string, TIngredientType> = {
