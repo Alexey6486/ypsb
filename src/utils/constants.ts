@@ -17,3 +17,8 @@ export const INGREDIENTS: Record<string, TIngredientType> = {
   MAIN: 'main',
   SAUCE: 'sauce',
 } as const;
+
+export const TOKEN = {
+  ACCESS: 'accessToken',
+  REFRESH: 'refreshToken',
+} as const;

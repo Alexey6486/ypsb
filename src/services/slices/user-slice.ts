@@ -6,7 +6,7 @@ import {
 } from '@reduxjs/toolkit';
 
 import { defaultRequestOptions, fetchWithRefresh, request } from '@utils/api';
-import { URLS } from '@utils/constants';
+import { TOKEN, URLS } from '@utils/constants';
 
 import type {
   TForgotPasswordForm,
@@ -17,6 +17,7 @@ import type {
   TLoginResponse,
   TUserResponse,
   TAuthServiceResponse,
+  TRegisterForm,
 } from '@utils/types';
 
 type TUserState = {
@@ -37,7 +38,7 @@ export const checkUserAuthThunk = createAsyncThunk<TUser | null>(
   'user/checkUserAuth',
   async (_, thunkApi) => {
     try {
-      const token = localStorage.getItem('accessToken');
+      const token = localStorage.getItem(TOKEN.ACCESS);
 
       if (token) {
         const response: TUserResponse = await fetchWithRefresh(URLS.GET_USER, {
@@ -75,8 +76,8 @@ export const loginThunk = createAsyncThunk<TUser, TLoginForm>(
         true
       );
 
-      localStorage.setItem('accessToken', response.accessToken);
-      localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem(TOKEN.ACCESS, response.accessToken);
+      localStorage.setItem(TOKEN.REFRESH, response.refreshToken);
 
       return response.user;
     } catch (error: unknown) {
@@ -100,8 +101,8 @@ export const registerThunk = createAsyncThunk<TUser, TLoginForm>(
         true
       );
 
-      localStorage.setItem('accessToken', response.accessToken);
-      localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem(TOKEN.ACCESS, response.accessToken);
+      localStorage.setItem(TOKEN.REFRESH, response.refreshToken);
 
       return response.user;
     } catch (error: unknown) {
@@ -116,7 +117,7 @@ export const logoutThunk = createAsyncThunk<TAuthServiceResponse>(
   'user/logout',
   async (_, thunkApi) => {
     try {
-      const token = localStorage.getItem('refreshToken');
+      const token = localStorage.getItem(TOKEN.REFRESH);
       const response: TAuthServiceResponse = await request(
         URLS.LOGOUT,
         {
@@ -128,8 +129,8 @@ export const logoutThunk = createAsyncThunk<TAuthServiceResponse>(
         true
       );
 
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      localStorage.removeItem(TOKEN.ACCESS);
+      localStorage.removeItem(TOKEN.REFRESH);
 
       return response;
     } catch (error: unknown) {
@@ -181,6 +182,37 @@ export const resetPasswordThunk = createAsyncThunk<
     return thunkApi.rejectWithValue(error?.message ?? 'Не удалось сбросить пароль.');
   }
 });
+
+export const editUserThunk = createAsyncThunk<TUser, TRegisterForm>(
+  'user/editUser',
+  async (data: TLoginForm, thunkApi) => {
+    try {
+      const token = localStorage.getItem(TOKEN.ACCESS);
+
+      if (token) {
+        const response: TUserResponse = await fetchWithRefresh(URLS.GET_USER, {
+          ...defaultRequestOptions,
+          headers: {
+            ...defaultRequestOptions.headers,
+            Authorization: token,
+          },
+          method: 'PATCH',
+          body: JSON.stringify({
+            ...data,
+          }),
+        });
+
+        return response.user;
+      }
+
+      return null;
+    } catch (error: unknown) {
+      return thunkApi.rejectWithValue(
+        error?.message ?? 'Не удалось изменить данные пользователя.'
+      );
+    }
+  }
+);
 
 const userSlice = createSlice({
   name: 'user',

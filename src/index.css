@@ -6,6 +6,17 @@ p {
   margin: 0;
 }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  all: unset;
+  cursor: pointer;
+}
+
 /* Fix for scrollbar */
 
 @supports (scrollbar-color: auto) {

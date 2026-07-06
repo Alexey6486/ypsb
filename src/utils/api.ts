@@ -1,4 +1,4 @@
-import { URLS } from '@utils/constants';
+import { TOKEN, URLS } from '@utils/constants';
 
 import type { TRefreshTokenResponse } from '@utils/types';
 
@@ -42,7 +42,7 @@ export const request = <T>(
 };
 
 export async function refreshToken(): Promise<TRefreshTokenResponse> {
-  const token = localStorage.getItem('refreshToken');
+  const token = localStorage.getItem(TOKEN.REFRESH);
 
   const response: TRefreshTokenResponse = await request(
     URLS.REFRESH_TOKEN,
@@ -52,8 +52,8 @@ export async function refreshToken(): Promise<TRefreshTokenResponse> {
     true
   );
 
-  localStorage.setItem('accessToken', response.accessToken);
-  localStorage.setItem('refreshToken', response.refreshToken);
+  localStorage.setItem(TOKEN.ACCESS, response.accessToken);
+  localStorage.setItem(TOKEN.REFRESH, response.refreshToken);
 
   return response;
 }
