@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { AppLayout } from '@components/app-layout/app-layout';
+import { ModalOrderDetails } from '@components/order-details/modal-order-details';
 import { ProtectedRoute } from '@components/protected-route/protected-route';
 import { HomePage } from '@pages/home/home';
 import { LoginPage } from '@pages/login/login';
@@ -29,7 +30,19 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <HomePage />,
+        children: [
+          { index: true, element: <></> },
+          { path: 'ingredients/:id', element: <ModalOrderDetails /> },
+        ],
       },
+      // {
+      //   path: '/',
+      //   element: <HomePage />,
+      // },
+      // {
+      //   path: '/ingredients/:id',
+      //   element: <HomePage />,
+      // },
       // {
       //   path: 'profile',
       //   element: <ProtectedRoute />,

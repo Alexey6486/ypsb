@@ -3,12 +3,13 @@ import type { JSX } from 'react';
 
 import styles from './ingredient-details.module.css';
 
-type TProps = {
+export const IngredientDetails = ({
+  ingredient,
+}: {
   ingredient: TIngredientUI;
-};
-
-export const IngredientDetails = ({ ingredient }: TProps): JSX.Element => {
+}): JSX.Element => {
   const { image_large, name, calories, proteins, fat, carbohydrates } = ingredient;
+
   return (
     <div className={styles.ingredient_details_container}>
       <img className="mb-4" src={image_large} alt="ingredient-image" />
