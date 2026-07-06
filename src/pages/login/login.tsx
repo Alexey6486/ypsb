@@ -6,8 +6,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { useFormWithValidation } from '@hooks/use-form-with-validation';
-import { loginThunk, selectIsLoading } from '@services/slices/user-slice';
-import { useDispatch, useSelector } from '@services/store';
+import { loginThunk } from '@services/slices/user-slice';
+import { useDispatch } from '@services/store';
 import { validators } from '@utils/validators';
 
 import type { TLoginForm } from '@utils/types';
@@ -16,7 +16,6 @@ import type { FormEvent, JSX } from 'react';
 export const LoginPage = (): JSX.Element => {
   const dispatch = useDispatch();
   const navigation = useNavigate();
-  const isLoading = useSelector(selectIsLoading);
 
   const { values, handleChange, errors, isValid } = useFormWithValidation<TLoginForm>({
     email: '',
@@ -31,6 +30,10 @@ export const LoginPage = (): JSX.Element => {
 
   const handleToRegister = (): void => {
     void navigation('/register');
+  };
+
+  const handleToReset = (): void => {
+    void navigation('/forgot-password');
   };
 
   return (
@@ -53,13 +56,7 @@ export const LoginPage = (): JSX.Element => {
         errorText={!errors.password ? validators.password.message : ''}
         extraClass="mb-6"
       />
-      <Button
-        size="medium"
-        type="primary"
-        htmlType="submit"
-        disabled={isLoading}
-        extraClass="mb-20"
-      >
+      <Button size="medium" type="primary" htmlType="submit" extraClass="mb-20">
         Войти
       </Button>
       <div className="text text_type_main-default text_color_inactive">
@@ -77,7 +74,7 @@ export const LoginPage = (): JSX.Element => {
       <div className="text text_type_main-default text_color_inactive">
         Забыли пароль?
         <Button
-          onClick={() => null}
+          onClick={handleToReset}
           size="medium"
           type="secondary"
           htmlType="button"

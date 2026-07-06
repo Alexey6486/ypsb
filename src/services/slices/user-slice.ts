@@ -64,12 +64,16 @@ export const loginThunk = createAsyncThunk<TUser, TLoginForm>(
   'user/login',
   async (data: TLoginForm, thunkApi) => {
     try {
-      const response: TLoginResponse = await request(URLS.LOGIN, {
-        ...defaultRequestOptions,
-        body: JSON.stringify({
-          data,
-        }),
-      });
+      const response: TLoginResponse = await request(
+        URLS.LOGIN,
+        {
+          ...defaultRequestOptions,
+          body: JSON.stringify({
+            ...data,
+          }),
+        },
+        true
+      );
 
       localStorage.setItem('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
@@ -85,12 +89,16 @@ export const registerThunk = createAsyncThunk<TUser, TLoginForm>(
   'user/register',
   async (data: TLoginForm, thunkApi) => {
     try {
-      const response: TLoginResponse = await request(URLS.REGISTER, {
-        ...defaultRequestOptions,
-        body: JSON.stringify({
-          data,
-        }),
-      });
+      const response: TLoginResponse = await request(
+        URLS.REGISTER,
+        {
+          ...defaultRequestOptions,
+          body: JSON.stringify({
+            ...data,
+          }),
+        },
+        true
+      );
 
       localStorage.setItem('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
@@ -109,12 +117,16 @@ export const logoutThunk = createAsyncThunk<TAuthServiceResponse>(
   async (_, thunkApi) => {
     try {
       const token = localStorage.getItem('refreshToken');
-      const response: TAuthServiceResponse = await request(URLS.LOGOUT, {
-        ...defaultRequestOptions,
-        body: JSON.stringify({
-          token,
-        }),
-      });
+      const response: TAuthServiceResponse = await request(
+        URLS.LOGOUT,
+        {
+          ...defaultRequestOptions,
+          body: JSON.stringify({
+            token,
+          }),
+        },
+        true
+      );
 
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
@@ -131,12 +143,16 @@ export const forgotPasswordThunk = createAsyncThunk<
   TForgotPasswordForm
 >('user/forgotPassword', async (data: TForgotPasswordForm, thunkApi) => {
   try {
-    await request(URLS.FORGOT_PSW, {
-      ...defaultRequestOptions,
-      body: JSON.stringify({
-        data,
-      }),
-    });
+    await request(
+      URLS.FORGOT_PSW,
+      {
+        ...defaultRequestOptions,
+        body: JSON.stringify({
+          ...data,
+        }),
+      },
+      true
+    );
   } catch (error: unknown) {
     return thunkApi.rejectWithValue(
       error?.message ?? 'Не удалось запросить сброс пароля.'
@@ -149,12 +165,16 @@ export const resetPasswordThunk = createAsyncThunk<
   TResetPasswordForm
 >('user/resetPassword', async (data: TResetPasswordForm, thunkApi) => {
   try {
-    const response: TAuthServiceResponse = await request(URLS.RESET_PSW, {
-      ...defaultRequestOptions,
-      body: JSON.stringify({
-        data,
-      }),
-    });
+    const response: TAuthServiceResponse = await request(
+      URLS.RESET_PSW,
+      {
+        ...defaultRequestOptions,
+        body: JSON.stringify({
+          ...data,
+        }),
+      },
+      true
+    );
 
     return response.message;
   } catch (error: unknown) {
@@ -213,9 +233,17 @@ const userSlice = createSlice({
         ) => {
           state.isLoading = false;
           state.isAuthChecked = true;
-          state.error = payload.error.message;
+          state.error = payload?.error?.message ?? '';
         }
       )
+      .addCase(forgotPasswordThunk.fulfilled, (state: TUserState) => {
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(resetPasswordThunk.fulfilled, (state: TUserState) => {
+        state.isLoading = false;
+        state.error = null;
+      })
       .addMatcher(
         (action: UnknownAction) => action.type.endsWith('/pending'),
         (state: TUserState) => {
@@ -227,7 +255,7 @@ const userSlice = createSlice({
         (action: UnknownAction) => action.type.endsWith('/rejected'),
         (state: TUserState, action: { error: { message: string } }) => {
           state.isLoading = false;
-          state.error = action.error.message;
+          state.error = action?.error?.message ?? '';
         }
       );
   },

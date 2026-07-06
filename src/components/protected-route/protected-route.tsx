@@ -15,7 +15,7 @@ export const ProtectedRoute = ({
   const isAuthChecked = useSelector(selectIsAuthChecked);
   const user = useSelector(selectUser);
   const location = useLocation<TLocationState>();
-
+  console.log({ isAuthChecked, user, location });
   if (!isAuthChecked) return <></>;
 
   if (onlyUnAuth && user) {

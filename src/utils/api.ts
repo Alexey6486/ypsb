@@ -3,6 +3,7 @@ import { URLS } from '@utils/constants';
 import type { TRefreshTokenResponse } from '@utils/types';
 
 export const BASE_URL = 'https://norma.education-services.ru/api/';
+export const BASE_AUTH_URL = 'https://new-stellarburgers.education-services.ru/api/';
 
 export const defaultRequestOptions = {
   method: 'POST',
@@ -30,16 +31,26 @@ const checkSuccess = <T>(res: T): Promise<T> | T => {
   return Promise.reject(error);
 };
 
-export const request = <T>(endpoint: string, options?: RequestInit): Promise<T> => {
-  return fetch(`${BASE_URL}${endpoint}`, options).then(checkResponse).then(checkSuccess);
+export const request = <T>(
+  endpoint: string,
+  options?: RequestInit,
+  isAuth?: boolean
+): Promise<T> => {
+  return fetch(`${isAuth ? BASE_AUTH_URL : BASE_URL}${endpoint}`, options)
+    .then(checkResponse)
+    .then(checkSuccess);
 };
 
 export async function refreshToken(): Promise<TRefreshTokenResponse> {
   const token = localStorage.getItem('refreshToken');
 
-  const response: TRefreshTokenResponse = await request(URLS.REFRESH_TOKEN, {
-    body: JSON.stringify({ token }),
-  });
+  const response: TRefreshTokenResponse = await request(
+    URLS.REFRESH_TOKEN,
+    {
+      body: JSON.stringify({ token }),
+    },
+    true
+  );
 
   localStorage.setItem('accessToken', response.accessToken);
   localStorage.setItem('refreshToken', response.refreshToken);
@@ -52,17 +63,21 @@ export async function fetchWithRefresh<T>(
   options: RequestInit
 ): Promise<T> {
   try {
-    return await request(endpoint, options);
+    return await request(endpoint, options, true);
   } catch (error) {
     if (error.statusCode === 401 || error.statusCode === 403) {
       const refreshData = await refreshToken();
       const headers = new Headers(options?.headers);
       headers.set('authorization', refreshData.accessToken);
 
-      return request(endpoint, {
-        ...options,
-        headers,
-      });
+      return request(
+        endpoint,
+        {
+          ...options,
+          headers,
+        },
+        true
+      );
     } else {
       throw error;
     }

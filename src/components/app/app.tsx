@@ -7,6 +7,7 @@ import { ProtectedRoute } from '@components/protected-route/protected-route';
 import { ForgotPasswordPage } from '@pages/forgot-password/forgot-password';
 import { HomePage } from '@pages/home/home';
 import { LoginPage } from '@pages/login/login';
+import { ProfilePage } from '@pages/profile/profile';
 import { RegisterPage } from '@pages/register/register';
 import { ResetPasswordPage } from '@pages/reset-password/reset-password';
 import { checkUserAuthThunk } from '@services/slices/user-slice';
@@ -47,15 +48,15 @@ const router = createBrowserRouter([
           { path: 'ingredients/:id', element: <ModalOrderDetails /> },
         ],
       },
-      // {
-      //   path: 'profile',
-      //   element: <ProtectedRoute />,
-      //   children: [
-      //     { index: true, element: <ProfilePage /> },
-      //     { path: 'orders', element: <ProfileOrdersPage /> },
-      //     { path: 'settings', element: <ProfileSettingsPage /> },
-      //   ],
-      // },
+      {
+        path: '/profile',
+        element: <ProtectedRoute onlyUnAuth={false} />,
+        children: [
+          { index: true, element: <ProfilePage /> },
+          // { path: 'orders', element: <ProfileOrdersPage /> },
+          // { path: 'settings', element: <ProfileSettingsPage /> },
+        ],
+      },
     ],
   },
 ]);
