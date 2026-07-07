@@ -2,7 +2,7 @@ import { Input, Button } from '@krgaa/react-developer-burger-ui-components';
 
 import { useFormWithValidation } from '@hooks/use-form-with-validation';
 import { selectUser, editUserThunk } from '@services/slices/user-slice';
-import { useDispatch, useSelector } from '@services/store';
+import { useAppDispatch, useAppSelector } from '@services/store';
 import { validators } from '@utils/validators';
 
 import type { TProfileSettingsForm, TUser } from '@utils/types';
@@ -22,8 +22,8 @@ const checkChanges = (prev: TUser | null, form: TProfileSettingsForm): boolean =
 };
 
 export const ProfileSettingsPage = (): JSX.Element => {
-  const dispatch = useDispatch();
-  const user = useSelector(selectUser);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
 
   const { values, handleChange, errors, isValid, handleReset } =
     useFormWithValidation<TProfileSettingsForm>(

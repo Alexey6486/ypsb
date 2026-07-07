@@ -1,4 +1,8 @@
-import { Button, ConstructorElement } from '@krgaa/react-developer-burger-ui-components';
+import {
+  Button,
+  ConstructorElement,
+  Preloader,
+} from '@krgaa/react-developer-burger-ui-components';
 import { nanoid } from '@reduxjs/toolkit';
 import { clsx } from 'clsx';
 import { useEffect, useLayoutEffect, useState } from 'react';
@@ -22,9 +26,10 @@ import {
   selectModalOrder,
   setModalOrderData,
   sendOrderThunk,
+  selectIsLoading,
 } from '@services/slices/modal-order-slice';
 import { selectIsAuthChecked, selectUser } from '@services/slices/user-slice';
-import { useDispatch, useSelector } from '@services/store';
+import { useAppDispatch, useAppSelector } from '@services/store';
 
 import type {
   TLocationState,
@@ -38,14 +43,15 @@ import commonStyles from './burger-constructor-common.module.css';
 import styles from './burger-constructor.module.css';
 
 export const BurgerConstructor = (): JSX.Element => {
-  const { bun, ingredients } = useSelector(selectOrder);
-  const details = useSelector(selectModalOrder);
-  const isAuthed = useSelector(selectIsAuthChecked);
-  const user = useSelector(selectUser);
+  const { bun, ingredients } = useAppSelector(selectOrder);
+  const isLoading = useAppSelector(selectIsLoading);
+  const details = useAppSelector(selectModalOrder);
+  const isAuthed = useAppSelector(selectIsAuthChecked);
+  const user = useAppSelector(selectUser);
   const navigate = useNavigate();
   const location = useLocation<TLocationState>();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [totalPrice, setTotalPrice] = useState(0);
   const [scrollableSize, setScrollableSize] = useState(0);
@@ -66,7 +72,7 @@ export const BurgerConstructor = (): JSX.Element => {
 
   const handleSendOrder = (): void => {
     if (!isAuthed || (isAuthed && !user)) {
-      void navigate('/login', {
+      return void navigate('/login', {
         state: { from: { pathname: location?.pathname ?? '/' } },
       });
     }
@@ -124,6 +130,11 @@ export const BurgerConstructor = (): JSX.Element => {
           className={`${clsx({ [styles.burger_constructor_hover]: isOver })} mb-10`}
           ref={dropTarget}
         >
+          {isLoading && (
+            <div className={styles.burger_constructor_loader}>
+              <Preloader />
+            </div>
+          )}
           <div className={`${commonStyles.burger_constructor_item} mb-4 mr-1`}>
             <div className={`${commonStyles.burger_constructor_ingredient} ml-2`}>
               {bun ? (

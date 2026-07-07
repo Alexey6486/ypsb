@@ -43,6 +43,7 @@ export const checkUserAuthThunk = createAsyncThunk<TUser | null>(
       if (token) {
         const response: TUserResponse = await fetchWithRefresh(URLS.GET_USER, {
           ...defaultRequestOptions,
+          method: 'GET',
           headers: {
             ...defaultRequestOptions.headers,
             Authorization: token,
@@ -65,16 +66,12 @@ export const loginThunk = createAsyncThunk<TUser, TLoginForm>(
   'user/login',
   async (data: TLoginForm, thunkApi) => {
     try {
-      const response: TLoginResponse = await request(
-        URLS.LOGIN,
-        {
-          ...defaultRequestOptions,
-          body: JSON.stringify({
-            ...data,
-          }),
-        },
-        true
-      );
+      const response: TLoginResponse = await request(URLS.LOGIN, {
+        ...defaultRequestOptions,
+        body: JSON.stringify({
+          ...data,
+        }),
+      });
 
       localStorage.setItem(TOKEN.ACCESS, response.accessToken);
       localStorage.setItem(TOKEN.REFRESH, response.refreshToken);
@@ -90,16 +87,12 @@ export const registerThunk = createAsyncThunk<TUser, TLoginForm>(
   'user/register',
   async (data: TLoginForm, thunkApi) => {
     try {
-      const response: TLoginResponse = await request(
-        URLS.REGISTER,
-        {
-          ...defaultRequestOptions,
-          body: JSON.stringify({
-            ...data,
-          }),
-        },
-        true
-      );
+      const response: TLoginResponse = await request(URLS.REGISTER, {
+        ...defaultRequestOptions,
+        body: JSON.stringify({
+          ...data,
+        }),
+      });
 
       localStorage.setItem(TOKEN.ACCESS, response.accessToken);
       localStorage.setItem(TOKEN.REFRESH, response.refreshToken);
@@ -118,16 +111,12 @@ export const logoutThunk = createAsyncThunk<TAuthServiceResponse>(
   async (_, thunkApi) => {
     try {
       const token = localStorage.getItem(TOKEN.REFRESH);
-      const response: TAuthServiceResponse = await request(
-        URLS.LOGOUT,
-        {
-          ...defaultRequestOptions,
-          body: JSON.stringify({
-            token,
-          }),
-        },
-        true
-      );
+      const response: TAuthServiceResponse = await request(URLS.LOGOUT, {
+        ...defaultRequestOptions,
+        body: JSON.stringify({
+          token,
+        }),
+      });
 
       localStorage.removeItem(TOKEN.ACCESS);
       localStorage.removeItem(TOKEN.REFRESH);
@@ -144,16 +133,12 @@ export const forgotPasswordThunk = createAsyncThunk<
   TForgotPasswordForm
 >('user/forgotPassword', async (data: TForgotPasswordForm, thunkApi) => {
   try {
-    await request(
-      URLS.FORGOT_PSW,
-      {
-        ...defaultRequestOptions,
-        body: JSON.stringify({
-          ...data,
-        }),
-      },
-      true
-    );
+    await request(URLS.FORGOT_PSW, {
+      ...defaultRequestOptions,
+      body: JSON.stringify({
+        ...data,
+      }),
+    });
   } catch (error: unknown) {
     return thunkApi.rejectWithValue(
       error?.message ?? 'Не удалось запросить сброс пароля.'
@@ -166,16 +151,12 @@ export const resetPasswordThunk = createAsyncThunk<
   TResetPasswordForm
 >('user/resetPassword', async (data: TResetPasswordForm, thunkApi) => {
   try {
-    const response: TAuthServiceResponse = await request(
-      URLS.RESET_PSW,
-      {
-        ...defaultRequestOptions,
-        body: JSON.stringify({
-          ...data,
-        }),
-      },
-      true
-    );
+    const response: TAuthServiceResponse = await request(URLS.RESET_PSW, {
+      ...defaultRequestOptions,
+      body: JSON.stringify({
+        ...data,
+      }),
+    });
 
     return response.message;
   } catch (error: unknown) {

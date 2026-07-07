@@ -7,14 +7,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useFormWithValidation } from '@hooks/use-form-with-validation';
 import { loginThunk } from '@services/slices/user-slice';
-import { useDispatch } from '@services/store';
+import { useAppDispatch } from '@services/store';
 import { validators } from '@utils/validators';
 
 import type { TLoginForm, TLocationState } from '@utils/types';
 import type { FormEvent, JSX } from 'react';
 
 export const LoginPage = (): JSX.Element => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation<TLocationState>();
 
@@ -31,7 +31,7 @@ export const LoginPage = (): JSX.Element => {
       try {
         await dispatch(loginThunk(values)).unwrap();
 
-        const returnTo = (location.state as TLocationState)?.from?.pathname;
+        const returnTo = (location as TLocationState).state?.from?.pathname;
         if (returnTo) {
           void navigate(returnTo, { replace: true });
         }

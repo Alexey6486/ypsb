@@ -6,7 +6,7 @@ import type { JSX } from 'react';
 export const ProtectedReset = (): JSX.Element => {
   const location = useLocation<TLocationState>();
 
-  if ((location.state as TLocationState)?.from?.pathname !== '/forgot-password') {
+  if ((location as TLocationState).state?.from?.pathname !== '/forgot-password') {
     return <Navigate to="/forgot-password" replace />;
   }
 

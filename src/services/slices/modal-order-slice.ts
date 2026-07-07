@@ -40,6 +40,7 @@ const modalOrderSlice = createSlice({
   initialState,
   selectors: {
     selectModalOrder: (state) => state.details,
+    selectIsLoading: (state) => state.isLoading,
   },
   reducers: {
     setModalOrderData: (state, { payload }: PayloadAction<TOrderDetails | null>) => {
@@ -75,5 +76,5 @@ const modalOrderSlice = createSlice({
 });
 
 export const { setModalOrderData } = modalOrderSlice.actions;
-export const { selectModalOrder } = modalOrderSlice.selectors;
+export const { selectModalOrder, selectIsLoading } = modalOrderSlice.selectors;
 export default modalOrderSlice.reducer;

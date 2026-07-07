@@ -1,23 +1,14 @@
-import { useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
-import { fetchIngredientsThunk } from '@services/slices/ingredients-slice';
-import { useDispatch } from '@services/store';
 
 import type { JSX } from 'react';
 
 import styles from './home.module.css';
 
 export const HomePage = (): JSX.Element => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    void dispatch(fetchIngredientsThunk());
-  }, [dispatch]);
-
   return (
     <>
       <h1 className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}>

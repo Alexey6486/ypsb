@@ -6,7 +6,7 @@ import { BurgerIngredientsBlock } from '@components/burger-ingredients/block/bur
 import { BurgerIngredientsList } from '@components/burger-ingredients/list/burger-ingredients-list';
 import { selectIngredients, selectIsLoading } from '@services/slices/ingredients-slice';
 import { setModalIngredientData } from '@services/slices/modal-ingredient-slice';
-import { useSelector, useDispatch } from '@services/store';
+import { useAppDispatch, useAppSelector } from '@services/store';
 import { INGREDIENTS } from '@utils/constants';
 
 import type { TIngredientUI, TIngredientType } from '@utils/types';
@@ -20,15 +20,15 @@ const SAUCE = 'Соусы';
 
 export const BurgerIngredients = (): JSX.Element => {
   const navigate = useNavigate();
-  const ingredients = useSelector(selectIngredients);
-  const isLoading = useSelector(selectIsLoading);
+  const ingredients = useAppSelector(selectIngredients);
+  const isLoading = useAppSelector(selectIsLoading);
   const mainRef = useRef<HTMLDivElement | null>(null);
   const sauceRef = useRef<HTMLDivElement | null>(null);
 
   const containerRef: RefObject<HTMLDivElement | null> = useRef(null);
 
   const [tab, setTab] = useState<TIngredientType>(INGREDIENTS.BUN);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleOpenModal = (ingredient: TIngredientUI): void => {
     dispatch(setModalIngredientData(ingredient));

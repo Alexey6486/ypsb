@@ -15,8 +15,9 @@ import { ProfilePage } from '@pages/profile/profile';
 import { RegisterPage } from '@pages/register/register';
 import { ProtectedReset } from '@pages/reset-password/protected-reset';
 import { ResetPasswordPage } from '@pages/reset-password/reset-password';
+import { fetchIngredientsThunk } from '@services/slices/ingredients-slice';
 import { checkUserAuthThunk } from '@services/slices/user-slice';
-import { useDispatch } from '@services/store';
+import { useAppDispatch } from '@services/store';
 
 import type { JSX } from 'react';
 
@@ -86,10 +87,11 @@ const router = createBrowserRouter([
 ]);
 
 export const App = (): JSX.Element => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     void dispatch(checkUserAuthThunk());
+    void dispatch(fetchIngredientsThunk());
   }, [dispatch]);
 
   return <RouterProvider router={router} />;

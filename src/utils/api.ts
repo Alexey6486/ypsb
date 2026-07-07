@@ -2,7 +2,6 @@ import { TOKEN, URLS } from '@utils/constants';
 
 import type { TRefreshTokenResponse } from '@utils/types';
 
-export const BASE_URL = 'https://norma.education-services.ru/api/';
 export const BASE_AUTH_URL = 'https://new-stellarburgers.education-services.ru/api/';
 
 export const defaultRequestOptions = {
@@ -31,12 +30,8 @@ const checkSuccess = <T>(res: T): Promise<T> | T => {
   return Promise.reject(error);
 };
 
-export const request = <T>(
-  endpoint: string,
-  options?: RequestInit,
-  isAuth?: boolean
-): Promise<T> => {
-  return fetch(`${isAuth ? BASE_AUTH_URL : BASE_URL}${endpoint}`, options)
+export const request = <T>(endpoint: string, options?: RequestInit): Promise<T> => {
+  return fetch(`${BASE_AUTH_URL}${endpoint}`, options)
     .then(checkResponse)
     .then(checkSuccess);
 };
@@ -44,13 +39,9 @@ export const request = <T>(
 export async function refreshToken(): Promise<TRefreshTokenResponse> {
   const token = localStorage.getItem(TOKEN.REFRESH);
 
-  const response: TRefreshTokenResponse = await request(
-    URLS.REFRESH_TOKEN,
-    {
-      body: JSON.stringify({ token }),
-    },
-    true
-  );
+  const response: TRefreshTokenResponse = await request(URLS.REFRESH_TOKEN, {
+    body: JSON.stringify({ token }),
+  });
 
   localStorage.setItem(TOKEN.ACCESS, response.accessToken);
   localStorage.setItem(TOKEN.REFRESH, response.refreshToken);
@@ -63,21 +54,17 @@ export async function fetchWithRefresh<T>(
   options: RequestInit
 ): Promise<T> {
   try {
-    return await request(endpoint, options, true);
+    return await request(endpoint, options);
   } catch (error: unknown) {
     if (error.statusCode === 401 || error.statusCode === 403) {
       const refreshData = await refreshToken();
       const headers = new Headers(options?.headers);
       headers.set('authorization', refreshData.accessToken);
 
-      return request(
-        endpoint,
-        {
-          ...options,
-          headers,
-        },
-        true
-      );
+      return request(endpoint, {
+        ...options,
+        headers,
+      });
     } else {
       throw error;
     }

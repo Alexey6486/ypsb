@@ -1,24 +1,19 @@
-import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 
 import { logoutThunk } from '@services/slices/user-slice';
-import { useDispatch } from '@services/store';
+import { useAppDispatch } from '@services/store';
 
 import type { JSX } from 'react';
 
 import styles from './profile.module.css';
 
 export const ProfilePage = (): JSX.Element => {
-  const dispatch = useDispatch();
-  const location = useLocation();
-  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const handleLogout = (): void => {
     void (async (): Promise<void> => {
       try {
         await dispatch(logoutThunk());
-        void navigate('/login', {
-          state: { from: { pathname: location?.pathname ?? '/profile' } },
-        });
       } catch (error: unknown) {
         console.log({ error });
       }

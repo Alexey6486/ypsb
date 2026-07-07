@@ -7,14 +7,14 @@ import { useNavigate } from 'react-router-dom';
 
 import { useFormWithValidation } from '@hooks/use-form-with-validation';
 import { resetPasswordThunk } from '@services/slices/user-slice';
-import { useDispatch } from '@services/store';
+import { useAppDispatch } from '@services/store';
 import { validators } from '@utils/validators';
 
 import type { TResetPasswordForm } from '@utils/types';
 import type { FormEvent, JSX } from 'react';
 
 export const ResetPasswordPage = (): JSX.Element => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const { values, handleChange, errors, isValid } =

@@ -8,16 +8,16 @@ import {
   selectModalIngredient,
   setModalIngredientData,
 } from '@services/slices/modal-ingredient-slice';
-import { useDispatch, useSelector } from '@services/store';
+import { useAppDispatch, useAppSelector } from '@services/store';
 
 import type { JSX } from 'react';
 
 export const ModalOrderDetails = (): JSX.Element => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const params = useParams();
-  const ingredient = useSelector(selectModalIngredient);
-  const ingredients = useSelector(selectIngredients);
+  const ingredient = useAppSelector(selectModalIngredient);
+  const ingredients = useAppSelector(selectIngredients);
 
   const handleCloseModal = (): void => {
     dispatch(setModalIngredientData(null));
