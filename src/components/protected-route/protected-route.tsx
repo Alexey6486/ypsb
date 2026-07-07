@@ -3,9 +3,8 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { selectIsAuthChecked, selectUser } from '@services/slices/user-slice';
 import { useSelector } from '@services/store';
 
-type TLocationState = {
-  from?: { pathname: string };
-};
+import type { TLocationState } from '@utils/types';
+import type { JSX } from 'react';
 
 export const ProtectedRoute = ({
   onlyUnAuth = false,

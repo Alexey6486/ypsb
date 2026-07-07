@@ -64,7 +64,7 @@ export async function fetchWithRefresh<T>(
 ): Promise<T> {
   try {
     return await request(endpoint, options, true);
-  } catch (error) {
+  } catch (error: unknown) {
     if (error.statusCode === 401 || error.statusCode === 403) {
       const refreshData = await refreshToken();
       const headers = new Headers(options?.headers);

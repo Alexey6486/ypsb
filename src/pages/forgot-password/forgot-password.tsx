@@ -2,8 +2,8 @@ import { EmailInput, Button } from '@krgaa/react-developer-burger-ui-components'
 import { useNavigate } from 'react-router-dom';
 
 import { useFormWithValidation } from '@hooks/use-form-with-validation';
-import { forgotPasswordThunk, selectIsLoading } from '@services/slices/user-slice';
-import { useDispatch, useSelector } from '@services/store';
+import { forgotPasswordThunk } from '@services/slices/user-slice';
+import { useDispatch } from '@services/store';
 import { validators } from '@utils/validators';
 
 import type { TForgotPasswordForm } from '@utils/types';
@@ -11,8 +11,7 @@ import type { FormEvent, JSX } from 'react';
 
 export const ForgotPasswordPage = (): JSX.Element => {
   const dispatch = useDispatch();
-  const navigation = useNavigate();
-  const isLoading = useSelector(selectIsLoading);
+  const navigate = useNavigate();
 
   const { values, handleChange, errors, isValid } =
     useFormWithValidation<TForgotPasswordForm>({
@@ -22,11 +21,14 @@ export const ForgotPasswordPage = (): JSX.Element => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (!isValid) return;
+
     void (async (): Promise<void> => {
       try {
         await dispatch(forgotPasswordThunk(values)).unwrap();
 
-        void navigation('/reset-password');
+        void navigate('/reset-password', {
+          state: { from: { pathname: location?.pathname ?? '/forgot-password' } },
+        });
       } catch (error: unknown) {
         console.log({ error });
       }
@@ -34,7 +36,7 @@ export const ForgotPasswordPage = (): JSX.Element => {
   };
 
   const handleToLogin = (): void => {
-    void navigation('/login');
+    void navigate('/login');
   };
 
   return (
@@ -48,13 +50,7 @@ export const ForgotPasswordPage = (): JSX.Element => {
         errorText={!errors.email ? validators.email.message : ''}
         extraClass="mb-6"
       />
-      <Button
-        size="medium"
-        type="primary"
-        htmlType="submit"
-        disabled={isLoading}
-        extraClass="mb-20"
-      >
+      <Button size="medium" type="primary" htmlType="submit" extraClass="mb-20">
         Восстановить
       </Button>
       <div className="text text_type_main-default text_color_inactive">

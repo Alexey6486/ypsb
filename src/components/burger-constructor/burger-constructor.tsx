@@ -3,6 +3,7 @@ import { nanoid } from '@reduxjs/toolkit';
 import { clsx } from 'clsx';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useDrop } from 'react-dnd';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { OrderIngredient } from '@components/burger-constructor/order-ingredient/order-ingredient';
 import { ConstructorPlaceholder } from '@components/constructor-placeholder/constructor-placeholder';
@@ -22,9 +23,15 @@ import {
   setModalOrderData,
   sendOrderThunk,
 } from '@services/slices/modal-order-slice';
+import { selectIsAuthChecked, selectUser } from '@services/slices/user-slice';
 import { useDispatch, useSelector } from '@services/store';
 
-import type { TIngredientType, TIngredientUI, TOrder } from '@utils/types';
+import type {
+  TLocationState,
+  TIngredientType,
+  TIngredientUI,
+  TOrder,
+} from '@utils/types';
 import type { JSX } from 'react';
 
 import commonStyles from './burger-constructor-common.module.css';
@@ -33,6 +40,10 @@ import styles from './burger-constructor.module.css';
 export const BurgerConstructor = (): JSX.Element => {
   const { bun, ingredients } = useSelector(selectOrder);
   const details = useSelector(selectModalOrder);
+  const isAuthed = useSelector(selectIsAuthChecked);
+  const user = useSelector(selectUser);
+  const navigate = useNavigate();
+  const location = useLocation<TLocationState>();
 
   const dispatch = useDispatch();
 
@@ -54,6 +65,12 @@ export const BurgerConstructor = (): JSX.Element => {
   });
 
   const handleSendOrder = (): void => {
+    if (!isAuthed || (isAuthed && !user)) {
+      void navigate('/login', {
+        state: { from: { pathname: location?.pathname ?? '/' } },
+      });
+    }
+
     if (!bun || !ingredients.length) return;
 
     const data: TOrder = {

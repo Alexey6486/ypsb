@@ -6,8 +6,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { useFormWithValidation } from '@hooks/use-form-with-validation';
-import { resetPasswordThunk, selectIsLoading } from '@services/slices/user-slice';
-import { useDispatch, useSelector } from '@services/store';
+import { resetPasswordThunk } from '@services/slices/user-slice';
+import { useDispatch } from '@services/store';
 import { validators } from '@utils/validators';
 
 import type { TResetPasswordForm } from '@utils/types';
@@ -15,8 +15,7 @@ import type { FormEvent, JSX } from 'react';
 
 export const ResetPasswordPage = (): JSX.Element => {
   const dispatch = useDispatch();
-  const navigation = useNavigate();
-  const isLoading = useSelector(selectIsLoading);
+  const navigate = useNavigate();
 
   const { values, handleChange, errors, isValid } =
     useFormWithValidation<TResetPasswordForm>({
@@ -31,7 +30,7 @@ export const ResetPasswordPage = (): JSX.Element => {
       try {
         await dispatch(resetPasswordThunk(values)).unwrap();
 
-        void navigation('/login');
+        void navigate('/login');
       } catch (error: unknown) {
         console.log({ error });
       }
@@ -39,7 +38,7 @@ export const ResetPasswordPage = (): JSX.Element => {
   };
 
   const handleToLogin = (): void => {
-    void navigation('/login');
+    void navigate('/login');
   };
 
   return (
@@ -61,13 +60,7 @@ export const ResetPasswordPage = (): JSX.Element => {
         value={values.token}
         extraClass="mb-6"
       />
-      <Button
-        size="medium"
-        type="primary"
-        htmlType="submit"
-        disabled={isLoading}
-        extraClass="mb-20"
-      >
+      <Button size="medium" type="primary" htmlType="submit" extraClass="mb-20">
         Сохранить
       </Button>
       <div className="text text_type_main-default text_color_inactive">

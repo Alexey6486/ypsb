@@ -13,6 +13,7 @@ import { ProfileOrdersPage } from '@pages/profile-orders/profile-orders';
 import { ProfileSettingsPage } from '@pages/profile-settings/profile-settings';
 import { ProfilePage } from '@pages/profile/profile';
 import { RegisterPage } from '@pages/register/register';
+import { ProtectedReset } from '@pages/reset-password/protected-reset';
 import { ResetPasswordPage } from '@pages/reset-password/reset-password';
 import { checkUserAuthThunk } from '@services/slices/user-slice';
 import { useDispatch } from '@services/store';
@@ -42,7 +43,13 @@ const router = createBrowserRouter([
       {
         path: '/reset-password',
         element: <ProtectedRoute onlyUnAuth={true} />,
-        children: [{ index: true, element: <ResetPasswordPage /> }],
+        children: [
+          {
+            path: '/reset-password',
+            element: <ProtectedReset />,
+            children: [{ index: true, element: <ResetPasswordPage /> }],
+          },
+        ],
       },
       {
         path: '/',

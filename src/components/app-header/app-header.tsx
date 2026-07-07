@@ -4,7 +4,7 @@ import {
   Logo,
   ProfileIcon,
 } from '@krgaa/react-developer-burger-ui-components';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import type { JSX } from 'react';
 
@@ -15,22 +15,37 @@ export const AppHeader = (): JSX.Element => {
     <header className={styles.header}>
       <nav className={`${styles.menu} p-4`}>
         <div className={styles.menu_part_left}>
-          <Link to="/" className={`${styles.link} ${styles.link_active}`}>
-            <BurgerIcon type="primary" />
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `${styles.link} ${isActive ? styles.link_active : ''}`
+            }
+          >
+            <BurgerIcon type="secondary" />
             <p className="text text_type_main-default ml-2">Конструктор</p>
-          </Link>
-          <Link to="/feed" className={`${styles.link} ml-10`}>
+          </NavLink>
+          <NavLink
+            to="/feed"
+            className={({ isActive }) =>
+              `${styles.link} ml-10 ${isActive ? styles.link_active : ''}`
+            }
+          >
             <ListIcon type="secondary" />
             <p className="text text_type_main-default ml-2">Лента заказов</p>
-          </Link>
+          </NavLink>
         </div>
         <div className={styles.logo}>
           <Logo />
         </div>
-        <Link to="/profile" className={`${styles.link} ${styles.link_position_last}`}>
+        <NavLink
+          to="/profile"
+          className={({ isActive }) =>
+            `${styles.link} ${styles.link_position_last} ${isActive ? styles.link_active : ''}`
+          }
+        >
           <ProfileIcon type="secondary" />
           <p className="text text_type_main-default ml-2">Личный кабинет</p>
-        </Link>
+        </NavLink>
       </nav>
     </header>
   );

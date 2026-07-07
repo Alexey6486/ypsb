@@ -93,3 +93,7 @@ export type TProfileSettingsForm = {
   name: string;
   newPassword: string;
 };
+
+export type TLocationState = {
+  from?: { pathname: string };
+};

@@ -3,19 +3,20 @@ import {
   EmailInput,
   Button,
 } from '@krgaa/react-developer-burger-ui-components';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useFormWithValidation } from '@hooks/use-form-with-validation';
 import { loginThunk } from '@services/slices/user-slice';
 import { useDispatch } from '@services/store';
 import { validators } from '@utils/validators';
 
-import type { TLoginForm } from '@utils/types';
+import type { TLoginForm, TLocationState } from '@utils/types';
 import type { FormEvent, JSX } from 'react';
 
 export const LoginPage = (): JSX.Element => {
   const dispatch = useDispatch();
-  const navigation = useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation<TLocationState>();
 
   const { values, handleChange, errors, isValid } = useFormWithValidation<TLoginForm>({
     email: '',
@@ -25,15 +26,27 @@ export const LoginPage = (): JSX.Element => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     if (!isValid) return;
-    void dispatch(loginThunk(values));
+
+    void (async (): Promise<void> => {
+      try {
+        await dispatch(loginThunk(values)).unwrap();
+
+        const returnTo = (location.state as TLocationState)?.from?.pathname;
+        if (returnTo) {
+          void navigate(returnTo, { replace: true });
+        }
+      } catch (error: unknown) {
+        console.log({ error });
+      }
+    })();
   };
 
   const handleToRegister = (): void => {
-    void navigation('/register');
+    void navigate('/register');
   };
 
   const handleToReset = (): void => {
-    void navigation('/forgot-password');
+    void navigate('/forgot-password');
   };
 
   return (
