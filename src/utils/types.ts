@@ -39,3 +39,62 @@ export type TOrderDetails = {
 export type TOrder = {
   ingredients: string[];
 };
+
+export type TLoginForm = {
+  email: string;
+  password: string;
+};
+
+export type TRegisterForm = {
+  email: string;
+  password: string;
+  name: string;
+};
+
+export type TForgotPasswordForm = {
+  email: string;
+};
+
+export type TResetPasswordForm = {
+  password: string;
+  token: string;
+};
+
+export type TUser = {
+  name: string;
+  email: string;
+};
+
+export type TUserResponse = {
+  success: boolean;
+  user: TUser;
+};
+
+export type TLoginResponse = {
+  success: boolean;
+  accessToken: string;
+  refreshToken: string;
+  user: TUser;
+};
+
+export type TRefreshTokenResponse = {
+  success: boolean;
+  accessToken: string;
+  refreshToken: string;
+};
+
+export type TAuthServiceResponse = {
+  success: boolean;
+  message: string;
+};
+
+export type TProfileSettingsForm = {
+  email: string;
+  name: string;
+  newPassword: string;
+};
+
+export type TLocationState = {
+  pathname: string;
+  state: { from?: { pathname: string } };
+} & Location;

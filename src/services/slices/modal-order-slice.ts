@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-import { request } from '@utils/api';
+import { defaultRequestOptions, request } from '@utils/api';
 import { URLS } from '@utils/constants';
 
 import type { TOrder, TOrderDetails, TNullable } from '@utils/types';
@@ -19,18 +19,19 @@ const initialState: TModalOrderState = {
 
 export const sendOrderThunk = createAsyncThunk<TOrderDetails, TOrder>(
   'modalOrder/sendOrder',
-  async (data: TOrder) => {
-    const response: TOrderDetails = await request(URLS.POST_ORDER, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ingredients: data.ingredients,
-      }),
-    });
+  async (data: TOrder, thunkApi) => {
+    try {
+      const response: TOrderDetails = await request(URLS.POST_ORDER, {
+        ...defaultRequestOptions,
+        body: JSON.stringify({
+          ingredients: data.ingredients,
+        }),
+      });
 
-    return response;
+      return response;
+    } catch (error: unknown) {
+      return thunkApi.rejectWithValue(error?.message ?? 'Не удалось отправить заказ.');
+    }
   }
 );
 
@@ -39,6 +40,7 @@ const modalOrderSlice = createSlice({
   initialState,
   selectors: {
     selectModalOrder: (state) => state.details,
+    selectIsLoading: (state) => state.isLoading,
   },
   reducers: {
     setModalOrderData: (state, { payload }: PayloadAction<TOrderDetails | null>) => {
@@ -74,5 +76,5 @@ const modalOrderSlice = createSlice({
 });
 
 export const { setModalOrderData } = modalOrderSlice.actions;
-export const { selectModalOrder } = modalOrderSlice.selectors;
+export const { selectModalOrder, selectIsLoading } = modalOrderSlice.selectors;
 export default modalOrderSlice.reducer;

@@ -1,34 +1,28 @@
-import {
-  combineReducers,
-  configureStore,
-  createListenerMiddleware,
-} from '@reduxjs/toolkit';
-import {
-  type TypedUseSelectorHook,
-  useSelector as useSelectorBase,
-  useDispatch as useDispatchBase,
-} from 'react-redux';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { useSelector, useDispatch } from 'react-redux';
 
 import ingredientsReducer from './slices/ingredients-slice';
 import modalIngredientReducer from './slices/modal-ingredient-slice';
 import modalOrderReducer from './slices/modal-order-slice';
+import userReducer from './slices/user-slice';
 
 export const reducer = combineReducers({
   ingredients: ingredientsReducer,
   modalIngredient: modalIngredientReducer,
   modalOrder: modalOrderReducer,
+  user: userReducer,
 });
 
 export type RootState = ReturnType<typeof reducer>;
-export const listenerMiddleware = createListenerMiddleware<RootState>();
+// export const listenerMiddleware = createListenerMiddleware<RootState>();
 
 export const store = configureStore({
   reducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().prepend(listenerMiddleware.middleware),
+  // middleware: (getDefaultMiddleware) =>
+  //   getDefaultMiddleware().prepend(listenerMiddleware.middleware),
 });
 
 export type AppDispatch = typeof store.dispatch;
 
-export const useDispatch: () => AppDispatch = useDispatchBase;
-export const useSelector: TypedUseSelectorHook<RootState> = useSelectorBase;
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
+export const useAppSelector = useSelector.withTypes<RootState>();
