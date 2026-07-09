@@ -30,12 +30,7 @@ import {
 import { selectIsAuthChecked, selectUser } from '@services/slices/user-slice';
 import { useAppDispatch, useAppSelector } from '@services/store';
 
-import type {
-  TLocationState,
-  TIngredientType,
-  TIngredientUI,
-  TOrder,
-} from '@utils/types';
+import type { TIngredientType, TIngredientUI, TOrder } from '@utils/types';
 import type { JSX } from 'react';
 
 import commonStyles from './burger-constructor-common.module.css';
@@ -48,7 +43,7 @@ export const BurgerConstructor = (): JSX.Element => {
   const isAuthed = useAppSelector(selectIsAuthChecked);
   const user = useAppSelector(selectUser);
   const navigate = useNavigate();
-  const location = useLocation<TLocationState>();
+  const location = useLocation();
 
   const dispatch = useAppDispatch();
 

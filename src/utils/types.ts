@@ -97,4 +97,4 @@ export type TProfileSettingsForm = {
 export type TLocationState = {
   pathname: string;
   state: { from?: { pathname: string } };
-} & Location;
+};
