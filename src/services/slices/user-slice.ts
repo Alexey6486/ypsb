@@ -214,30 +214,39 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loginThunk.fulfilled, (state: TUserState, { payload }) => {
-        state.isLoading = false;
-        state.isAuthChecked = true;
-        state.user = payload;
-        state.error = null;
-      })
-      .addCase(registerThunk.fulfilled, (state: TUserState, { payload }) => {
-        state.isLoading = false;
-        state.isAuthChecked = true;
-        state.user = payload;
-        state.error = null;
-      })
+      .addCase(
+        loginThunk.fulfilled,
+        (state: TUserState, { payload }: PayloadAction<TUser>) => {
+          state.isLoading = false;
+          state.isAuthChecked = true;
+          state.user = payload;
+          state.error = null;
+        }
+      )
+      .addCase(
+        registerThunk.fulfilled,
+        (state: TUserState, { payload }: PayloadAction<TUser>) => {
+          state.isLoading = false;
+          state.isAuthChecked = true;
+          state.user = payload;
+          state.error = null;
+        }
+      )
       .addCase(logoutThunk.fulfilled, (state: TUserState) => {
         state.isLoading = false;
         state.isAuthChecked = true;
         state.user = null;
         state.error = null;
       })
-      .addCase(checkUserAuthThunk.fulfilled, (state: TUserState, { payload }) => {
-        state.isLoading = false;
-        state.isAuthChecked = true;
-        state.user = payload;
-        state.error = null;
-      })
+      .addCase(
+        checkUserAuthThunk.fulfilled,
+        (state: TUserState, { payload }: PayloadAction<TUser | null>) => {
+          state.isLoading = false;
+          state.isAuthChecked = true;
+          state.user = payload;
+          state.error = null;
+        }
+      )
       .addCase(
         checkUserAuthThunk.rejected,
         (
@@ -257,12 +266,15 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.error = null;
       })
-      .addCase(editUserThunk.fulfilled, (state: TUserState, { payload }) => {
-        state.isLoading = false;
-        state.isAuthChecked = true;
-        state.user = payload;
-        state.error = null;
-      })
+      .addCase(
+        editUserThunk.fulfilled,
+        (state: TUserState, { payload }: PayloadAction<TUser>) => {
+          state.isLoading = false;
+          state.isAuthChecked = true;
+          state.user = payload;
+          state.error = null;
+        }
+      )
       .addMatcher(
         (action: UnknownAction) => action.type.endsWith('/pending'),
         (state: TUserState) => {

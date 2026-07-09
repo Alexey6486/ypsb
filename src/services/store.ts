@@ -13,7 +13,6 @@ export const reducer = combineReducers({
   user: userReducer,
 });
 
-export type RootState = ReturnType<typeof reducer>;
 // export const listenerMiddleware = createListenerMiddleware<RootState>();
 
 export const store = configureStore({
@@ -22,7 +21,10 @@ export const store = configureStore({
   //   getDefaultMiddleware().prepend(listenerMiddleware.middleware),
 });
 
+export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
+export const useAppDispatch = (): ReturnType<typeof useDispatch<AppDispatch>> =>
+  useDispatch<AppDispatch>();
+// export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
 export const useAppSelector = useSelector.withTypes<RootState>();
