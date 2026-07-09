@@ -1,4 +1,4 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { type CaseReducer, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 import type { TIngredientUI } from '@utils/types';
 
@@ -10,22 +10,22 @@ const initialState: TModalIngredientState = {
   ingredient: null,
 };
 
-const modalIngredientSlice = createSlice({
+export const modalIngredientSlice = createSlice({
   name: 'modalIngredient',
   initialState,
   selectors: {
     selectModalIngredient: (state) => state.ingredient,
   },
   reducers: {
-    setModalIngredientData: (
+    setModalIngredientData: ((
       state,
       { payload }: PayloadAction<TIngredientUI | null>
     ) => {
       state.ingredient = payload;
-    },
+    }) as CaseReducer<TModalIngredientState, PayloadAction<TIngredientUI | null>>,
   },
 });
 
-export const { setModalIngredientData } = modalIngredientSlice.actions;
+// export const { setModalIngredientData } = modalIngredientSlice.actions;
 export const { selectModalIngredient } = modalIngredientSlice.selectors;
 export default modalIngredientSlice.reducer;

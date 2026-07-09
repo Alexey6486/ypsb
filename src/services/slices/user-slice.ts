@@ -195,17 +195,10 @@ export const editUserThunk = createAsyncThunk<TUser, TRegisterForm>(
   }
 );
 
-const userSlice = createSlice({
+export const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {
-    setIsAuthChecked: (state, { payload }: PayloadAction<boolean>) => {
-      state.isAuthChecked = payload;
-    },
-    setUser: (state, { payload }: PayloadAction<TUser>) => {
-      state.user = payload;
-    },
-  },
+  reducers: {},
   selectors: {
     selectIsLoading: (state) => state.isLoading,
     selectIsAuthChecked: (state) => state.isAuthChecked,
@@ -292,6 +285,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { setIsAuthChecked, setUser } = userSlice.actions;
-export const { selectIsLoading, selectIsAuthChecked, selectUser } = userSlice.selectors;
+export const { selectIsAuthChecked, selectUser } = userSlice.selectors;
 export default userSlice.reducer;

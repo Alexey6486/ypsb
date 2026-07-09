@@ -38,7 +38,6 @@ export const ProtectedRoute = ({
   }
 
   if (!onlyUnAuth && !user) {
-    console.log('or !onlyUnAuth && !user check');
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

@@ -5,7 +5,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { BurgerIngredientsBlock } from '@components/burger-ingredients/block/burger-ingredients-block';
 import { BurgerIngredientsList } from '@components/burger-ingredients/list/burger-ingredients-list';
 import { selectIngredients, selectIsLoading } from '@services/slices/ingredients-slice';
-import { setModalIngredientData } from '@services/slices/modal-ingredient-slice';
+import { modalIngredientSlice } from '@services/slices/modal-ingredient-slice';
 import { useAppDispatch, useAppSelector } from '@services/store';
 import { INGREDIENTS } from '@utils/constants';
 
@@ -31,7 +31,7 @@ export const BurgerIngredients = (): JSX.Element => {
   const dispatch = useAppDispatch();
 
   const handleOpenModal = (ingredient: TIngredientUI): void => {
-    dispatch(setModalIngredientData(ingredient));
+    dispatch(modalIngredientSlice.actions.setModalIngredientData(ingredient));
     void navigate(`/ingredients/${ingredient._id}`);
   };
 

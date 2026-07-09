@@ -14,18 +14,12 @@ import { Modal } from '@components/modal/modal';
 import { OrderDetails } from '@components/order-details/order-details';
 import { Price } from '@components/price/price';
 import { useWindowSize } from '@hooks/useWindowSize';
-import {
-  setOrderIngredient,
-  removeIngredient,
-  resetOrder,
-  moveOrderIngredient,
-  selectOrder,
-} from '@services/slices/ingredients-slice';
+import { selectOrder, ingredientsSlice } from '@services/slices/ingredients-slice';
 import {
   selectModalOrder,
-  setModalOrderData,
   sendOrderThunk,
   selectIsLoading,
+  modalOrderSlice,
 } from '@services/slices/modal-order-slice';
 import { selectIsAuthChecked, selectUser } from '@services/slices/user-slice';
 import { useAppDispatch, useAppSelector } from '@services/store';
@@ -57,7 +51,7 @@ export const BurgerConstructor = (): JSX.Element => {
       if (bun && bun._id === ingredient._id) {
         return;
       }
-      dispatch(setOrderIngredient(ingredient));
+      dispatch(ingredientsSlice.actions.setOrderIngredient(ingredient));
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
@@ -81,8 +75,8 @@ export const BurgerConstructor = (): JSX.Element => {
   };
 
   const handleCloseModal = (): void => {
-    dispatch(setModalOrderData(null));
-    dispatch(resetOrder());
+    dispatch(modalOrderSlice.actions.setModalOrderData(null));
+    dispatch(ingredientsSlice.actions.resetOrder());
   };
 
   const handleRemoveIngredient = (
@@ -90,11 +84,13 @@ export const BurgerConstructor = (): JSX.Element => {
     nanoid: string,
     type: TIngredientType
   ): void => {
-    dispatch(removeIngredient({ id, nanoid, type }));
+    dispatch(ingredientsSlice.actions.removeIngredient({ id, nanoid, type }));
   };
 
   const handleOrderIngredientMove = (dragIndex: number, hoverIndex: number): void => {
-    dispatch(moveOrderIngredient({ from: dragIndex, to: hoverIndex }));
+    dispatch(
+      ingredientsSlice.actions.moveOrderIngredient({ from: dragIndex, to: hoverIndex })
+    );
   };
 
   useLayoutEffect(() => {

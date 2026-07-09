@@ -35,7 +35,7 @@ export const sendOrderThunk = createAsyncThunk<TOrderDetails, TOrder>(
   }
 );
 
-const modalOrderSlice = createSlice({
+export const modalOrderSlice = createSlice({
   name: 'modalOrder',
   initialState,
   selectors: {
@@ -75,6 +75,5 @@ const modalOrderSlice = createSlice({
   },
 });
 
-export const { setModalOrderData } = modalOrderSlice.actions;
 export const { selectModalOrder, selectIsLoading } = modalOrderSlice.selectors;
 export default modalOrderSlice.reducer;

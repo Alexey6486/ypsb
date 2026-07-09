@@ -63,7 +63,7 @@ export const fetchIngredientsThunk = createAsyncThunk<TNullable<TIngredientsSort
   }
 );
 
-const ingredientsSlice = createSlice({
+export const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
   selectors: {
@@ -177,8 +177,10 @@ const ingredientsSlice = createSlice({
   },
 });
 
-export const { setOrderIngredient, removeIngredient, resetOrder, moveOrderIngredient } =
-  ingredientsSlice.actions;
+// если экспортировать экшены так, то в компонентах, в диспаче он не не может разобраться с тем, что
+// в него передают и подчеркивает, требует два параметра
+// export const { setOrderIngredient, removeIngredient, resetOrder, moveOrderIngredient } =
+// ingredientsSlice.actions;
 export const { selectIngredients, selectOrder, selectIsLoading } =
   ingredientsSlice.selectors;
 export default ingredientsSlice.reducer;
