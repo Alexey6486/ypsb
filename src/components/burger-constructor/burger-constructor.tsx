@@ -3,7 +3,6 @@ import {
   ConstructorElement,
   Preloader,
 } from '@krgaa/react-developer-burger-ui-components';
-import { nanoid } from '@reduxjs/toolkit';
 import { clsx } from 'clsx';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useDrop } from 'react-dnd';
@@ -63,7 +62,7 @@ export const BurgerConstructor = (): JSX.Element => {
       if (bun && bun._id === ingredient._id) {
         return;
       }
-      dispatch(setOrderIngredient({ ...ingredient, nanoid: nanoid() }));
+      dispatch(setOrderIngredient(ingredient));
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
