@@ -6,7 +6,7 @@ import modalIngredientReducer from '@services/slices/modal-ingredient-slice';
 import modalOrderReducer from '@services/slices/modal-order-slice';
 import userReducer from '@services/slices/user-slice';
 
-export const reducer = combineReducers({
+const reducer = combineReducers({
   ingredients: ingredientsReducer,
   modalIngredient: modalIngredientReducer,
   modalOrder: modalOrderReducer,
