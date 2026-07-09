@@ -19,7 +19,7 @@ export const ProtectedRoute = ({
 }): JSX.Element => {
   const isAuthChecked = useAppSelector(selectIsAuthChecked);
   const user = useAppSelector(selectUser);
-  const location = useLocation<TLocationState>();
+  const location = useLocation();
   const dispatch = useAppDispatch();
 
   useEffect(() => {

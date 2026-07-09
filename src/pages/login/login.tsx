@@ -16,7 +16,7 @@ import type { FormEvent, JSX } from 'react';
 export const LoginPage = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const location = useLocation<TLocationState>();
+  const location = useLocation();
 
   const { values, handleChange, errors, isValid } = useFormWithValidation<TLoginForm>({
     email: '',
