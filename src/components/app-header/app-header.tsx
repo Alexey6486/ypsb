@@ -35,7 +35,7 @@ export const AppHeader = (): JSX.Element => {
           </NavLink>
         </div>
         <div className={styles.logo}>
-          <Link to={'/'}>
+          <Link to="/">
             <Logo />
           </Link>
         </div>

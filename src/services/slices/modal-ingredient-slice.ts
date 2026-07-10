@@ -26,6 +26,5 @@ export const modalIngredientSlice = createSlice({
   },
 });
 
-// export const { setModalIngredientData } = modalIngredientSlice.actions;
 export const { selectModalIngredient } = modalIngredientSlice.selectors;
 export default modalIngredientSlice.reducer;

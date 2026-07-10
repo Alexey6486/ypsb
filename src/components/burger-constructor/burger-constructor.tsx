@@ -129,7 +129,6 @@ export const BurgerConstructor = (): JSX.Element => {
             <div className={`${commonStyles.burger_constructor_ingredient} ml-2`}>
               {bun ? (
                 <ConstructorElement
-                  handleClose={() => null}
                   isLocked
                   price={bun.price}
                   text={`${bun.name} (верх)`}
@@ -170,7 +169,6 @@ export const BurgerConstructor = (): JSX.Element => {
             <div className={`${commonStyles.burger_constructor_ingredient} ml-2`}>
               {bun ? (
                 <ConstructorElement
-                  handleClose={() => null}
                   isLocked
                   price={bun.price}
                   text={`${bun.name} (низ)`}
