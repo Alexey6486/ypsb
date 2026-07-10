@@ -97,3 +97,12 @@ export type TProfileSettingsForm = {
 export type TLocationState = {
   state: { from?: { pathname: string } };
 };
+
+export type TOrderCardUI = {
+  name: string;
+  date: string;
+  number: number;
+  status: string;
+  price: number;
+  images: string[];
+};

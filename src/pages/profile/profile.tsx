@@ -21,7 +21,7 @@ export const ProfilePage = (): JSX.Element => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.profile} container`}>
       <nav className={`${styles.navigation} mr-15`}>
         <ul className="text text_type_main-medium mb-20">
           <li>

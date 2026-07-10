@@ -2,7 +2,9 @@ import { TOKEN, URLS } from '@utils/constants';
 
 import type { TRefreshTokenResponse } from '@utils/types';
 
-export const BASE_AUTH_URL = 'https://new-stellarburgers.education-services.ru/api/';
+export const BASE_URL = 'new-stellarburgers.education-services.ru';
+export const BASE_AUTH_URL = `https://${BASE_URL}/api/`;
+export const BASE_WS_URL = `wss://${BASE_URL}/orders/`; // feed - all, :id, profile/orders - ?token=${accessToken}
 
 export const defaultRequestOptions = {
   method: 'POST',
