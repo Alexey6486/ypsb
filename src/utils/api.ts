@@ -32,8 +32,8 @@ const checkSuccess = <T>(res: T): Promise<T> | T => {
 
 export const request = <T>(endpoint: string, options?: RequestInit): Promise<T> => {
   return fetch(`${BASE_AUTH_URL}${endpoint}`, options)
-    .then(checkResponse)
-    .then(checkSuccess);
+    .then(checkResponse<T>)
+    .then(checkSuccess<T>);
 };
 
 export async function refreshToken(): Promise<TRefreshTokenResponse> {

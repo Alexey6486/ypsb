@@ -4,21 +4,22 @@ import { createPortal } from 'react-dom';
 
 import { ModalOverlay } from '@components/modal-overlay/modal-overlay';
 
-import type { ReactNode, JSX } from 'react';
+import type { JSX, PropsWithChildren } from 'react';
 
 import styles from './modal.module.css';
 
 const modalRoot = document.getElementById('modal');
 
+type TProps = {
+  title: string;
+  onClose: () => void;
+};
+
 export const Modal = ({
   title,
   onClose,
   children,
-}: {
-  title: string;
-  children: ReactNode;
-  onClose: () => void;
-}): JSX.Element => {
+}: PropsWithChildren<TProps>): JSX.Element => {
   useEffect(() => {
     function handleEscape(event: KeyboardEvent): void {
       event.key === 'Escape' && onClose();

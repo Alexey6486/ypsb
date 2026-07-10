@@ -3,7 +3,6 @@ import {
   ConstructorElement,
   Preloader,
 } from '@krgaa/react-developer-burger-ui-components';
-import { nanoid } from '@reduxjs/toolkit';
 import { clsx } from 'clsx';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useDrop } from 'react-dnd';
@@ -15,28 +14,17 @@ import { Modal } from '@components/modal/modal';
 import { OrderDetails } from '@components/order-details/order-details';
 import { Price } from '@components/price/price';
 import { useWindowSize } from '@hooks/useWindowSize';
-import {
-  setOrderIngredient,
-  removeIngredient,
-  resetOrder,
-  moveOrderIngredient,
-  selectOrder,
-} from '@services/slices/ingredients-slice';
+import { selectOrder, ingredientsSlice } from '@services/slices/ingredients-slice';
 import {
   selectModalOrder,
-  setModalOrderData,
   sendOrderThunk,
   selectIsLoading,
+  modalOrderSlice,
 } from '@services/slices/modal-order-slice';
 import { selectIsAuthChecked, selectUser } from '@services/slices/user-slice';
 import { useAppDispatch, useAppSelector } from '@services/store';
 
-import type {
-  TLocationState,
-  TIngredientType,
-  TIngredientUI,
-  TOrder,
-} from '@utils/types';
+import type { TIngredientType, TIngredientUI, TOrder } from '@utils/types';
 import type { JSX } from 'react';
 
 import commonStyles from './burger-constructor-common.module.css';
@@ -49,7 +37,7 @@ export const BurgerConstructor = (): JSX.Element => {
   const isAuthed = useAppSelector(selectIsAuthChecked);
   const user = useAppSelector(selectUser);
   const navigate = useNavigate();
-  const location = useLocation<TLocationState>();
+  const location = useLocation();
 
   const dispatch = useAppDispatch();
 
@@ -63,7 +51,7 @@ export const BurgerConstructor = (): JSX.Element => {
       if (bun && bun._id === ingredient._id) {
         return;
       }
-      dispatch(setOrderIngredient({ ...ingredient, nanoid: nanoid() }));
+      dispatch(ingredientsSlice.actions.setOrderIngredient(ingredient));
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
@@ -87,8 +75,8 @@ export const BurgerConstructor = (): JSX.Element => {
   };
 
   const handleCloseModal = (): void => {
-    dispatch(setModalOrderData(null));
-    dispatch(resetOrder());
+    dispatch(modalOrderSlice.actions.setModalOrderData(null));
+    dispatch(ingredientsSlice.actions.resetOrder());
   };
 
   const handleRemoveIngredient = (
@@ -96,11 +84,13 @@ export const BurgerConstructor = (): JSX.Element => {
     nanoid: string,
     type: TIngredientType
   ): void => {
-    dispatch(removeIngredient({ id, nanoid, type }));
+    dispatch(ingredientsSlice.actions.removeIngredient({ id, nanoid, type }));
   };
 
   const handleOrderIngredientMove = (dragIndex: number, hoverIndex: number): void => {
-    dispatch(moveOrderIngredient({ from: dragIndex, to: hoverIndex }));
+    dispatch(
+      ingredientsSlice.actions.moveOrderIngredient({ from: dragIndex, to: hoverIndex })
+    );
   };
 
   useLayoutEffect(() => {
@@ -139,7 +129,6 @@ export const BurgerConstructor = (): JSX.Element => {
             <div className={`${commonStyles.burger_constructor_ingredient} ml-2`}>
               {bun ? (
                 <ConstructorElement
-                  handleClose={() => null}
                   isLocked
                   price={bun.price}
                   text={`${bun.name} (верх)`}
@@ -180,7 +169,6 @@ export const BurgerConstructor = (): JSX.Element => {
             <div className={`${commonStyles.burger_constructor_ingredient} ml-2`}>
               {bun ? (
                 <ConstructorElement
-                  handleClose={() => null}
                   isLocked
                   price={bun.price}
                   text={`${bun.name} (низ)`}

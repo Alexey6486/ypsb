@@ -19,7 +19,7 @@ export const ProtectedRoute = ({
 }): JSX.Element => {
   const isAuthChecked = useAppSelector(selectIsAuthChecked);
   const user = useAppSelector(selectUser);
-  const location = useLocation<TLocationState>();
+  const location = useLocation();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -38,7 +38,6 @@ export const ProtectedRoute = ({
   }
 
   if (!onlyUnAuth && !user) {
-    console.log('or !onlyUnAuth && !user check');
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

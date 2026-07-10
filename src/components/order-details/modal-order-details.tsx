@@ -6,7 +6,7 @@ import { Modal } from '@components/modal/modal';
 import { selectIngredients } from '@services/slices/ingredients-slice';
 import {
   selectModalIngredient,
-  setModalIngredientData,
+  modalIngredientSlice,
 } from '@services/slices/modal-ingredient-slice';
 import { useAppDispatch, useAppSelector } from '@services/store';
 
@@ -20,7 +20,7 @@ export const ModalOrderDetails = (): JSX.Element => {
   const ingredients = useAppSelector(selectIngredients);
 
   const handleCloseModal = (): void => {
-    dispatch(setModalIngredientData(null));
+    dispatch(modalIngredientSlice.actions.setModalIngredientData(null));
     void navigate(`/`);
   };
 
@@ -45,7 +45,7 @@ export const ModalOrderDetails = (): JSX.Element => {
     const target = [...bun, ...main, ...sauce].find((el) => el._id === params.id);
 
     if (target) {
-      dispatch(setModalIngredientData(target));
+      dispatch(modalIngredientSlice.actions.setModalIngredientData(target));
     } else {
       void navigate(`/`);
     }

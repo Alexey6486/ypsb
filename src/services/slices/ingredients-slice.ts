@@ -1,4 +1,9 @@
-import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createSlice,
+  nanoid,
+  type PayloadAction,
+} from '@reduxjs/toolkit';
 
 import { request } from '@utils/api';
 import { INGREDIENTS, URLS } from '@utils/constants';
@@ -58,7 +63,7 @@ export const fetchIngredientsThunk = createAsyncThunk<TNullable<TIngredientsSort
   }
 );
 
-const ingredientsSlice = createSlice({
+export const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
   selectors: {
@@ -67,34 +72,42 @@ const ingredientsSlice = createSlice({
     selectIsLoading: (state) => state.isLoading,
   },
   reducers: {
-    setOrderIngredient: (state, { payload }: PayloadAction<TIngredientUI>) => {
-      state.order = {
-        ...state.order,
-        bun: payload.type === INGREDIENTS.BUN ? payload : state.order.bun,
-        ingredients:
-          payload.type !== INGREDIENTS.BUN
-            ? [...state.order.ingredients, payload]
-            : state.order.ingredients,
-      };
-      state.ingredients = {
-        ...state.ingredients,
-        [payload.type]: state.ingredients[payload.type].map((el) => {
-          if (el._id === payload._id) {
-            return {
-              ...el,
-              counter: payload.type === INGREDIENTS.BUN ? 2 : el.counter + 1,
-            };
-          } else if (
-            payload.type === INGREDIENTS.BUN &&
-            el.type === INGREDIENTS.BUN &&
-            el._id !== payload._id
-          ) {
-            return { ...el, counter: 0 };
-          } else {
-            return el;
-          }
-        }),
-      };
+    setOrderIngredient: {
+      reducer: (state, { payload }: PayloadAction<TIngredientUI>) => {
+        state.order = {
+          ...state.order,
+          bun: payload.type === INGREDIENTS.BUN ? payload : state.order.bun,
+          ingredients:
+            payload.type !== INGREDIENTS.BUN
+              ? [...state.order.ingredients, payload]
+              : state.order.ingredients,
+        };
+        state.ingredients = {
+          ...state.ingredients,
+          [payload.type]: state.ingredients[payload.type].map((el) => {
+            if (el._id === payload._id) {
+              return {
+                ...el,
+                counter: payload.type === INGREDIENTS.BUN ? 2 : el.counter + 1,
+              };
+            } else if (
+              payload.type === INGREDIENTS.BUN &&
+              el.type === INGREDIENTS.BUN &&
+              el._id !== payload._id
+            ) {
+              return { ...el, counter: 0 };
+            } else {
+              return el;
+            }
+          }),
+        };
+      },
+      prepare: (ingredient: TIngredientUI) => ({
+        payload: {
+          ...ingredient,
+          nanoid: nanoid(),
+        },
+      }),
     },
     removeIngredient: (
       state,
@@ -164,8 +177,10 @@ const ingredientsSlice = createSlice({
   },
 });
 
-export const { setOrderIngredient, removeIngredient, resetOrder, moveOrderIngredient } =
-  ingredientsSlice.actions;
+// если экспортировать экшены так, то в компонентах, в диспаче он не не может разобраться с тем, что
+// в него передают и подчеркивает, требует два параметра
+// export const { setOrderIngredient, removeIngredient, resetOrder, moveOrderIngredient } =
+// ingredientsSlice.actions;
 export const { selectIngredients, selectOrder, selectIsLoading } =
   ingredientsSlice.selectors;
 export default ingredientsSlice.reducer;
