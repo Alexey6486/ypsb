@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { AppLayout } from '@components/app-layout/app-layout';
-import { ModalOrderDetails } from '@components/order-details/modal-order-details';
+import { ModalIngredients } from '@components/ingredient-details/modal-ingredients';
+import { ModalOrder } from '@components/order/modal-order';
 import { ProtectedRoute } from '@components/protected-route/protected-route';
 import { ErrorPage } from '@pages/error/error';
 import { FeedPage } from '@pages/feed/feed';
@@ -57,12 +58,16 @@ const router = createBrowserRouter([
         element: <HomePage />,
         children: [
           { index: true, element: <></> },
-          { path: 'ingredients/:id', element: <ModalOrderDetails /> },
+          { path: 'ingredients/:id', element: <ModalIngredients /> },
         ],
       },
       {
         path: '/feed',
         element: <FeedPage />,
+        children: [
+          { index: true, element: <></> },
+          { path: '/feed/:id', element: <ModalOrder /> },
+        ],
       },
       {
         path: '/profile',
@@ -73,7 +78,14 @@ const router = createBrowserRouter([
             element: <ProfilePage />,
             children: [
               { index: true, element: <ProfileSettingsPage /> },
-              { path: 'orders', element: <ProfileOrdersPage /> },
+              {
+                path: 'orders',
+                element: <ProfileOrdersPage />,
+                children: [
+                  { index: true, element: <></> },
+                  { path: '/profile/orders/:id', element: <ModalOrder /> },
+                ],
+              },
             ],
           },
         ],

@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from '@services/store';
 
 import type { JSX } from 'react';
 
-export const ModalOrderDetails = (): JSX.Element => {
+export const ModalIngredients = (): JSX.Element => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const params = useParams();

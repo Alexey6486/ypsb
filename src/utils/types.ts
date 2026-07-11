@@ -99,10 +99,17 @@ export type TLocationState = {
 };
 
 export type TOrderCardUI = {
+  id: string;
   name: string;
   date: string;
   number: number;
   status?: string;
   price: number;
-  images: string[];
+  ingredients: TIngredientUI[];
 };
+
+export enum ORDER_STATUS_TEXT {
+  done = 'Выполнен',
+  pending = 'Готовится',
+  created = 'Создан',
+}

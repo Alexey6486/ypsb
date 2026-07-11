@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { OrderCard } from '@components/order-card/order-card';
 import { selectIngredients } from '@services/slices/ingredients-slice';
-import { useAppSelector } from '@services/store';
+import { modalDealSlice } from '@services/slices/modal-deal-slice';
+import { useAppDispatch, useAppSelector } from '@services/store';
 
 import type { TOrderCardUI, TIngredientUI } from '@utils/types';
 import type { JSX } from 'react';
 
 export const OrdersFeed = (): JSX.Element => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   // const orders = useAppSelector(selectOrdersFeed);
 
   const ingredients = useAppSelector(selectIngredients);
@@ -22,7 +26,10 @@ export const OrdersFeed = (): JSX.Element => {
         '692889f16bf770001bfeb4cf',
         '692889f16bf770001bfeb4cd',
         '692889f16bf770001bfeb4d3',
+        '692889f16bf770001bfeb4d3',
         '692889f16bf770001bfeb4d0',
+        '692889f16bf770001bfeb4d5',
+        '692889f16bf770001bfeb4d5',
         '692889f16bf770001bfeb4d5',
       ],
       _id: '1',
@@ -108,34 +115,38 @@ export const OrdersFeed = (): JSX.Element => {
     },
   ];
 
+  const handleOpenModal = (value: TOrderCardUI): void => {
+    dispatch(modalDealSlice.actions.setModalDealData(value));
+    void navigate(`/feed/${value.id}`);
+  };
+
   useEffect(() => {
     // TODO перенести в selectOrdersFeed, вынести выше, в компоненту feed
     if (ingredients) {
       const orderList = orders
-        .map(({ ingredients: ids, number, name, updatedAt }) => {
-          const images = [];
+        .map(({ ingredients: ids, number, name, updatedAt, _id }) => {
+          const ingredientsList = [];
           let price = 0;
-          const test = [...ingredients.bun, ...ingredients.main, ...ingredients.sauce];
-          console.log({ test });
+          const list = [...ingredients.bun, ...ingredients.main, ...ingredients.sauce];
           ids.forEach((id) => {
-            const target: TIngredientUI | null = test.find((ing) => {
-              console.log({ ingredients, ing: ing._id, id, check: ing._id === id });
+            const target: TIngredientUI | null = list.find((ing) => {
               return ing._id === id;
             });
             if (target) {
-              images.push(target.image_mobile);
+              ingredientsList.push(target);
               price += target.price;
             }
           });
 
           if (price > 0) {
             return {
+              id: _id,
               name: name ?? 'Some name',
               date: updatedAt,
               number,
               status: undefined,
               price,
-              images,
+              ingredients: ingredientsList,
             };
           }
 
@@ -143,7 +154,6 @@ export const OrdersFeed = (): JSX.Element => {
         })
         .filter((el) => el !== null);
 
-      console.log({ orderList });
       setState(orderList);
     }
   }, [ingredients]);
@@ -151,7 +161,7 @@ export const OrdersFeed = (): JSX.Element => {
   return (
     <>
       {state.map((el) => (
-        <OrderCard key={el.number} data={el} />
+        <OrderCard key={el.number} data={el} onClick={handleOpenModal} />
       ))}
     </>
   );

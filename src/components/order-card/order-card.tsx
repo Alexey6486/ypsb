@@ -2,26 +2,28 @@ import { FormattedDate } from '@krgaa/react-developer-burger-ui-components';
 import { clsx } from 'clsx';
 
 import { Price } from '@components/price/price';
+import { ORDER_STATUS_TEXT } from '@utils/types';
 
 import type { TOrderCardUI } from '@utils/types';
-import type { JSX } from 'react';
+import type { JSX, MouseEvent } from 'react';
 
 import styles from './order-card.module.css';
 
 type TProps = {
   data: TOrderCardUI;
+  onClick: (value: TOrderCardUI) => void;
 };
 
-enum STATUS_TEXT {
-  done = 'Выполнен',
-  pending = 'Готовится',
-  created = 'Создан',
-}
+export const OrderCard = ({ data, onClick }: TProps): JSX.Element => {
+  const { ingredients, name, price, date, status, number } = data;
 
-export const OrderCard = ({ data }: TProps): JSX.Element => {
-  const { images, name, price, date, status, number } = data;
+  const handleClick = (event: MouseEvent<HTMLDivElement>): void => {
+    event.stopPropagation();
+    onClick(data);
+  };
+
   return (
-    <div className={styles.container}>
+    <div onClick={handleClick} className={styles.container}>
       <div className={`${styles.content} mb-6`}>
         <div className={`text text_type_digits-default`}>#{number}</div>
         <div className={`text text_type_main-default text_color_inactive`}>
@@ -31,23 +33,27 @@ export const OrderCard = ({ data }: TProps): JSX.Element => {
       <div className={`text text_type_main-medium mb-2`}>{name}</div>
       {status && (
         <div
-          className={`${clsx({ [styles.status_done]: status === 'done' })} text text_type_main-default mb-2`}
+          className={`${clsx({ ['status-done']: status === 'done' })} text text_type_main-default mb-2`}
         >
-          {STATUS_TEXT[status]}
+          {ORDER_STATUS_TEXT[status]}
         </div>
       )}
       <div className={`${styles.content} mt-4`}>
         <div className={`${styles.images}`}>
-          {images.map((el, index) => {
+          {ingredients.map((el, index) => {
             if (index <= 5) {
               return (
-                <div style={{ zIndex: images.length - index }} key={index}>
-                  {images.length > 6 && index === 5 && (
+                <div
+                  className="mobile-ingredient-image"
+                  style={{ zIndex: ingredients.length - index }}
+                  key={index}
+                >
+                  {ingredients.length > 6 && index === 5 && (
                     <span className="text text_type_main-default">
-                      +{images.length - 6}
+                      +{ingredients.length - 6}
                     </span>
                   )}
-                  <img src={el} alt="ingredient-image" />
+                  <img src={el.image_mobile} alt="ingredient-image" />
                 </div>
               );
             }
