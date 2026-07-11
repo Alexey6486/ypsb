@@ -56,35 +56,25 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <HomePage />,
-        children: [
-          { index: true, element: <></> },
-          { path: 'ingredients/:id', element: <ModalIngredients /> },
-        ],
+        children: [{ path: 'ingredients/:id', element: <ModalIngredients /> }],
       },
       {
         path: '/feed',
         element: <FeedPage />,
-        children: [
-          { index: true, element: <></> },
-          { path: '/feed/:id', element: <ModalOrder /> },
-        ],
+        children: [{ path: ':id', element: <ModalOrder /> }],
       },
       {
         path: '/profile',
         element: <ProtectedRoute onlyUnAuth={false} />,
         children: [
           {
-            path: '/profile',
             element: <ProfilePage />,
             children: [
               { index: true, element: <ProfileSettingsPage /> },
               {
                 path: 'orders',
                 element: <ProfileOrdersPage />,
-                children: [
-                  { index: true, element: <></> },
-                  { path: '/profile/orders/:id', element: <ModalOrder /> },
-                ],
+                children: [{ path: ':id', element: <ModalOrder /> }],
               },
             ],
           },
