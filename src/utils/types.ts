@@ -102,7 +102,7 @@ export type TOrderCardUI = {
   name: string;
   date: string;
   number: number;
-  status: string;
+  status?: string;
   price: number;
   images: string[];
 };

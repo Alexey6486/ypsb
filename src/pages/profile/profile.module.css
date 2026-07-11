@@ -19,6 +19,7 @@
 .content {
   display: flex;
   flex-grow: 1;
+  height: calc(100vh - 208px);
 }
 
 .note {

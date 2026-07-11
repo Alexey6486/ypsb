@@ -1,9 +1,11 @@
 .container {
   display: flex;
   flex-direction: column;
+  margin-bottom: 24px;
   padding: 24px;
   background-color: #1c1c21;
   border-radius: 40px;
+  cursor: pointer;
 }
 
 .content {
@@ -65,4 +67,8 @@
 
 .images img {
   height: 50px;
+}
+
+.status_done {
+  color: #0cc;
 }

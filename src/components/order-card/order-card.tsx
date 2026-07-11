@@ -1,4 +1,5 @@
 import { FormattedDate } from '@krgaa/react-developer-burger-ui-components';
+import { clsx } from 'clsx';
 
 import { Price } from '@components/price/price';
 
@@ -11,6 +12,12 @@ type TProps = {
   data: TOrderCardUI;
 };
 
+enum STATUS_TEXT {
+  done = 'Выполнен',
+  pending = 'Готовится',
+  created = 'Создан',
+}
+
 export const OrderCard = ({ data }: TProps): JSX.Element => {
   const { images, name, price, date, status, number } = data;
   return (
@@ -22,14 +29,20 @@ export const OrderCard = ({ data }: TProps): JSX.Element => {
         </div>
       </div>
       <div className={`text text_type_main-medium mb-2`}>{name}</div>
-      {status && <div className={`text text_type_main-default mb-2`}>{status}</div>}
+      {status && (
+        <div
+          className={`${clsx({ [styles.status_done]: status === 'done' })} text text_type_main-default mb-2`}
+        >
+          {STATUS_TEXT[status]}
+        </div>
+      )}
       <div className={`${styles.content} mt-4`}>
         <div className={`${styles.images}`}>
           {images.map((el, index) => {
             if (index <= 5) {
               return (
                 <div style={{ zIndex: images.length - index }} key={index}>
-                  {index === 5 && (
+                  {images.length > 6 && index === 5 && (
                     <span className="text text_type_main-default">
                       +{images.length - 6}
                     </span>

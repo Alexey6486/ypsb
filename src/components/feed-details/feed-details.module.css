@@ -1,0 +1,24 @@
+.feed_details {
+  display: flex;
+  flex-direction: column;
+}
+
+.line {
+  display: flex;
+}
+
+.line_block {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 272px;
+}
+
+.line_list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 136px); /* auto columns */
+  grid-auto-flow: column;
+  max-height: 313px; /* adjust based on item height */
+  overflow: hidden;
+}
