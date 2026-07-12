@@ -1,7 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { useSelector, useDispatch } from 'react-redux';
 
-import feedReducer from '@services/slices/feed-slice';
 import ingredientsReducer from '@services/slices/ingredients-slice';
 import modalDealReducer from '@services/slices/modal-deal-slice';
 import modalIngredientReducer from '@services/slices/modal-ingredient-slice';
@@ -16,7 +15,6 @@ const reducer = combineReducers({
   modalOrder: modalOrderReducer,
   user: userReducer,
   modalDeal: modalDealReducer,
-  feed: feedReducer,
   socket: socketReducer,
 });
 
