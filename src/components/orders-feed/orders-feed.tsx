@@ -13,8 +13,6 @@ export const OrdersFeed = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const data = useAppSelector(selectWsData);
 
-  console.log('OrdersFeed', { data });
-
   const handleOpenModal = (value: TOrderCardUI): void => {
     dispatch(modalDealSlice.actions.setModalDealData(value));
     void navigate(`/feed/${value.id}`);

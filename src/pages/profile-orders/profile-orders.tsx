@@ -15,8 +15,6 @@ export const ProfileOrdersPage = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const data = useAppSelector(selectWsData);
 
-  console.log('ProfileOrdersPage', { data });
-
   const handleOpenModal = (value: TOrderCardUI): void => {
     dispatch(modalDealSlice.actions.setModalDealData(value));
     void navigate(`/profile/orders/${value.id}`);

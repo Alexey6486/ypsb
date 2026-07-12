@@ -123,7 +123,7 @@ export type TOrderCardUI = {
   name: string;
   date: string;
   number: number;
-  status: string;
+  status: TOrderStatusType;
   price: number;
   ingredients: TIngredientUI[];
 };

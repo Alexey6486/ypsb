@@ -205,8 +205,6 @@ export const ModalOrder = (): JSX.Element => {
     ? '/profile/orders'
     : '/feed';
 
-  console.log({ location, order });
-
   const handleCloseModal = (): void => {
     dispatch(modalDealSlice.actions.setModalDealData(null));
     // TODO проверить, мы на странице feed или profile/orders
