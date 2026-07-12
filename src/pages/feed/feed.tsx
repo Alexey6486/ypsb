@@ -15,7 +15,7 @@ export const FeedPage = (): JSX.Element => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    void dispatch(socketSlice.actions.connect(`${BASE_WS_URL}all`));
+    void dispatch(socketSlice.actions.connect(`${BASE_WS_URL}/all`));
 
     return (): void => {
       void dispatch(socketSlice.actions.disconnect());

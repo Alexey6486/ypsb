@@ -1,7 +1,11 @@
+import { useEffect } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 
 import { logoutThunk } from '@services/slices/user-slice';
+import { socketSlice } from '@services/slices/ws-slice';
 import { useAppDispatch } from '@services/store';
+import { BASE_WS_URL } from '@utils/api';
+import { TOKEN } from '@utils/constants';
 
 import type { JSX } from 'react';
 
@@ -19,6 +23,19 @@ export const ProfilePage = (): JSX.Element => {
       }
     })();
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem(TOKEN.ACCESS);
+
+    if (token) {
+      const rawToken = token.replace('Bearer ', '');
+      void dispatch(socketSlice.actions.connect(`${BASE_WS_URL}?token=${rawToken}`));
+    }
+
+    return (): void => {
+      void dispatch(socketSlice.actions.disconnect());
+    };
+  }, []);
 
   return (
     <div className={`${styles.profile} container`}>
