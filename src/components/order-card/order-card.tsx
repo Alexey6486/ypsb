@@ -2,7 +2,7 @@ import { FormattedDate } from '@krgaa/react-developer-burger-ui-components';
 import { clsx } from 'clsx';
 
 import { Price } from '@components/price/price';
-import { ORDER_STATUS_TEXT } from '@utils/types';
+import { ORDER_STATUS_TEXT } from '@utils/constants';
 
 import type { TOrderCardUI } from '@utils/types';
 import type { JSX, MouseEvent } from 'react';

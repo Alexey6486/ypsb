@@ -3,8 +3,7 @@ import { clsx } from 'clsx';
 
 import { ContentCard } from '@components/order/content-card/content-card';
 import { Price } from '@components/price/price';
-import { INGREDIENTS } from '@utils/constants';
-import { ORDER_STATUS_TEXT } from '@utils/types';
+import { INGREDIENTS, ORDER_STATUS_TEXT } from '@utils/constants';
 
 import type { TIngredientUI, TOrderCardUI } from '@utils/types';
 import type { JSX } from 'react';

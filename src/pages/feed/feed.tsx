@@ -1,13 +1,27 @@
+import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { FeedDetails } from '@components/feed-details/feed-details';
 import { OrdersFeed } from '@components/orders-feed/orders-feed';
+import { socketSlice } from '@services/slices/ws-slice';
+import { useAppDispatch } from '@services/store';
+import { BASE_WS_URL } from '@utils/api';
 
 import type { JSX } from 'react';
 
 import styles from './feed.module.css';
 
 export const FeedPage = (): JSX.Element => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    void dispatch(socketSlice.actions.connect(`${BASE_WS_URL}all`));
+
+    return (): void => {
+      void dispatch(socketSlice.actions.disconnect());
+    };
+  }, []);
+
   return (
     <>
       <main className={`${styles.feed} container mt-10`}>

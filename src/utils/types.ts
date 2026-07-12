@@ -98,18 +98,32 @@ export type TLocationState = {
   state: { from?: { pathname: string } };
 };
 
+export type TOrderStatusType = 'done' | 'pending' | 'created';
+
+export type TOrderDto = {
+  ingredients: string[];
+  _id: string;
+  status: TOrderStatusType;
+  number: number;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TOrdersResponseDto = {
+  success: boolean;
+  orders: TOrderDto[];
+  total: number;
+  totalToday: number;
+  message?: string;
+};
+
 export type TOrderCardUI = {
   id: string;
   name: string;
   date: string;
   number: number;
-  status?: string;
+  status: string;
   price: number;
   ingredients: TIngredientUI[];
 };
-
-export enum ORDER_STATUS_TEXT {
-  done = 'Выполнен',
-  pending = 'Готовится',
-  created = 'Создан',
-}
