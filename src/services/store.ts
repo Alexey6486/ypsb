@@ -8,7 +8,6 @@ import modalIngredientReducer from '@services/slices/modal-ingredient-slice';
 import modalOrderReducer from '@services/slices/modal-order-slice';
 import { profileWsSlice } from '@services/slices/profile-ws-slice';
 import userReducer from '@services/slices/user-slice';
-import socketReducer from '@services/slices/ws-slice';
 import socketMiddleware from '@services/socket/socket';
 
 import type { TWSActions } from '@utils/types';
@@ -19,7 +18,6 @@ const reducer = combineReducers({
   modalOrder: modalOrderReducer,
   user: userReducer,
   modalDeal: modalDealReducer,
-  socket: socketReducer,
   feedWs: feedWsSlice.reducer,
   profileWs: profileWsSlice.reducer,
 });

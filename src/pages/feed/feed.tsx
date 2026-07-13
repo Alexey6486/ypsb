@@ -15,6 +15,7 @@ export const FeedPage = (): JSX.Element => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    console.log('render');
     void dispatch(feedWsSlice.actions.connect(`${BASE_WS_URL}/all`));
 
     return (): void => {

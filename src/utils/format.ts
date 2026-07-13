@@ -22,7 +22,7 @@ export const formatWsData = (
     const list = [...ingredients.bun, ...ingredients.main, ...ingredients.sauce];
 
     ids.forEach((id) => {
-      const target: TIngredientUI | null = list.find((ing) => {
+      const target: TIngredientUI | undefined = list.find((ing) => {
         return ing._id === id;
       });
 

@@ -27,6 +27,7 @@ const socketMiddleware = (
 
         // Закрываем старое соединение, если есть
         if (ws) {
+          console.log('close');
           ws.close();
         }
 

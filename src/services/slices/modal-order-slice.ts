@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-import { defaultRequestOptions, request } from '@utils/api';
-import { URLS } from '@utils/constants';
+import { defaultRequestOptions, fetchWithRefresh } from '@utils/api';
+import { TOKEN, URLS } from '@utils/constants';
 
 import type { TOrder, TOrderDetails, TNullable } from '@utils/types';
 
@@ -21,14 +21,23 @@ export const sendOrderThunk = createAsyncThunk<TOrderDetails, TOrder>(
   'modalOrder/sendOrder',
   async (data: TOrder, thunkApi) => {
     try {
-      const response: TOrderDetails = await request(URLS.POST_ORDER, {
-        ...defaultRequestOptions,
-        body: JSON.stringify({
-          ingredients: data.ingredients,
-        }),
-      });
+      const token = localStorage.getItem(TOKEN.ACCESS);
+      if (token) {
+        const response: TOrderDetails = await fetchWithRefresh(URLS.POST_ORDER, {
+          ...defaultRequestOptions,
+          body: JSON.stringify({
+            ingredients: data.ingredients,
+          }),
+          headers: {
+            ...defaultRequestOptions.headers,
+            Authorization: token,
+          },
+        });
 
-      return response;
+        return response;
+      }
+
+      return null;
     } catch (error: unknown) {
       return thunkApi.rejectWithValue(error?.message ?? 'Не удалось отправить заказ.');
     }
