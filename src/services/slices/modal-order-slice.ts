@@ -22,6 +22,7 @@ export const sendOrderThunk = createAsyncThunk<TOrderDetails, TOrder>(
   async (data: TOrder, thunkApi) => {
     try {
       const token = localStorage.getItem(TOKEN.ACCESS);
+
       if (token) {
         const response: TOrderDetails = await fetchWithRefresh(URLS.POST_ORDER, {
           ...defaultRequestOptions,
