@@ -10,18 +10,22 @@ import {
   selectModalDeal,
   selectModalDealError,
 } from '@services/slices/modal-deal-slice';
-import { selectWsData } from '@services/slices/ws-slice';
 import { useAppDispatch, useAppSelector } from '@services/store';
 
+import type { TOrderCardUI } from '@utils/types';
 import type { JSX } from 'react';
-export const ModalOrder = (): JSX.Element => {
+
+type TProps = {
+  orders: TOrderCardUI[];
+};
+
+export const ModalOrder = ({ orders }: TProps): JSX.Element => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const params = useParams();
   const location = useLocation();
   const order = useAppSelector(selectModalDeal);
   const error = useAppSelector(selectModalDealError);
-  const { orders } = useAppSelector(selectWsData);
 
   const backUrl = location.pathname.includes('profile/orders')
     ? '/profile/orders'

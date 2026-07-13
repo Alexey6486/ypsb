@@ -1,3 +1,5 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
+
 export type TIngredientType = 'bun' | 'main' | 'sauce';
 
 export type TIngredientDto = {
@@ -126,4 +128,19 @@ export type TOrderCardUI = {
   status: TOrderStatusType;
   price: number;
   ingredients: TIngredientUI[];
+};
+
+export type TWsData = {
+  orders: TOrderCardUI[];
+  total: number;
+  totalToday: number;
+};
+
+export type TWSActions = {
+  disconnect: () => PayloadAction<undefined, string>;
+  onClose: () => PayloadAction<undefined, string>;
+  onError: (error: string) => PayloadAction<undefined, string>;
+  onOpen: () => PayloadAction<undefined, string>;
+  onMessage: (data: TWsData) => PayloadAction<TWsData, string>;
+  connect: (url: string) => PayloadAction<undefined, string>;
 };

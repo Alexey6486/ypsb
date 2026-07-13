@@ -2,7 +2,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 
 import { OrderCard } from '@components/order-card/order-card';
 import { modalDealSlice } from '@services/slices/modal-deal-slice';
-import { selectWsData } from '@services/slices/ws-slice';
+import { selectWsData } from '@services/slices/profile-ws-slice';
 import { useAppDispatch, useAppSelector } from '@services/store';
 
 import type { TOrderCardUI } from '@utils/types';

@@ -1,10 +1,9 @@
-import { socketSlice } from '@services/slices/ws-slice';
 import { refreshToken } from '@utils/api';
 import { formatWsData } from '@utils/format';
 
 import type { Middleware, MiddlewareAPI, PayloadAction } from '@reduxjs/toolkit';
 import type { AppDispatch, RootState } from '@services/store';
-import type { TOrdersResponseDto } from '@utils/types';
+import type { TOrdersResponseDto, TWSActions } from '@utils/types';
 
 let ws: WebSocket | null = null;
 let isConnected = false; // Флаг: считается ли пользователь подключённым?
@@ -12,14 +11,18 @@ const reconnectPeriod = 3000;
 let currentUrl = '';
 let reconnectTimerId = 0;
 
-const socketMiddleware = (withTokenRefresh: boolean): Middleware => {
+const socketMiddleware = (
+  withTokenRefresh: boolean,
+  sliceName: string,
+  sliceActions: TWSActions
+): Middleware => {
   return (store: MiddlewareAPI<AppDispatch, RootState>) =>
     (next) =>
     (action: PayloadAction) => {
       // console.log('[ws mw]', { store, next, action });
       const { type } = action;
 
-      if (type === 'socket/connect') {
+      if (type === `${sliceName}/connect`) {
         const { payload: url } = action as PayloadAction<string>;
 
         // Закрываем старое соединение, если есть
@@ -36,7 +39,7 @@ const socketMiddleware = (withTokenRefresh: boolean): Middleware => {
         ws.onopen = (): void => {
           // console.log('[ws] соединение установлено', { event });
 
-          store.dispatch(socketSlice.actions.onOpen());
+          store.dispatch(sliceActions.onOpen());
         };
 
         // Обработчик входящих сообщений
@@ -62,22 +65,20 @@ const socketMiddleware = (withTokenRefresh: boolean): Middleware => {
                       refreshedData.accessToken.replace('Bearer ', '')
                     );
 
-                    store.dispatch(socketSlice.actions.connect(wssUrl.toString()));
+                    store.dispatch(sliceActions.connect(wssUrl.toString()));
                   })
                   .catch((error: unknown) => {
                     console.log({ error });
-                    store.dispatch(
-                      socketSlice.actions.onError('Не удалось обновить токен')
-                    );
+                    store.dispatch(sliceActions.onError('Не удалось обновить токен'));
                   });
 
-                store.dispatch(socketSlice.actions.disconnect());
+                store.dispatch(sliceActions.disconnect());
                 return;
               }
 
               const ingredients = store.getState()?.ingredients?.ingredients;
               store.dispatch(
-                socketSlice.actions.onMessage({
+                sliceActions.onMessage({
                   orders: formatWsData(wsDataResponse.orders, ingredients),
                   total: wsDataResponse.total,
                   totalToday: wsDataResponse.totalToday,
@@ -86,32 +87,30 @@ const socketMiddleware = (withTokenRefresh: boolean): Middleware => {
             }
           } catch (error: unknown) {
             console.log({ error });
-            store.dispatch(
-              socketSlice.actions.onError('Ошибка парсинга сообщения от сервера')
-            );
+            store.dispatch(sliceActions.onError('Ошибка парсинга сообщения от сервера'));
           }
         };
 
         // Обработчик ошибок
         ws.onerror = (): void => {
-          store.dispatch(socketSlice.actions.onError('Ошибка WebSocket-соединения'));
+          store.dispatch(sliceActions.onError('Ошибка WebSocket-соединения'));
         };
 
         // Обработчик закрытия соединения
         ws.onclose = (): void => {
-          store.dispatch(socketSlice.actions.onClose());
+          store.dispatch(sliceActions.onClose());
           ws = null;
 
           if (isConnected) {
             reconnectTimerId = setTimeout(() => {
-              store.dispatch(socketSlice.actions.connect(currentUrl));
+              store.dispatch(sliceActions.connect(currentUrl));
             }, reconnectPeriod);
           }
         };
       }
 
       // Обработка экшена disconnect
-      if (type === 'socket/disconnect') {
+      if (type === `${sliceName}/disconnect`) {
         if (ws) {
           ws.close();
           ws = null;

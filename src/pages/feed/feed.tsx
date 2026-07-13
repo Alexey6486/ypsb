@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 
 import { FeedDetails } from '@components/feed-details/feed-details';
 import { OrdersFeed } from '@components/orders-feed/orders-feed';
-import { socketSlice } from '@services/slices/ws-slice';
+import { feedWsSlice } from '@services/slices/feed-ws-slice';
 import { useAppDispatch } from '@services/store';
 import { BASE_WS_URL } from '@utils/api';
 
@@ -15,10 +15,10 @@ export const FeedPage = (): JSX.Element => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    void dispatch(socketSlice.actions.connect(`${BASE_WS_URL}/all`));
+    void dispatch(feedWsSlice.actions.connect(`${BASE_WS_URL}/all`));
 
     return (): void => {
-      void dispatch(socketSlice.actions.disconnect());
+      void dispatch(feedWsSlice.actions.disconnect());
     };
   }, []);
 

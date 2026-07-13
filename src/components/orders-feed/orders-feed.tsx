@@ -2,8 +2,12 @@ import { Preloader } from '@krgaa/react-developer-burger-ui-components';
 import { useNavigate } from 'react-router-dom';
 
 import { OrderCard } from '@components/order-card/order-card';
+import {
+  selectWsData,
+  isWsLoading,
+  isWsConnected,
+} from '@services/slices/feed-ws-slice';
 import { modalDealSlice } from '@services/slices/modal-deal-slice';
-import { selectWsData, isWsLoading, isWsConnected } from '@services/slices/ws-slice';
 import { useAppDispatch, useAppSelector } from '@services/store';
 
 import type { TOrderCardUI } from '@utils/types';

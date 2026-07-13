@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 
+import { profileWsSlice } from '@services/slices/profile-ws-slice';
 import { logoutThunk } from '@services/slices/user-slice';
-import { socketSlice } from '@services/slices/ws-slice';
 import { useAppDispatch } from '@services/store';
 import { BASE_WS_URL } from '@utils/api';
 import { TOKEN } from '@utils/constants';
@@ -29,11 +29,11 @@ export const ProfilePage = (): JSX.Element => {
 
     if (token) {
       const rawToken = token.replace('Bearer ', '');
-      void dispatch(socketSlice.actions.connect(`${BASE_WS_URL}?token=${rawToken}`));
+      void dispatch(profileWsSlice.actions.connect(`${BASE_WS_URL}?token=${rawToken}`));
     }
 
     return (): void => {
-      void dispatch(socketSlice.actions.disconnect());
+      void dispatch(profileWsSlice.actions.disconnect());
     };
   }, []);
 

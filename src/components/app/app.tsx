@@ -3,13 +3,14 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { AppLayout } from '@components/app-layout/app-layout';
 import { ModalIngredients } from '@components/ingredient-details/modal-ingredients';
-import { ModalOrder } from '@components/order/modal-order';
 import { ProtectedRoute } from '@components/protected-route/protected-route';
 import { ErrorPage } from '@pages/error/error';
 import { FeedPage } from '@pages/feed/feed';
+import { FeedModalOrders } from '@pages/feed/feed-modal-orders';
 import { ForgotPasswordPage } from '@pages/forgot-password/forgot-password';
 import { HomePage } from '@pages/home/home';
 import { LoginPage } from '@pages/login/login';
+import { ProfileModalOrders } from '@pages/profile-orders/profile-modal-orders';
 import { ProfileOrdersPage } from '@pages/profile-orders/profile-orders';
 import { ProfileSettingsPage } from '@pages/profile-settings/profile-settings';
 import { ProfilePage } from '@pages/profile/profile';
@@ -61,7 +62,7 @@ const router = createBrowserRouter([
       {
         path: '/feed',
         element: <FeedPage />,
-        children: [{ path: ':id', element: <ModalOrder /> }],
+        children: [{ path: ':id', element: <FeedModalOrders /> }],
       },
       {
         path: '/profile',
@@ -74,7 +75,7 @@ const router = createBrowserRouter([
               {
                 path: 'orders',
                 element: <ProfileOrdersPage />,
-                children: [{ path: ':id', element: <ModalOrder /> }],
+                children: [{ path: ':id', element: <ProfileModalOrders /> }],
               },
             ],
           },

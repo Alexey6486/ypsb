@@ -1,7 +1,11 @@
 import { Preloader } from '@krgaa/react-developer-burger-ui-components';
 import { useEffect, useState } from 'react';
 
-import { isWsConnected, isWsLoading, selectWsData } from '@services/slices/ws-slice';
+import {
+  isWsConnected,
+  isWsLoading,
+  selectWsData,
+} from '@services/slices/feed-ws-slice';
 import { useAppSelector } from '@services/store';
 
 import type { JSX } from 'react';
