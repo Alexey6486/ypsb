@@ -1,6 +1,7 @@
+import { Preloader } from '@krgaa/react-developer-burger-ui-components';
 import { useEffect, useState } from 'react';
 
-import { selectWsData } from '@services/slices/ws-slice';
+import { isWsConnected, isWsLoading, selectWsData } from '@services/slices/ws-slice';
 import { useAppSelector } from '@services/store';
 
 import type { JSX } from 'react';
@@ -13,6 +14,8 @@ export const FeedDetails = (): JSX.Element => {
     pending: [],
   });
   const { orders, total, totalToday } = useAppSelector(selectWsData);
+  const isLoading = useAppSelector(isWsLoading);
+  const isConnected = useAppSelector(isWsConnected);
 
   useEffect(() => {
     if (orders) {
@@ -45,54 +48,61 @@ export const FeedDetails = (): JSX.Element => {
   }, [orders]);
 
   return (
-    <div className={styles.feed_details}>
-      <div className={`${styles.line} mb-15`}>
-        <div className={`${styles.line_block} mr-9`}>
-          <div className="text text_type_main-medium mb-6">Готовы:</div>
-          <div
-            className={styles.line_list}
-            style={{
-              gridTemplateRows: `repeat(${state.done.length > 10 ? '10' : state.done.length}, 1fr)`,
-            }}
-          >
-            {state.done.map((el, index) => (
-              <span
-                style={{ color: '#00CCCC' }}
-                className={`text text_type_digits-default ${index !== 9 && index + 1 !== state.done.length ? 'mb-2' : ''}`}
-                key={el}
-              >
-                {el}
-              </span>
-            ))}
+    <>
+      {(!isConnected || isLoading) && (
+        <div className="preloader-wrapper">
+          <Preloader />
+        </div>
+      )}
+      <div className={styles.feed_details}>
+        <div className={`${styles.line} mb-15`}>
+          <div className={`${styles.line_block} mr-9`}>
+            <div className="text text_type_main-medium mb-6">Готовы:</div>
+            <div
+              className={styles.line_list}
+              style={{
+                gridTemplateRows: `repeat(${state.done.length > 10 ? '10' : state.done.length}, 1fr)`,
+              }}
+            >
+              {state.done.map((el, index) => (
+                <span
+                  style={{ color: '#00CCCC' }}
+                  className={`text text_type_digits-default ${index !== 9 && index + 1 !== state.done.length ? 'mb-2' : ''}`}
+                  key={el}
+                >
+                  {el}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className={`${styles.line_block}`}>
+            <div className="text text_type_main-medium mb-6">В работе:</div>
+            <div
+              className={styles.line_list}
+              style={{
+                gridTemplateRows: `repeat(${state.pending.length > 10 ? '10' : state.pending.length}, 1fr)`,
+              }}
+            >
+              {state.pending.map((el, index) => (
+                <span
+                  className={`text text_type_digits-default ${index !== 9 && index + 1 !== state.pending.length ? 'mb-2' : ''}`}
+                  key={el}
+                >
+                  {el}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
-        <div className={`${styles.line_block}`}>
-          <div className="text text_type_main-medium mb-6">В работе:</div>
-          <div
-            className={styles.line_list}
-            style={{
-              gridTemplateRows: `repeat(${state.pending.length > 10 ? '10' : state.pending.length}, 1fr)`,
-            }}
-          >
-            {state.pending.map((el, index) => (
-              <span
-                className={`text text_type_digits-default ${index !== 9 && index + 1 !== state.pending.length ? 'mb-2' : ''}`}
-                key={el}
-              >
-                {el}
-              </span>
-            ))}
-          </div>
+        <div className="mb-15">
+          <div className="text text_type_main-medium">Выполнено за все время:</div>
+          <div className="text text_type_digits-large">{total}</div>
+        </div>
+        <div>
+          <div className="text text_type_main-medium">Выполнено за сегодня:</div>
+          <div className="text text_type_digits-large">{totalToday}</div>
         </div>
       </div>
-      <div className="mb-15">
-        <div className="text text_type_main-medium">Выполнено за все время:</div>
-        <div className="text text_type_digits-large">{total}</div>
-      </div>
-      <div>
-        <div className="text text_type_main-medium">Выполнено за сегодня:</div>
-        <div className="text text_type_digits-large">{totalToday}</div>
-      </div>
-    </div>
+    </>
   );
 };

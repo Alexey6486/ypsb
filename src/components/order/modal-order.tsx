@@ -1,3 +1,4 @@
+import { Preloader } from '@krgaa/react-developer-burger-ui-components';
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -7,66 +8,60 @@ import {
   fetchOrderByIdThunk,
   modalDealSlice,
   selectModalDeal,
+  selectModalDealError,
 } from '@services/slices/modal-deal-slice';
-import { isWsConnected, selectWsData } from '@services/slices/ws-slice';
+import { selectWsData } from '@services/slices/ws-slice';
 import { useAppDispatch, useAppSelector } from '@services/store';
 
 import type { JSX } from 'react';
-
 export const ModalOrder = (): JSX.Element => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const params = useParams();
   const location = useLocation();
   const order = useAppSelector(selectModalDeal);
+  const error = useAppSelector(selectModalDealError);
   const { orders } = useAppSelector(selectWsData);
-  const isConnected = useAppSelector(isWsConnected);
 
   const backUrl = location.pathname.includes('profile/orders')
     ? '/profile/orders'
     : '/feed';
 
   const handleCloseModal = (): void => {
-    dispatch(modalDealSlice.actions.setModalDealData(null));
+    dispatch(modalDealSlice.actions.closeModalDealData());
     void navigate(backUrl);
   };
 
   useEffect(() => {
-    if (order) {
+    if (order || error) {
       return;
     }
 
-    if (!order?.id && orders && params.id) {
-      const target = orders.find((el) => el.id === 'params.id');
+    if (orders?.length) {
+      const target = orders.find((el) => el.id === params.id);
 
       if (target) {
         dispatch(modalDealSlice.actions.setModalDealData(target));
         return;
-      }
-
-      if (isConnected && (orders.length > 0 || !target)) {
+      } else {
         void dispatch(fetchOrderByIdThunk(params.id));
       }
-
-      return;
-    }
-
-    if (!params.id && !order && isConnected && orders && orders.length === 0) {
-      void navigate(backUrl);
     }
   }, [orders]);
 
   return (
     <>
-      {order ? (
+      {(order ?? error) && (
         <Modal
-          title={`#${order.number}`}
+          title={order ? `#${order.number}` : ''}
           titleTypography="text_type_digits-medium"
           onClose={handleCloseModal}
         >
-          <Order order={order} />
+          {order && <Order order={order} />}
+          {error && <div className="text text_type_main-medium -mt-2">{error}</div>}
+          {!order && !error && <Preloader />}
         </Modal>
-      ) : null}
+      )}
     </>
   );
 };

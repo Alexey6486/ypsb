@@ -1,8 +1,9 @@
+import { Preloader } from '@krgaa/react-developer-burger-ui-components';
 import { useNavigate } from 'react-router-dom';
 
 import { OrderCard } from '@components/order-card/order-card';
 import { modalDealSlice } from '@services/slices/modal-deal-slice';
-import { selectWsData } from '@services/slices/ws-slice';
+import { selectWsData, isWsLoading, isWsConnected } from '@services/slices/ws-slice';
 import { useAppDispatch, useAppSelector } from '@services/store';
 
 import type { TOrderCardUI } from '@utils/types';
@@ -11,7 +12,9 @@ import type { JSX } from 'react';
 export const OrdersFeed = (): JSX.Element => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const data = useAppSelector(selectWsData);
+  const { orders } = useAppSelector(selectWsData);
+  const isLoading = useAppSelector(isWsLoading);
+  const isConnected = useAppSelector(isWsConnected);
 
   const handleOpenModal = (value: TOrderCardUI): void => {
     dispatch(modalDealSlice.actions.setModalDealData(value));
@@ -20,11 +23,14 @@ export const OrdersFeed = (): JSX.Element => {
 
   return (
     <>
-      {data.orders &&
-        data.orders.length > 0 &&
-        data.orders.map((el) => (
-          <OrderCard key={el.number} data={el} onClick={handleOpenModal} />
-        ))}
+      {(!isConnected || isLoading) && (
+        <div className="preloader-wrapper">
+          <Preloader />
+        </div>
+      )}
+      {orders?.map?.((el) => (
+        <OrderCard key={el.number} data={el} onClick={handleOpenModal} />
+      ))}
     </>
   );
 };

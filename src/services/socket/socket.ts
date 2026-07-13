@@ -16,7 +16,7 @@ const socketMiddleware = (withTokenRefresh: boolean): Middleware => {
   return (store: MiddlewareAPI<AppDispatch, RootState>) =>
     (next) =>
     (action: PayloadAction) => {
-      console.log('[ws mw]', { store, next, action });
+      // console.log('[ws mw]', { store, next, action });
       const { type } = action;
 
       if (type === 'socket/connect') {
@@ -33,8 +33,8 @@ const socketMiddleware = (withTokenRefresh: boolean): Middleware => {
         currentUrl = url;
 
         // Обработчик открытия соединения
-        ws.onopen = (event: Event): void => {
-          console.log('[ws] соединение установлено', { event });
+        ws.onopen = (): void => {
+          // console.log('[ws] соединение установлено', { event });
 
           store.dispatch(socketSlice.actions.onOpen());
         };
@@ -42,17 +42,12 @@ const socketMiddleware = (withTokenRefresh: boolean): Middleware => {
         // Обработчик входящих сообщений
         ws.onmessage = (event: MessageEvent<string>): void => {
           try {
-            console.log('[ws] получены данные', { event });
-
-            // if (event.data === 'ping') {
-            //   console.log('[ws] сервис фрагмент ping-pong');
-            //   ws.send('pong');
-            // }
+            // console.log('[ws] получены данные', { event });
 
             const response = event?.data;
             if (response) {
               const wsDataResponse = JSON.parse(response) as TOrdersResponseDto;
-              console.log('[ws] данные', { wsDataResponse });
+              // console.log('[ws] данные', { wsDataResponse });
 
               // Новая логика: проверяем токен
               if (
@@ -114,18 +109,6 @@ const socketMiddleware = (withTokenRefresh: boolean): Middleware => {
           }
         };
       }
-
-      // Обработка экшена sendMessage
-      // if (type === 'socket/sendMessage') {
-      // const { payload: data } = action as PayloadAction<any>;
-
-      // Проверяем две вещи:
-      // 1. Что ws существует (не null).
-      // 2. Что соединение открыто (readyState === WebSocket.OPEN).
-      // if (ws && ws.readyState === WebSocket.OPEN) {
-      //   ws.send(JSON.stringify(data));
-      // }
-      // }
 
       // Обработка экшена disconnect
       if (type === 'socket/disconnect') {

@@ -35,34 +35,37 @@ export const fetchOrderByIdThunk = createAsyncThunk<
   TNullable<TOrderCardUI>,
   string,
   ThunkApiConfig
->(
-  'modalDeal/fetchOrderById',
-  async (orderId: string, thunkApi: GetThunkAPI<ThunkApiConfig>) => {
-    try {
-      const { order }: { order: TOrderDto } = await request(
-        `${URLS.POST_ORDER}/${orderId}`
-      );
-      const ingredients = thunkApi.getState().ingredients.ingredients;
-      const result = formatWsData([order], ingredients);
+>('modalDeal/fetchOrderById', async (id, thunkApi: GetThunkAPI<ThunkApiConfig>) => {
+  try {
+    const { order }: { order: TOrderDto } = await request(`${URLS.POST_ORDER}/${id}`);
 
-      return result[0] ?? null;
-    } catch (error: unknown) {
-      console.log('fetch order by id', { error });
-      return thunkApi.rejectWithValue('Не удалось найти заказ.');
-    }
+    const ingredients = thunkApi.getState().ingredients.ingredients;
+    const result = formatWsData([order], ingredients);
+
+    return result[0] ?? null;
+  } catch (error: unknown) {
+    console.log('fetch order by id', { error });
+    return thunkApi.rejectWithValue('Не удалось найти заказ.');
   }
-);
+});
 
 export const modalDealSlice = createSlice({
   name: 'modalDeal',
   initialState,
   selectors: {
     selectModalDeal: (state) => state.order,
+    selectModalDealError: (state) => state.error,
   },
   reducers: {
     setModalDealData: ((state, { payload }: PayloadAction<TOrderCardUI | null>) => {
       state.order = payload;
+      state.error = null;
     }) as CaseReducer<TModalDealState, PayloadAction<TOrderCardUI | null>>,
+    closeModalDealData: (state) => {
+      state.order = null;
+      state.error = null;
+      state.isLoading = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -87,5 +90,5 @@ export const modalDealSlice = createSlice({
   },
 });
 
-export const { selectModalDeal } = modalDealSlice.selectors;
+export const { selectModalDeal, selectModalDealError } = modalDealSlice.selectors;
 export default modalDealSlice.reducer;
