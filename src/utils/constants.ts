@@ -1,4 +1,4 @@
-import type { TIngredientType } from '@utils/types';
+import type { TOrderStatusType, TIngredientType } from '@utils/types';
 
 export const URLS = {
   GET_INGREDIENTS: 'ingredients',
@@ -21,4 +21,10 @@ export const INGREDIENTS: Record<string, TIngredientType> = {
 export const TOKEN = {
   ACCESS: 'accessToken',
   REFRESH: 'refreshToken',
+} as const;
+
+export const ORDER_STATUS_TEXT: Record<TOrderStatusType, string> = {
+  done: 'Выполнен',
+  pending: 'Готовится',
+  created: 'Создан',
 } as const;

@@ -1,9 +1,35 @@
+import { Outlet, useNavigate } from 'react-router-dom';
+
+import { OrderCard } from '@components/order-card/order-card';
+import { modalDealSlice } from '@services/slices/modal-deal-slice';
+import { selectWsData } from '@services/slices/profile-ws-slice';
+import { useAppDispatch, useAppSelector } from '@services/store';
+
+import type { TOrderCardUI } from '@utils/types';
 import type { JSX } from 'react';
 
+import styles from './profile-orders.module.css';
+
 export const ProfileOrdersPage = (): JSX.Element => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const data = useAppSelector(selectWsData);
+
+  const handleOpenModal = (value: TOrderCardUI): void => {
+    dispatch(modalDealSlice.actions.setModalDealData(value));
+    void navigate(`/profile/orders/${value.id}`);
+  };
+
   return (
-    <div className="text text_type_main-default" style={{ margin: '50px auto 0' }}>
-      Страница истории заказов находится в разработке
-    </div>
+    <>
+      <div className={`${styles.container} pr-2`}>
+        {data.orders &&
+          data.orders.length > 0 &&
+          data.orders.map((el) => (
+            <OrderCard key={el.number} data={el} onClick={handleOpenModal} />
+          ))}
+      </div>
+      <Outlet />
+    </>
   );
 };

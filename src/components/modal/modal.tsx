@@ -12,11 +12,13 @@ const modalRoot = document.getElementById('modal');
 
 type TProps = {
   title: string;
+  titleTypography?: string;
   onClose: () => void;
 };
 
 export const Modal = ({
   title,
+  titleTypography,
   onClose,
   children,
 }: PropsWithChildren<TProps>): JSX.Element => {
@@ -35,7 +37,11 @@ export const Modal = ({
     <>
       <ModalOverlay onClose={onClose} />
       <div className={styles.modal_container}>
-        <h2 className={`${styles.modal_title} text text_type_main-large`}>{title}</h2>
+        <h2
+          className={`${styles.modal_title} text ${titleTypography ?? 'text_type_main-large'}`}
+        >
+          {title}
+        </h2>
         <CloseIcon type="primary" onClick={onClose} className={styles.modal_close} />
         {children}
       </div>

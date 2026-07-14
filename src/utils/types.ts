@@ -1,3 +1,5 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
+
 export type TIngredientType = 'bun' | 'main' | 'sauce';
 
 export type TIngredientDto = {
@@ -96,4 +98,49 @@ export type TProfileSettingsForm = {
 
 export type TLocationState = {
   state: { from?: { pathname: string } };
+};
+
+export type TOrderStatusType = 'done' | 'pending' | 'created';
+
+export type TOrderDto = {
+  ingredients: string[];
+  _id: string;
+  status: TOrderStatusType;
+  number: number;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TOrdersResponseDto = {
+  success: boolean;
+  orders: TOrderDto[];
+  total: number;
+  totalToday: number;
+  message?: string;
+};
+
+export type TOrderCardUI = {
+  id: string;
+  name: string;
+  date: string;
+  number: number;
+  status: TOrderStatusType;
+  price: number;
+  ingredients: TIngredientUI[];
+};
+
+export type TWsData = {
+  orders: TOrderCardUI[];
+  total: number;
+  totalToday: number;
+};
+
+export type TWSActions = {
+  disconnect: () => PayloadAction<undefined, string>;
+  onClose: () => PayloadAction<undefined, string>;
+  onError: (error: string) => PayloadAction<undefined, string>;
+  onOpen: () => PayloadAction<undefined, string>;
+  onMessage: (data: TWsData) => PayloadAction<TWsData, string>;
+  connect: (url: string) => PayloadAction<undefined, string>;
 };

@@ -1,8 +1,5 @@
-.container {
-  display: flex;
-  width: 100%;
-  max-width: 1240px;
-  margin: 120px auto 0;
+.profile {
+  margin-top: 120px;
 }
 
 .navigation {
@@ -22,6 +19,7 @@
 .content {
   display: flex;
   flex-grow: 1;
+  height: calc(100vh - 208px);
 }
 
 .note {

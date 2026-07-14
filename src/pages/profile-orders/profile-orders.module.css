@@ -1,0 +1,8 @@
+.container {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  box-sizing: border-box;
+  margin-top: -80px;
+  overflow: auto;
+}

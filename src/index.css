@@ -31,10 +31,60 @@ a {
   }
 }
 
+.container {
+  display: flex;
+  width: 100%;
+  max-width: 1240px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
 .form-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   margin: auto;
+}
+
+.status-done {
+  color: #0cc;
+}
+
+.mobile-ingredient-image {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  background: linear-gradient(63.18deg, #801ab3 0%, #4c4cff 100%);
+  border-radius: 50%;
+}
+
+.mobile-ingredient-image::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 0;
+  width: 60px;
+  height: 60px;
+  background-color: #131316;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  content: "''";
+}
+
+.mobile-ingredient-image img {
+  z-index: 0;
+  height: 50px;
+}
+
+.preloader-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

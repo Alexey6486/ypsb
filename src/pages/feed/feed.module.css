@@ -1,0 +1,21 @@
+.feed {
+  flex-wrap: wrap;
+  height: 100%;
+  overflow: hidden;
+}
+
+.title {
+  width: 100%;
+}
+
+.belt {
+  position: relative;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 580px;
+  height: 95%;
+  overflow: auto;
+}
