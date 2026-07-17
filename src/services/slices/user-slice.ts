@@ -25,6 +25,7 @@ export type TUserState = {
   isAuthChecked: boolean;
   isLoading: boolean;
   error: TNullable<string>;
+  serviceMessage: TNullable<string>;
 };
 
 const initialState: TUserState = {
@@ -32,6 +33,7 @@ const initialState: TUserState = {
   isAuthChecked: false,
   isLoading: false,
   error: null,
+  serviceMessage: null,
 };
 
 export const checkUserAuthThunk = createAsyncThunk<TUser | null>(
@@ -255,10 +257,14 @@ export const userSlice = createSlice({
         state.isLoading = false;
         state.error = null;
       })
-      .addCase(resetPasswordThunk.fulfilled, (state: TUserState) => {
-        state.isLoading = false;
-        state.error = null;
-      })
+      .addCase(
+        resetPasswordThunk.fulfilled,
+        (state: TUserState, { payload }: PayloadAction<string>) => {
+          state.isLoading = false;
+          state.error = null;
+          state.serviceMessage = payload;
+        }
+      )
       .addCase(
         editUserThunk.fulfilled,
         (state: TUserState, { payload }: PayloadAction<TUser>) => {
@@ -277,9 +283,9 @@ export const userSlice = createSlice({
       )
       .addMatcher(
         (action: UnknownAction) => action.type.endsWith('/rejected'),
-        (state: TUserState, action: { error: { message: string } }) => {
+        (state: TUserState, { payload }: PayloadAction<string>) => {
           state.isLoading = false;
-          state.error = action?.error?.message ?? '';
+          state.error = payload ?? '';
         }
       );
   },

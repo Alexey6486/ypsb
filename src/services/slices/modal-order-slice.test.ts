@@ -20,7 +20,7 @@ const order: TOrderDetails = {
 };
 
 describe('modal-order-slice', () => {
-  it('должен перевести isLoading в состояние true при выполнении запроса', () => {
+  it('тест изменения state при статусе выполнения запроса pending', () => {
     // 1. Arrange: Готовим входные данные
     const order = {};
     const action = sendOrderThunk.pending(order, undefined);
@@ -33,7 +33,7 @@ describe('modal-order-slice', () => {
     expect(nextState.error).toBeNull();
   });
 
-  it('должен сохранить результат в state при успешном запросе и перевести isLoading в состояние false', () => {
+  it('тест изменения state при статусе выполнения запроса fulfilled', () => {
     // 1. Arrange: Готовим входные данные
 
     const action = {
@@ -49,7 +49,7 @@ describe('modal-order-slice', () => {
     expect(nextState.details).toEqual(order);
   });
 
-  it('должен сохранить тектс ошибки в error и перевести isLoading в состояние false', () => {
+  it('тест изменения state при статусе выполнения запроса rejected', () => {
     // 1. Arrange: Готовим входные данные
     const errorPayload = 'Network error';
     const action = {

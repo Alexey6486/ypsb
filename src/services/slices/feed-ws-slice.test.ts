@@ -14,7 +14,7 @@ const initState: TFeedWsState = {
 };
 
 describe('feed-ws-slice', () => {
-  it('тестирование начала подключения', () => {
+  it('тест начала подключения', () => {
     // 1. Arrange: Готовим входные данные
     const action = {
       type: 'feedWs/connect',
@@ -28,7 +28,7 @@ describe('feed-ws-slice', () => {
     expect(result.isConnected).toBeFalsy();
   });
 
-  it('тестирование разрыва соединения', () => {
+  it('тест разрыва соединения', () => {
     // 1. Arrange: Готовим входные данные
     const action = {
       type: 'feedWs/disconnect',
@@ -42,7 +42,7 @@ describe('feed-ws-slice', () => {
     expect(result.isLoading).toBeFalsy();
   });
 
-  it('тестирование состояния подключенного сокета', () => {
+  it('тест состояния подключенного сокета', () => {
     // 1. Arrange: Готовим входные данные
     const action = {
       type: 'feedWs/onOpen',
@@ -56,7 +56,7 @@ describe('feed-ws-slice', () => {
     expect(result.isLoading).toBeFalsy();
   });
 
-  it('тестирование получения данных по сокету', () => {
+  it('тест получения данных по сокету', () => {
     // 1. Arrange: Готовим входные данные
     const payload = {
       orders: [order_card_test],
@@ -75,7 +75,7 @@ describe('feed-ws-slice', () => {
     expect(result.data.orders).toHaveLength(1);
   });
 
-  it('тестирование получения ошибки по сокету', () => {
+  it('тест получения ошибки по сокету', () => {
     // 1. Arrange: Готовим входные данные
     const payload = 'Network error';
     const action = {
@@ -90,7 +90,7 @@ describe('feed-ws-slice', () => {
     expect(result.error).toBe(payload);
   });
 
-  it('тестирование закрытия соединения', () => {
+  it('тест закрытия соединения', () => {
     // 1. Arrange: Готовим входные данные
     const action = {
       type: 'feedWs/onClose',

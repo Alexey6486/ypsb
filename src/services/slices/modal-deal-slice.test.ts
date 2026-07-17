@@ -12,7 +12,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 const initState: TModalDealState = { order: null, isLoading: false, error: null };
 
 describe('modal-deal-slice', () => {
-  it('должен перевести isLoading в состояние true при выполнении запроса', () => {
+  it('тест изменения state при статусе выполнения запроса pending', () => {
     // 1. Arrange: Готовим входные данные
     const id = '1';
     const action = fetchOrderByIdThunk.pending(id, undefined);
@@ -25,7 +25,7 @@ describe('modal-deal-slice', () => {
     expect(nextState.error).toBeNull();
   });
 
-  it('должен сохранить результат в state при успешном запросе и перевести isLoading в состояние false', () => {
+  it('тест изменения state при статусе выполнения запроса fulfilled', () => {
     // 1. Arrange: Готовим входные данные
     const action = {
       type: fetchOrderByIdThunk.fulfilled.type,
@@ -40,7 +40,7 @@ describe('modal-deal-slice', () => {
     expect(nextState.order).toEqual(order_card_test);
   });
 
-  it('должен сохранить тектс ошибки в error и перевести isLoading в состояние false', () => {
+  it('тест изменения state при статусе выполнения запроса rejected', () => {
     // 1. Arrange: Готовим входные данные
     const errorPayload = 'Network error';
     const action = {

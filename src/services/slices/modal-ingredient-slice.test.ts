@@ -8,7 +8,7 @@ import {
 } from './modal-ingredient-slice';
 
 describe('modal-ingredient-slice', () => {
-  it('должен возвращать начальное состояние', () => {
+  it('тест начального состояния state', () => {
     // 1. Arrange: Готовим входные данные
     const initState = undefined;
     const action = { type: '' };
@@ -20,7 +20,7 @@ describe('modal-ingredient-slice', () => {
     expect(result).toEqual({ ingredient: null });
   });
 
-  it('должен добавить ingredient в state', () => {
+  it('тест добавления ingredient в state', () => {
     // 1. Arrange: Готовим входные данные
     const initState: TModalIngredientState = { ingredient: null };
 

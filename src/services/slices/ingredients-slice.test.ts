@@ -25,7 +25,7 @@ const initState: TIngredientsState = {
 };
 
 describe('ingredients-slice', () => {
-  it('должен добавить ингридиенты в order', () => {
+  it('тест добавления ингредиента в order', () => {
     // 1. Arrange: Готовим входные данные
     const ingredientsAction = {
       type: fetchIngredientsThunk.fulfilled.type,
@@ -49,7 +49,7 @@ describe('ingredients-slice', () => {
     expect(finalState.order.bun).toEqual(ingredient_test);
   });
 
-  it('должен удалить ингридиент из order', () => {
+  it('тест удаления ингредиента из order', () => {
     // 1. Arrange: Готовим входные данные
     const ingredientsAction = {
       type: fetchIngredientsThunk.fulfilled.type,
@@ -68,7 +68,7 @@ describe('ingredients-slice', () => {
     expect(finalState.order.ingredients).toHaveLength(0);
   });
 
-  it('должен очистить order', () => {
+  it('тест очистки order', () => {
     // 1. Arrange: Готовим входные данные
     const ingredientsAction = {
       type: fetchIngredientsThunk.fulfilled.type,
@@ -97,7 +97,7 @@ describe('ingredients-slice', () => {
     expect(finalState.order.ingredients).toHaveLength(0);
   });
 
-  it('должен перевести isLoading в состояние true при выполнении запроса', () => {
+  it('тест изменения state при статусе выполнения запроса pending', () => {
     // 1. Arrange: Готовим входные данные
     const action = fetchIngredientsThunk.pending(undefined, undefined);
 
@@ -109,7 +109,7 @@ describe('ingredients-slice', () => {
     expect(nextState.error).toBeNull();
   });
 
-  it('должен сохранить результат в state при успешном запросе и перевести isLoading в состояние false', () => {
+  it('тест изменения state при статусе выполнения запроса fulfilled', () => {
     // 1. Arrange: Готовим входные данные
     const action = {
       type: fetchIngredientsThunk.fulfilled.type,
@@ -124,7 +124,7 @@ describe('ingredients-slice', () => {
     expect(nextState.ingredients).toEqual(ingredients_test);
   });
 
-  it('должен сохранить тектс ошибки в error и перевести isLoading в состояние false', () => {
+  it('тест изменения state при статусе выполнения запроса rejected', () => {
     // 1. Arrange: Готовим входные данные
     const errorPayload = 'Network error';
     const action = {

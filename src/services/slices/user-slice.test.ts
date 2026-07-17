@@ -1,27 +1,43 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { userSlice, checkUserAuthThunk } from '@services/slices/user-slice';
+import {
+  userSlice,
+  checkUserAuthThunk,
+  logoutThunk,
+  loginThunk,
+  registerThunk,
+  editUserThunk,
+  forgotPasswordThunk,
+  resetPasswordThunk,
+} from '@services/slices/user-slice';
 import { TOKEN } from '@utils/constants';
 
-import type { fetchWithRefresh } from '@utils/api';
-import type { TUser, TUserResponse } from '@utils/types';
+import type { fetchWithRefresh, request } from '@utils/api';
+import type {
+  TAuthServiceResponse,
+  TUser,
+  TUserResponse,
+  TLoginForm,
+  TLoginResponse,
+} from '@utils/types';
 import type { MockedFunction } from 'vitest';
 
-// const initState: TUserState = {
-//   user: null,
-//   isAuthChecked: false,
-//   isLoading: false,
-//   error: null,
-// };
-
-// const action = {
-//   type: 'user/',
-//   payload: {},
-// } as PayloadAction<object>;
-
+const message = 'Network error';
+const TEST_TOKEN = 'sometoken';
+const userAuth: TLoginForm = { password: 'password', email: 'email@test.ru' };
 const user: TUser = { name: 'user-name', email: 'email@test.ru' };
-const successResponse: TUserResponse = { success: true, user };
+const successUserResponse: TUserResponse = { success: true, user };
+const successAuthResponse: TLoginResponse = {
+  success: true,
+  user,
+  accessToken: TEST_TOKEN,
+  refreshToken: TEST_TOKEN,
+};
+const successServiceResponse: TAuthServiceResponse = {
+  success: true,
+  message: 'success',
+};
 
 vi.mock('@utils/api', () => ({
   request: vi.fn(),
@@ -55,12 +71,12 @@ beforeEach(() => {
 });
 
 describe('user-slice', () => {
-  it('loginThunk updates store on fulfilled', async () => {
-    mockStorage.items.set(TOKEN.ACCESS, 'my-token');
+  it('тест проверки пользователя при наличии токена', async () => {
+    mockStorage.items.set(TOKEN.ACCESS, TEST_TOKEN);
 
     const api = await import('@utils/api');
     (api.fetchWithRefresh as MockedFunction<typeof fetchWithRefresh>).mockResolvedValue(
-      successResponse
+      successUserResponse
     );
 
     const store = configureStore({
@@ -69,11 +85,12 @@ describe('user-slice', () => {
 
     const result = await store.dispatch(checkUserAuthThunk());
 
-    // 5. Проверяем статус thunk
+    // Проверяем статус thunk
     expect(result.meta.requestStatus).toBe('fulfilled');
 
-    // 6. Проверяем стейт
+    // Проверяем стейт
     const state = store.getState().user;
+
     expect(state.user).not.toBeNull();
     expect(state.isLoading).toBe(false);
     expect(state.isAuthChecked).toBe(true);
@@ -82,7 +99,28 @@ describe('user-slice', () => {
     expect(state.user).toHaveProperty('email');
   });
 
-  it('проверка запроса/ответа при отсутствии токена', async () => {
+  it('тест срабатывания catch при проверки пользователя', async () => {
+    mockStorage.items.set(TOKEN.ACCESS, TEST_TOKEN);
+
+    const api = await import('@utils/api');
+    (api.fetchWithRefresh as MockedFunction<typeof fetchWithRefresh>).mockRejectedValue(
+      new Error(message)
+    );
+
+    const store = configureStore({
+      reducer: { user: userSlice.reducer },
+    });
+
+    const result = await store.dispatch(checkUserAuthThunk());
+
+    expect(result.meta.requestStatus).toBe('rejected');
+    const state = store.getState().user;
+
+    expect(state.user).toBeNull();
+    expect(state.error).toBe(message);
+  });
+
+  it('тест проверки пользователя при отсутствии токена', async () => {
     const store = configureStore({
       reducer: { user: userSlice.reducer },
     });
@@ -93,5 +131,165 @@ describe('user-slice', () => {
 
     expect(result.meta.requestStatus).toBe('fulfilled');
     expect(state.user).toBeNull();
+  });
+
+  it('тест выхода пользователя из аккаунта', async () => {
+    mockStorage.items.set(TOKEN.ACCESS, TEST_TOKEN);
+
+    // Проверяем что токен установлен
+    expect(mockStorage.getItem(TOKEN.ACCESS)).not.toBeNull();
+
+    const api = await import('@utils/api');
+    (api.request as MockedFunction<typeof request>).mockResolvedValue(
+      successServiceResponse
+    );
+
+    const store = configureStore({
+      reducer: { user: userSlice.reducer },
+    });
+
+    const result = await store.dispatch(logoutThunk());
+
+    // Проверяем статус thunk
+    expect(result.meta.requestStatus).toBe('fulfilled');
+
+    // Проверяем стейт и mock ls
+    const state = store.getState().user;
+
+    expect(state.user).toBeNull();
+    expect(mockStorage.getItem(TOKEN.ACCESS)).toBeNull();
+  });
+
+  it('тест успешной авторизации пользователя', async () => {
+    // Проверяем что токен не установлен
+    expect(mockStorage.getItem(TOKEN.ACCESS)).toBeNull();
+
+    const api = await import('@utils/api');
+    (api.request as MockedFunction<typeof request>).mockResolvedValue(
+      successAuthResponse
+    );
+
+    const store = configureStore({
+      reducer: { user: userSlice.reducer },
+    });
+
+    const result = await store.dispatch(loginThunk(userAuth));
+
+    // Проверяем статус thunk
+    expect(result.meta.requestStatus).toBe('fulfilled');
+
+    // Проверяем стейт и mock ls
+    const state = store.getState().user;
+
+    expect(state.user).not.toBeNull();
+    expect(state.user).toHaveProperty('name');
+    expect(state.user).toHaveProperty('email');
+    expect(mockStorage.getItem(TOKEN.ACCESS)).toBe(TEST_TOKEN);
+  });
+
+  it('тест срабатывания catch при авторизации пользователя', async () => {
+    const api = await import('@utils/api');
+    (api.request as MockedFunction<typeof request>).mockRejectedValue(
+      new Error(message)
+    );
+
+    const store = configureStore({
+      reducer: { user: userSlice.reducer },
+    });
+
+    const result = await store.dispatch(loginThunk(userAuth));
+
+    expect(result.meta.requestStatus).toBe('rejected');
+
+    const state = store.getState().user;
+
+    expect(state.user).toBeNull();
+    expect(state.error).toBe(message);
+  });
+
+  it('тест успешной регистрации пользователя', async () => {
+    const api = await import('@utils/api');
+    (api.request as MockedFunction<typeof request>).mockResolvedValue(
+      successAuthResponse
+    );
+
+    const store = configureStore({
+      reducer: { user: userSlice.reducer },
+    });
+
+    const result = await store.dispatch(registerThunk(userAuth));
+
+    expect(result.meta.requestStatus).toBe('fulfilled');
+
+    const state = store.getState().user;
+
+    expect(state.user).not.toBeNull();
+    expect(state.user).toHaveProperty('name');
+    expect(state.user).toHaveProperty('email');
+    expect(mockStorage.getItem(TOKEN.ACCESS)).toBe(TEST_TOKEN);
+  });
+
+  it('тест успешного редактирования данных пользователя', async () => {
+    mockStorage.items.set(TOKEN.ACCESS, TEST_TOKEN);
+
+    const api = await import('@utils/api');
+    (api.fetchWithRefresh as MockedFunction<typeof fetchWithRefresh>).mockResolvedValue(
+      successAuthResponse
+    );
+
+    const store = configureStore({
+      reducer: { user: userSlice.reducer },
+    });
+
+    const result = await store.dispatch(editUserThunk(userAuth));
+
+    expect(result.meta.requestStatus).toBe('fulfilled');
+
+    const state = store.getState().user;
+
+    expect(state.user).not.toBeNull();
+    expect(state.user).toHaveProperty('name');
+    expect(state.user).toHaveProperty('email');
+  });
+
+  it('тест успешного запроса на смену пароля', async () => {
+    const api = await import('@utils/api');
+    (api.request as MockedFunction<typeof request>).mockResolvedValue(undefined);
+
+    const store = configureStore({
+      reducer: { user: userSlice.reducer },
+    });
+
+    const result = await store.dispatch(forgotPasswordThunk({ email: 'user@email.ru' }));
+
+    expect(result.meta.requestStatus).toBe('fulfilled');
+
+    const state = store.getState().user;
+
+    expect(state.isLoading).toBeFalsy();
+    expect(state.error).toBeNull();
+  });
+
+  it('тест успешной смены пароля', async () => {
+    const api = await import('@utils/api');
+    (api.request as MockedFunction<typeof request>).mockResolvedValue(
+      successServiceResponse
+    );
+
+    const store = configureStore({
+      reducer: { user: userSlice.reducer },
+    });
+
+    const result = await store.dispatch(
+      resetPasswordThunk({ password: 'newpassword', token: 'sometoken' })
+    );
+
+    expect(result.meta.requestStatus).toBe('fulfilled');
+
+    const state = store.getState().user;
+
+    expect(state.isLoading).toBeFalsy();
+    expect(state.error).toBeNull();
+    expect(state.serviceMessage).toBe(successServiceResponse.message);
   });
 });

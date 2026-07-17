@@ -15,7 +15,7 @@ const initState: TFeedWsState = {
 };
 
 describe('profile-ws-slice', () => {
-  it('тестирование начала подключения', () => {
+  it('тест начала подключения', () => {
     // 1. Arrange: Готовим входные данные
     const action = {
       type: 'profileWs/connect',
@@ -29,7 +29,7 @@ describe('profile-ws-slice', () => {
     expect(result.isConnected).toBeFalsy();
   });
 
-  it('тестирование разрыва соединения', () => {
+  it('тест разрыва соединения', () => {
     // 1. Arrange: Готовим входные данные
     const action = {
       type: 'profileWs/disconnect',
@@ -43,7 +43,7 @@ describe('profile-ws-slice', () => {
     expect(result.isLoading).toBeFalsy();
   });
 
-  it('тестирование состояния подключенного сокета', () => {
+  it('тест состояния подключенного сокета', () => {
     // 1. Arrange: Готовим входные данные
     const action = {
       type: 'profileWs/onOpen',
@@ -57,7 +57,7 @@ describe('profile-ws-slice', () => {
     expect(result.isLoading).toBeFalsy();
   });
 
-  it('тестирование получения данных по сокету', () => {
+  it('тест получения данных по сокету', () => {
     // 1. Arrange: Готовим входные данные
     const payload = {
       orders: [order_card_test],
@@ -76,7 +76,7 @@ describe('profile-ws-slice', () => {
     expect(result.data.orders).toHaveLength(1);
   });
 
-  it('тестирование получения ошибки по сокету', () => {
+  it('тест получения ошибки по сокету', () => {
     // 1. Arrange: Готовим входные данные
     const payload = 'Network error';
     const action = {
@@ -91,7 +91,7 @@ describe('profile-ws-slice', () => {
     expect(result.error).toBe(payload);
   });
 
-  it('тестирование закрытия соединения', () => {
+  it('тест закрытия соединения', () => {
     // 1. Arrange: Готовим входные данные
     const action = {
       type: 'profileWs/onClose',
