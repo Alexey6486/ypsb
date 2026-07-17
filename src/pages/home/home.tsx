@@ -11,7 +11,10 @@ import styles from './home.module.css';
 export const HomePage = (): JSX.Element => {
   return (
     <>
-      <h1 className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}>
+      <h1
+        data-testid="main-title"
+        className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}
+      >
         Соберите бургер
       </h1>
       <DndProvider backend={HTML5Backend}>
