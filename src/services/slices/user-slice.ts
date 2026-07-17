@@ -20,7 +20,7 @@ import type {
   TRegisterForm,
 } from '@utils/types';
 
-type TUserState = {
+export type TUserState = {
   user: TNullable<TUser>;
   isAuthChecked: boolean;
   isLoading: boolean;
