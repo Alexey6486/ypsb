@@ -200,7 +200,14 @@ export const editUserThunk = createAsyncThunk<TUser, TRegisterForm>(
 export const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    setUserAuth: (state, action: PayloadAction<TUser>) => {
+      state.user = action.payload;
+      state.isLoading = false;
+      state.isAuthChecked = true;
+      state.error = null;
+    },
+  },
   selectors: {
     selectIsLoading: (state) => state.isLoading,
     selectIsAuthChecked: (state) => state.isAuthChecked,

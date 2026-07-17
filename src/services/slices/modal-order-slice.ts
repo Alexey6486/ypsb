@@ -65,14 +65,9 @@ export const modalOrderSlice = createSlice({
       })
       .addCase(
         sendOrderThunk.rejected,
-        (
-          state: TModalOrderState,
-          action: PayloadAction<{
-            error: { message: string };
-          }>
-        ) => {
+        (state: TModalOrderState, action: PayloadAction<string>) => {
           state.isLoading = false;
-          state.error = action.payload.error.message;
+          state.error = action.payload;
         }
       )
       .addCase(

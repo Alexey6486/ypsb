@@ -26,7 +26,7 @@ export const BurgerIngredientCard = ({ data, onClick }: TProps): JSX.Element => 
 
   return (
     <div
-      className={`${styles.burger_ingredient_card} mb-8 ingredient-source`}
+      className={`${styles.burger_ingredient_card} mb-8 pw-ingredient-source`}
       onClick={handleClick}
       ref={dragRef}
       data-testid={_id}

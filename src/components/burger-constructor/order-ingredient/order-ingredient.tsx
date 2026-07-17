@@ -50,7 +50,7 @@ export const OrderIngredient = ({
 
   return (
     <div
-      className={`${commonStyles.burger_constructor_item} mb-4 mr-1 ingredient-order`}
+      className={`${commonStyles.burger_constructor_item} mb-4 mr-1 pw-ingredient-order`}
       ref={(node) => dragRef(dropRef(node))}
       style={{ opacity: dragRef.isDrag ? 0.8 : 1 }}
     >

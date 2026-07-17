@@ -12,7 +12,7 @@ export const HomePage = (): JSX.Element => {
   return (
     <>
       <h1
-        data-testid="main-title"
+        data-testid="pw-title"
         className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}
       >
         Соберите бургер
