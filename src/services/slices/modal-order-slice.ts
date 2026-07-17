@@ -23,22 +23,18 @@ export const sendOrderThunk = createAsyncThunk<TOrderDetails, TOrder>(
     try {
       const token = localStorage.getItem(TOKEN.ACCESS);
 
-      if (token) {
-        const response: TOrderDetails = await fetchWithRefresh(URLS.POST_ORDER, {
-          ...defaultRequestOptions,
-          body: JSON.stringify({
-            ingredients: data.ingredients,
-          }),
-          headers: {
-            ...defaultRequestOptions.headers,
-            Authorization: token,
-          },
-        });
+      const response: TOrderDetails = await fetchWithRefresh(URLS.POST_ORDER, {
+        ...defaultRequestOptions,
+        body: JSON.stringify({
+          ingredients: data.ingredients,
+        }),
+        headers: {
+          ...defaultRequestOptions.headers,
+          Authorization: token ?? '',
+        },
+      });
 
-        return response;
-      }
-
-      return null;
+      return response;
     } catch (error: unknown) {
       return thunkApi.rejectWithValue(error?.message ?? 'Не удалось отправить заказ.');
     }
