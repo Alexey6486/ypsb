@@ -23,76 +23,71 @@ import { useAppDispatch } from '@services/store';
 
 import type { JSX } from 'react';
 
-const router = createBrowserRouter(
-  [
-    {
-      path: '/',
-      element: <AppLayout />,
-      children: [
-        {
-          path: '/login',
-          element: <ProtectedRoute onlyUnAuth={true} />,
-          children: [{ index: true, element: <LoginPage /> }],
-        },
-        {
-          path: '/register',
-          element: <ProtectedRoute onlyUnAuth={true} />,
-          children: [{ index: true, element: <RegisterPage /> }],
-        },
-        {
-          path: '/forgot-password',
-          element: <ProtectedRoute onlyUnAuth={true} />,
-          children: [{ index: true, element: <ForgotPasswordPage /> }],
-        },
-        {
-          path: '/reset-password',
-          element: <ProtectedRoute onlyUnAuth={true} />,
-          children: [
-            {
-              path: '/reset-password',
-              element: <ProtectedReset />,
-              children: [{ index: true, element: <ResetPasswordPage /> }],
-            },
-          ],
-        },
-        {
-          path: '/',
-          element: <HomePage />,
-          children: [{ path: 'ingredients/:id', element: <ModalIngredients /> }],
-        },
-        {
-          path: '/feed',
-          element: <FeedPage />,
-          children: [{ path: ':id', element: <FeedModalOrders /> }],
-        },
-        {
-          path: '/profile',
-          element: <ProtectedRoute onlyUnAuth={false} />,
-          children: [
-            {
-              element: <ProfilePage />,
-              children: [
-                { index: true, element: <ProfileSettingsPage /> },
-                {
-                  path: 'orders',
-                  element: <ProfileOrdersPage />,
-                  children: [{ path: ':id', element: <ProfileModalOrders /> }],
-                },
-              ],
-            },
-          ],
-        },
-        {
-          path: '*',
-          element: <ErrorPage code="404" text="Страница не найдена" />,
-        },
-      ],
-    },
-  ],
+const router = createBrowserRouter([
   {
-    basename: import.meta.env.BASE_URL,
-  }
-);
+    path: '/',
+    element: <AppLayout />,
+    children: [
+      {
+        path: '/login',
+        element: <ProtectedRoute onlyUnAuth={true} />,
+        children: [{ index: true, element: <LoginPage /> }],
+      },
+      {
+        path: '/register',
+        element: <ProtectedRoute onlyUnAuth={true} />,
+        children: [{ index: true, element: <RegisterPage /> }],
+      },
+      {
+        path: '/forgot-password',
+        element: <ProtectedRoute onlyUnAuth={true} />,
+        children: [{ index: true, element: <ForgotPasswordPage /> }],
+      },
+      {
+        path: '/reset-password',
+        element: <ProtectedRoute onlyUnAuth={true} />,
+        children: [
+          {
+            path: '/reset-password',
+            element: <ProtectedReset />,
+            children: [{ index: true, element: <ResetPasswordPage /> }],
+          },
+        ],
+      },
+      {
+        path: '/',
+        element: <HomePage />,
+        children: [{ path: 'ingredients/:id', element: <ModalIngredients /> }],
+      },
+      {
+        path: '/feed',
+        element: <FeedPage />,
+        children: [{ path: ':id', element: <FeedModalOrders /> }],
+      },
+      {
+        path: '/profile',
+        element: <ProtectedRoute onlyUnAuth={false} />,
+        children: [
+          {
+            element: <ProfilePage />,
+            children: [
+              { index: true, element: <ProfileSettingsPage /> },
+              {
+                path: 'orders',
+                element: <ProfileOrdersPage />,
+                children: [{ path: ':id', element: <ProfileModalOrders /> }],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: '*',
+        element: <ErrorPage code="404" text="Страница не найдена" />,
+      },
+    ],
+  },
+]);
 
 export const App = (): JSX.Element => {
   const dispatch = useAppDispatch();
