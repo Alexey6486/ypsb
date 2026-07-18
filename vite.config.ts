@@ -19,7 +19,7 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
-  base: '',
+  base: '/ypsb/',
   test: {
     globals: true,
     environment: 'jsdom',
