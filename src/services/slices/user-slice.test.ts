@@ -13,6 +13,7 @@ import {
 } from '@services/slices/user-slice';
 import { TOKEN } from '@utils/constants';
 
+import type { TUserState } from '@services/slices/user-slice';
 import type { fetchWithRefresh, request } from '@utils/api';
 import type {
   TAuthServiceResponse,
@@ -22,6 +23,14 @@ import type {
   TLoginResponse,
 } from '@utils/types';
 import type { MockedFunction } from 'vitest';
+
+const initState: TUserState = {
+  user: null,
+  isAuthChecked: false,
+  isLoading: false,
+  error: null,
+  serviceMessage: null,
+};
 
 const message = 'Network error';
 const TEST_TOKEN = 'sometoken';
@@ -71,6 +80,17 @@ beforeEach(() => {
 });
 
 describe('user-slice', () => {
+  it('тест начального состояния state', () => {
+    // 1. Arrange: Готовим входные данные
+    const initTestState = undefined;
+    const action = { type: '' };
+
+    // 2. Act: Запускаем редьюсер
+    const result = userSlice.reducer(initTestState, action);
+
+    // 3. Assert: Проверяем результат
+    expect(result).toEqual(initState);
+  });
   it('тест проверки пользователя при наличии токена', async () => {
     mockStorage.items.set(TOKEN.ACCESS, TEST_TOKEN);
 

@@ -25,6 +25,17 @@ const initState: TIngredientsState = {
 };
 
 describe('ingredients-slice', () => {
+  it('тест начального состояния state', () => {
+    // 1. Arrange: Готовим входные данные
+    const initTestState = undefined;
+    const action = { type: '' };
+
+    // 2. Act: Запускаем редьюсер
+    const result = ingredientsSlice.reducer(initTestState, action);
+
+    // 3. Assert: Проверяем результат
+    expect(result).toEqual(initState);
+  });
   it('тест добавления ингредиента в order', () => {
     // 1. Arrange: Готовим входные данные
     const ingredientsAction = {

@@ -10,8 +10,13 @@ type TProps = {
 
 export const OrderDetails = ({ orderId }: TProps): JSX.Element => {
   return (
-    <div className={styles.order_details_container} data-testid="pw-modal-order">
-      <p className="text text_type_digits-large mb-8">{orderId}</p>
+    <div className={styles.order_details_container}>
+      <p
+        className="text text_type_digits-large mb-8"
+        data-testid="pw-modal-order-number"
+      >
+        {orderId}
+      </p>
       <p className="text text_type_main-medium mb-15">идентификатор заказа</p>
       <div className={`${styles.order_details_graphics} mb-15`}>
         <img src="/waves.svg" alt="waves-image" />

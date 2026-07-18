@@ -49,7 +49,7 @@ test('тест ингредиентов в заказе', async ({ page }) => {
 //   await bun.dragTo(orderZone);
 //   await content.dragTo(orderZone);
 //
-//   // т.к. добавили булку, то их появится в заказе две + 1 ингредиент
+//   // получаем три ингредиента, т.к. булки будет две
 //   await expect(orderIngredients).toHaveCount(3);
 //
 //   const btn = await page.getByTestId('pw-send-order');
@@ -89,7 +89,7 @@ test('тест ингредиентов в заказе', async ({ page }) => {
 //   await bun.dragTo(orderZone);
 //   await content.dragTo(orderZone);
 //
-//   // т.к. добавили булку, то их появится в заказе две + 1 ингредиент
+//   // получаем три ингредиента, т.к. булки будет две
 //   await expect(orderIngredients).toHaveCount(3);
 //
 //   const btn = await page.getByTestId('pw-send-order');
@@ -111,7 +111,7 @@ test('тест ингредиентов в заказе', async ({ page }) => {
 //
 //   await btn2.click();
 //
-//   const modal = await page.getByTestId('pw-modal-order');
+//   const modal = await page.getByTestId('pw-modal');
 //
 //   await expect(modal).toBeVisible({ timeout: 10000 });
 // });
@@ -120,6 +120,11 @@ test('тест перемещения ингредиента в заказ и с
   await page.addInitScript(() => {
     localStorage.setItem(TOKEN.ACCESS, 'test');
     localStorage.setItem(TOKEN.REFRESH, 'test');
+  });
+
+  await page.routeFromHAR('./e2e/hars/example.har', {
+    url: '**/api/**',  // только API-запросы из HAR
+    update: false,     // читать из файла, не перезаписывать
   });
 
   await page.goto('/');
@@ -141,16 +146,39 @@ test('тест перемещения ингредиента в заказ и с
   }, mockUser);
 
   // убеждаемся, что ингредиенты пришли с сервера
-  const response = await page.waitForResponse(r =>
-    r.url().includes('ingredients') && r.status() === 200
-  );
-
-  const data = await response.json();
-  expect(data.data.length).toBeGreaterThan(0);
+  // const response = await page.waitForResponse(r =>
+  //   r.url().includes('ingredients') && r.status() === 200
+  // );
+  //
+  // const data = await response.json();
+  // expect(data.data.length).toBeGreaterThan(0);
 
   // убеждаемся, что ингредиенты появились на странице
   const ingredients = await page.locator('.pw-ingredient-source');
-  await expect(ingredients.first()).toBeVisible({ timeout: 10000 });
+  const first = ingredients.first();
+  await expect(first).toBeVisible({ timeout: 10000 });
+
+  await first.click();
+
+  const modalIngredient = await page.getByTestId('pw-modal');
+
+  await expect(modalIngredient).toBeVisible({ timeout: 10000 });
+
+  const modalIngredientHtml = await modalIngredient.evaluate((el) => el.outerHTML)
+  console.log({ modalIngredientHtml });
+
+  const modalIngredientName = await page.getByTestId('pw-ingredient-name');
+  const modalIngredientNameText = await modalIngredientName.textContent();
+  expect(modalIngredientNameText?.length).toBeGreaterThan(0);
+
+  const modalIngredientCalories = await page.getByTestId('pw-ingredient-calories');
+  const modalIngredientCaloriesText = await modalIngredientCalories.textContent();
+  expect(modalIngredientCaloriesText?.length).toBeGreaterThan(0);
+
+  const modalIngredientClose = await page.getByTestId('pw-modal-close');
+  await modalIngredientClose.click();
+
+  await expect(modalIngredient).toHaveCount(0);
 
   // проверяем, что в заказе ничего нет
   const orderZone = await page.locator('.pw-drop-zone');
@@ -158,13 +186,14 @@ test('тест перемещения ингредиента в заказ и с
   const orderIngredients = await page.locator('.pw-ingredient-order');
   await expect(orderIngredients).toHaveCount(0);
 
-  // перетаскиваем два элемента
+  // перетаскиваем два ингредиента
   const bun = ingredients.first();
   const content = ingredients.nth(2);
 
   await bun.dragTo(orderZone);
   await content.dragTo(orderZone);
 
+  // получаем три ингредиента, т.к. булки будет две
   await expect(orderIngredients).toHaveCount(3);
 
   const btn = await page.getByTestId('pw-send-order');
@@ -173,11 +202,20 @@ test('тест перемещения ингредиента в заказ и с
 
   await btn.click();
 
-  const modal = await page.getByTestId('pw-modal-order');
+  const modalOrder = await page.getByTestId('pw-modal');
 
-  await expect(modal).toBeVisible({ timeout: 10000 });
+  await expect(modalOrder).toBeVisible({ timeout: 10000 });
 
-  const html = await modal.evaluate((el) => el.outerHTML)
-  console.log({ html });
+  const modalOrderHtml = await modalOrder.evaluate((el) => el.outerHTML)
+  console.log({ modalOrderHtml });
+
+  const modalOrderNumber = await page.getByTestId('pw-modal-order-number');
+  const modalOrderNumberText = await modalOrderNumber.textContent();
+  expect(modalOrderNumberText?.length).toBeGreaterThan(0);
+
+  const modalOrderClose = await page.getByTestId('pw-modal-close');
+  await modalOrderClose.click();
+
+  await expect(modalOrder).toHaveCount(0);
 });
 

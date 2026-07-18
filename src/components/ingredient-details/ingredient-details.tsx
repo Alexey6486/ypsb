@@ -13,11 +13,18 @@ export const IngredientDetails = ({
   return (
     <div className={styles.ingredient_details_container}>
       <img className="mb-4" src={image_large} alt="ingredient-image" />
-      <p className="text text_type_main-medium mb-8">{name}</p>
+      <p className="text text_type_main-medium mb-8" data-testid="pw-ingredient-name">
+        {name}
+      </p>
       <div className={`${styles.ingredient_details_elements} mb-5`}>
         <div>
           <p className="text text_type_main-default text_color_inactive">Калории,ккал</p>
-          <p className="text text_type_digits-default text_color_inactive">{calories}</p>
+          <p
+            className="text text_type_digits-default text_color_inactive"
+            data-testid="pw-ingredient-calories"
+          >
+            {calories}
+          </p>
         </div>
         <div>
           <p className="text text_type_main-default text_color_inactive">Белки, г</p>

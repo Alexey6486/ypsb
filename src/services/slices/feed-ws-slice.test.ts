@@ -14,6 +14,17 @@ const initState: TFeedWsState = {
 };
 
 describe('feed-ws-slice', () => {
+  it('тест начального состояния state', () => {
+    // 1. Arrange: Готовим входные данные
+    const initTestState = undefined;
+    const action = { type: '' };
+
+    // 2. Act: Запускаем редьюсер
+    const result = feedWsSlice.reducer(initTestState, action);
+
+    // 3. Assert: Проверяем результат
+    expect(result).toEqual(initState);
+  });
   it('тест начала подключения', () => {
     // 1. Arrange: Готовим входные данные
     const action = {

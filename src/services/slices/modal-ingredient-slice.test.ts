@@ -10,11 +10,11 @@ import {
 describe('modal-ingredient-slice', () => {
   it('тест начального состояния state', () => {
     // 1. Arrange: Готовим входные данные
-    const initState = undefined;
+    const initTestState = undefined;
     const action = { type: '' };
 
     // 2. Act: Запускаем редьюсер
-    const result = modalIngredientSlice.reducer(initState, action);
+    const result = modalIngredientSlice.reducer(initTestState, action);
 
     // 3. Assert: Проверяем результат
     expect(result).toEqual({ ingredient: null });

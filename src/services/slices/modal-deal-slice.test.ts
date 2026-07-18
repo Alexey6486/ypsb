@@ -12,6 +12,17 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 const initState: TModalDealState = { order: null, isLoading: false, error: null };
 
 describe('modal-deal-slice', () => {
+  it('тест начального состояния state', () => {
+    // 1. Arrange: Готовим входные данные
+    const initTestState = undefined;
+    const action = { type: '' };
+
+    // 2. Act: Запускаем редьюсер
+    const result = modalDealSlice.reducer(initTestState, action);
+
+    // 3. Assert: Проверяем результат
+    expect(result).toEqual(initState);
+  });
   it('тест изменения state при статусе выполнения запроса pending', () => {
     // 1. Arrange: Готовим входные данные
     const id = '1';

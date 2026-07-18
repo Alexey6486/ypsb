@@ -20,6 +20,17 @@ const order: TOrderDetails = {
 };
 
 describe('modal-order-slice', () => {
+  it('тест начального состояния state', () => {
+    // 1. Arrange: Готовим входные данные
+    const initTestState = undefined;
+    const action = { type: '' };
+
+    // 2. Act: Запускаем редьюсер
+    const result = modalOrderSlice.reducer(initTestState, action);
+
+    // 3. Assert: Проверяем результат
+    expect(result).toEqual(initState);
+  });
   it('тест изменения state при статусе выполнения запроса pending', () => {
     // 1. Arrange: Готовим входные данные
     const order = {};
@@ -54,8 +65,8 @@ describe('modal-order-slice', () => {
     const errorPayload = 'Network error';
     const action = {
       type: sendOrderThunk.rejected.type,
-      payload: { error: { message: errorPayload } },
-    } as PayloadAction<{ error: { message: string } }>;
+      payload: errorPayload,
+    } as PayloadAction<string>;
 
     // 2. Act: Запускаем редьюсер
     const nextState = modalOrderSlice.reducer(initState, action);
