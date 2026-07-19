@@ -9,7 +9,7 @@ export type TFeedWsState = {
   isLoading: boolean;
 };
 
-const initialState: TFeedWsState = {
+export const initialState: TFeedWsState = {
   isConnected: false,
   data: { orders: [], total: 0, totalToday: 0 },
   error: null,

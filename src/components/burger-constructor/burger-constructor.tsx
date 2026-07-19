@@ -117,7 +117,7 @@ export const BurgerConstructor = (): JSX.Element => {
     <>
       <section className={`${styles.burger_constructor} mb-10 pt-5 pr-4 pb-10 pl-4`}>
         <div
-          className={`${clsx({ [styles.burger_constructor_hover]: isOver })} mb-10`}
+          className={`${clsx({ [styles.burger_constructor_hover]: isOver })} mb-10 pw-drop-zone`}
           ref={dropTarget}
         >
           {isLoading && (
@@ -134,6 +134,7 @@ export const BurgerConstructor = (): JSX.Element => {
                   text={`${bun.name} (верх)`}
                   thumbnail={bun.image_mobile}
                   type="top"
+                  extraClass="pw-ingredient-order"
                 />
               ) : (
                 <ConstructorPlaceholder type="top" text="Выберете булки" />
@@ -174,6 +175,7 @@ export const BurgerConstructor = (): JSX.Element => {
                   text={`${bun.name} (низ)`}
                   thumbnail={bun.image_mobile}
                   type="bottom"
+                  extraClass="pw-ingredient-order"
                 />
               ) : (
                 <ConstructorPlaceholder type="bottom" text="Выберете булки" />
@@ -192,7 +194,7 @@ export const BurgerConstructor = (): JSX.Element => {
             size="large"
             type="primary"
             htmlType="button"
-            extraClass="ml-10"
+            extraClass="ml-10 pw-send-order"
           >
             Оформить заказ
           </Button>

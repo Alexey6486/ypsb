@@ -14,7 +14,7 @@ type TProps = {
 };
 
 export const BurgerIngredientCard = ({ data, onClick }: TProps): JSX.Element => {
-  const { name, price, image, counter } = data;
+  const { name, price, image, counter, _id } = data;
   const [, dragRef] = useDrag({
     type: 'ingredient',
     item: { ingredient: data },
@@ -26,9 +26,10 @@ export const BurgerIngredientCard = ({ data, onClick }: TProps): JSX.Element => 
 
   return (
     <div
-      className={`${styles.burger_ingredient_card} mb-8`}
+      className={`${styles.burger_ingredient_card} mb-8 pw-ingredient-source`}
       onClick={handleClick}
       ref={dragRef}
+      data-testid={_id}
     >
       {counter > 0 && <Counter count={counter} size="default" />}
       <div className="pl-4 pr-4">

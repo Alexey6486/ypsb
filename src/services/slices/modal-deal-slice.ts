@@ -19,7 +19,7 @@ export type TModalDealState = {
   error: TNullable<string>;
 };
 
-const initialState: TModalDealState = {
+export const initialState: TModalDealState = {
   order: null,
   isLoading: false,
   error: null,

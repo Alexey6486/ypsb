@@ -9,6 +9,7 @@
     "check": "stylelint && eslint src/",
     "e2e": "npx playwright test",
     "e2e:ui": "npx playwright test --ui",
+    "e2e:gen": "npx playwright codegen",
     "dev": "vite",
     "deploy": "gh-pages -d dist",
     "eslint": "eslint ./src/ --fix",
@@ -32,8 +33,8 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.2.7",
     "react-redux": "^9.3.0",
-    "redux": "^5.0.1",
-    "react-router-dom": "^7.9.3"
+    "react-router-dom": "^7.9.3",
+    "redux": "^5.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

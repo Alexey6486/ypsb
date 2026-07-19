@@ -31,6 +31,15 @@ export const store = configureStore({
     ),
 });
 
+if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
+  (window as unknown).appStore = store;
+
+  const { userSlice } = await import('@services/slices/user-slice');
+  (window as unknown).testActions = {
+    setUserAuth: userSlice.actions.setUserAuth,
+  };
+}
+
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 

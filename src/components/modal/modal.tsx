@@ -36,13 +36,19 @@ export const Modal = ({
   return createPortal(
     <>
       <ModalOverlay onClose={onClose} />
-      <div className={styles.modal_container}>
+      <div className={styles.modal_container} data-testid="pw-modal">
         <h2
           className={`${styles.modal_title} text ${titleTypography ?? 'text_type_main-large'}`}
         >
           {title}
         </h2>
-        <CloseIcon type="primary" onClick={onClose} className={styles.modal_close} />
+        <div
+          data-testid="pw-modal-close"
+          onClick={onClose}
+          className={styles.modal_close}
+        >
+          <CloseIcon type="primary" />
+        </div>
         {children}
       </div>
     </>,

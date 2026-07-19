@@ -36,3 +36,6 @@
 		'@utils': path.resolve(__dirname, './src/utils'),
 	},
 ```
+
+**Ссылка на проект:**
+http://158.160.186.59/

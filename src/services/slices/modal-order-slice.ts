@@ -11,7 +11,7 @@ export type TModalOrderState = {
   error: TNullable<string>;
 };
 
-const initialState: TModalOrderState = {
+export const initialState: TModalOrderState = {
   details: null,
   isLoading: false,
   error: null,
@@ -23,22 +23,18 @@ export const sendOrderThunk = createAsyncThunk<TOrderDetails, TOrder>(
     try {
       const token = localStorage.getItem(TOKEN.ACCESS);
 
-      if (token) {
-        const response: TOrderDetails = await fetchWithRefresh(URLS.POST_ORDER, {
-          ...defaultRequestOptions,
-          body: JSON.stringify({
-            ingredients: data.ingredients,
-          }),
-          headers: {
-            ...defaultRequestOptions.headers,
-            Authorization: token,
-          },
-        });
+      const response: TOrderDetails = await fetchWithRefresh(URLS.POST_ORDER, {
+        ...defaultRequestOptions,
+        body: JSON.stringify({
+          ingredients: data.ingredients,
+        }),
+        headers: {
+          ...defaultRequestOptions.headers,
+          Authorization: token ?? '',
+        },
+      });
 
-        return response;
-      }
-
-      return null;
+      return response;
     } catch (error: unknown) {
       return thunkApi.rejectWithValue(error?.message ?? 'Не удалось отправить заказ.');
     }
@@ -65,14 +61,9 @@ export const modalOrderSlice = createSlice({
       })
       .addCase(
         sendOrderThunk.rejected,
-        (
-          state: TModalOrderState,
-          action: PayloadAction<{
-            error: { message: string };
-          }>
-        ) => {
+        (state: TModalOrderState, action: PayloadAction<string>) => {
           state.isLoading = false;
-          state.error = action.payload.error.message;
+          state.error = action.payload;
         }
       )
       .addCase(

@@ -9,7 +9,7 @@ type TProfileWsState = {
   isLoading: boolean;
 };
 
-const initialState: TProfileWsState = {
+export const initialState: TProfileWsState = {
   isConnected: false,
   data: { orders: [], total: 0, totalToday: 0 },
   error: null,

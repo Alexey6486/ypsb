@@ -26,7 +26,7 @@ export type TIngredientsState = {
   error: TNullable<string>;
 };
 
-const initialState: TIngredientsState = {
+export const initialState: TIngredientsState = {
   ingredients: null,
   order: {
     bun: null,
