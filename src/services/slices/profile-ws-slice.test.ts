@@ -1,18 +1,10 @@
 import { describe, it, expect } from 'vitest';
 
-import { profileWsSlice } from '@services/slices/profile-ws-slice';
+import { initialState, profileWsSlice } from '@services/slices/profile-ws-slice';
 import { order_card_test } from '@utils/constants';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { TFeedWsState } from '@services/slices/feed-ws-slice';
 import type { TWsData } from '@utils/types';
-
-const initState: TFeedWsState = {
-  isConnected: false,
-  data: { orders: [], total: 0, totalToday: 0 },
-  error: null,
-  isLoading: false,
-};
 
 describe('profile-ws-slice', () => {
   it('тест начального состояния state', () => {
@@ -24,7 +16,7 @@ describe('profile-ws-slice', () => {
     const result = profileWsSlice.reducer(initTestState, action);
 
     // 3. Assert: Проверяем результат
-    expect(result).toEqual(initState);
+    expect(result).toEqual(initialState);
   });
   it('тест начала подключения', () => {
     // 1. Arrange: Готовим входные данные
@@ -33,7 +25,7 @@ describe('profile-ws-slice', () => {
     };
 
     // 2. Act: Запускаем редьюсер
-    const result = profileWsSlice.reducer(initState, action);
+    const result = profileWsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(result.isLoading).toBeTruthy();
@@ -47,7 +39,7 @@ describe('profile-ws-slice', () => {
     };
 
     // 2. Act: Запускаем редьюсер
-    const result = profileWsSlice.reducer(initState, action);
+    const result = profileWsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(result.isConnected).toBeFalsy();
@@ -61,7 +53,7 @@ describe('profile-ws-slice', () => {
     };
 
     // 2. Act: Запускаем редьюсер
-    const result = profileWsSlice.reducer(initState, action);
+    const result = profileWsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(result.isConnected).toBeTruthy();
@@ -81,7 +73,7 @@ describe('profile-ws-slice', () => {
     } as PayloadAction<TWsData>;
 
     // 2. Act: Запускаем редьюсер
-    const result = profileWsSlice.reducer(initState, action);
+    const result = profileWsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(result.data.orders).toHaveLength(1);
@@ -96,7 +88,7 @@ describe('profile-ws-slice', () => {
     } as PayloadAction<string>;
 
     // 2. Act: Запускаем редьюсер
-    const result = profileWsSlice.reducer(initState, action);
+    const result = profileWsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(result.error).toBe(payload);
@@ -109,7 +101,7 @@ describe('profile-ws-slice', () => {
     };
 
     // 2. Act: Запускаем редьюсер
-    const result = profileWsSlice.reducer(initState, action);
+    const result = profileWsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(result.isConnected).toBeFalsy();

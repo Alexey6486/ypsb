@@ -1,17 +1,10 @@
 import { describe, it, expect } from 'vitest';
 
-import { feedWsSlice, type TFeedWsState } from '@services/slices/feed-ws-slice';
+import { feedWsSlice, initialState } from '@services/slices/feed-ws-slice';
 import { order_card_test } from '@utils/constants';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { TWsData } from '@utils/types';
-
-const initState: TFeedWsState = {
-  isConnected: false,
-  data: { orders: [], total: 0, totalToday: 0 },
-  error: null,
-  isLoading: false,
-};
 
 describe('feed-ws-slice', () => {
   it('тест начального состояния state', () => {
@@ -23,7 +16,7 @@ describe('feed-ws-slice', () => {
     const result = feedWsSlice.reducer(initTestState, action);
 
     // 3. Assert: Проверяем результат
-    expect(result).toEqual(initState);
+    expect(result).toEqual(initialState);
   });
   it('тест начала подключения', () => {
     // 1. Arrange: Готовим входные данные
@@ -32,7 +25,7 @@ describe('feed-ws-slice', () => {
     };
 
     // 2. Act: Запускаем редьюсер
-    const result = feedWsSlice.reducer(initState, action);
+    const result = feedWsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(result.isLoading).toBeTruthy();
@@ -46,7 +39,7 @@ describe('feed-ws-slice', () => {
     };
 
     // 2. Act: Запускаем редьюсер
-    const result = feedWsSlice.reducer(initState, action);
+    const result = feedWsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(result.isConnected).toBeFalsy();
@@ -60,7 +53,7 @@ describe('feed-ws-slice', () => {
     };
 
     // 2. Act: Запускаем редьюсер
-    const result = feedWsSlice.reducer(initState, action);
+    const result = feedWsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(result.isConnected).toBeTruthy();
@@ -80,7 +73,7 @@ describe('feed-ws-slice', () => {
     } as PayloadAction<TWsData>;
 
     // 2. Act: Запускаем редьюсер
-    const result = feedWsSlice.reducer(initState, action);
+    const result = feedWsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(result.data.orders).toHaveLength(1);
@@ -95,7 +88,7 @@ describe('feed-ws-slice', () => {
     } as PayloadAction<string>;
 
     // 2. Act: Запускаем редьюсер
-    const result = feedWsSlice.reducer(initState, action);
+    const result = feedWsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(result.error).toBe(payload);
@@ -108,7 +101,7 @@ describe('feed-ws-slice', () => {
     };
 
     // 2. Act: Запускаем редьюсер
-    const result = feedWsSlice.reducer(initState, action);
+    const result = feedWsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(result.isConnected).toBeFalsy();

@@ -6,7 +6,7 @@ export type TModalIngredientState = {
   ingredient: TIngredientUI | null;
 };
 
-const initialState: TModalIngredientState = {
+export const initialState: TModalIngredientState = {
   ingredient: null,
 };
 

@@ -2,10 +2,7 @@ import { describe, it, expect } from 'vitest';
 
 import { ingredient_test } from '@utils/constants';
 
-import {
-  modalIngredientSlice,
-  type TModalIngredientState,
-} from './modal-ingredient-slice';
+import { initialState, modalIngredientSlice } from './modal-ingredient-slice';
 
 describe('modal-ingredient-slice', () => {
   it('тест начального состояния state', () => {
@@ -21,12 +18,9 @@ describe('modal-ingredient-slice', () => {
   });
 
   it('тест добавления ingredient в state', () => {
-    // 1. Arrange: Готовим входные данные
-    const initState: TModalIngredientState = { ingredient: null };
-
     // 2. Act: Запускаем редьюсер
     const result = modalIngredientSlice.reducer(
-      initState,
+      initialState,
       modalIngredientSlice.actions.setModalIngredientData(ingredient_test)
     );
 

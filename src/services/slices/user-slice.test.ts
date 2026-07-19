@@ -10,10 +10,10 @@ import {
   editUserThunk,
   forgotPasswordThunk,
   resetPasswordThunk,
+  initialState,
 } from '@services/slices/user-slice';
 import { TOKEN } from '@utils/constants';
 
-import type { TUserState } from '@services/slices/user-slice';
 import type { fetchWithRefresh, request } from '@utils/api';
 import type {
   TAuthServiceResponse,
@@ -23,14 +23,6 @@ import type {
   TLoginResponse,
 } from '@utils/types';
 import type { MockedFunction } from 'vitest';
-
-const initState: TUserState = {
-  user: null,
-  isAuthChecked: false,
-  isLoading: false,
-  error: null,
-  serviceMessage: null,
-};
 
 const message = 'Network error';
 const TEST_TOKEN = 'sometoken';
@@ -89,7 +81,7 @@ describe('user-slice', () => {
     const result = userSlice.reducer(initTestState, action);
 
     // 3. Assert: Проверяем результат
-    expect(result).toEqual(initState);
+    expect(result).toEqual(initialState);
   });
   it('тест проверки пользователя при наличии токена', async () => {
     mockStorage.items.set(TOKEN.ACCESS, TEST_TOKEN);

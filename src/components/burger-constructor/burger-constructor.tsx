@@ -194,8 +194,7 @@ export const BurgerConstructor = (): JSX.Element => {
             size="large"
             type="primary"
             htmlType="button"
-            extraClass="ml-10"
-            data-testid="pw-send-order"
+            extraClass="ml-10 pw-send-order"
           >
             Оформить заказ
           </Button>

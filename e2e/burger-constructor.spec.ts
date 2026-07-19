@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { PlaywrightModal } from './utils';
 
 test('тест перемещения ингредиента в заказ и создание тестового заказа', async ({ page }) => {
   // har файл с запросом ингредиентов и создания заказа
@@ -34,15 +35,14 @@ test('тест перемещения ингредиента в заказ и с
   });
   await expect(userState.user).toEqual(mockUser);
 
-  // получаем ингредиенты на странице и убеждаемся, что выбранный ингредиент появился на странице
+  // открываем модальное окно состава ингредиента и проверяем, что оно появилось в html
+  let modalIngredient: PlaywrightModal | null = new PlaywrightModal(page, '.pw-ingredient-source');
+  await modalIngredient.openModal();
+
+  // // получаем ингредиенты на странице и убеждаемся, что выбранный ингредиент появился на странице
   const ingredients = await page.locator('.pw-ingredient-source');
   const first = ingredients.first();
   await expect(first).toBeVisible({ timeout: 10000 });
-
-  // открываем модальное окно состава ингредиента и проверяем, что оно появилось в html
-  await first.click();
-  const modalIngredient = await page.getByTestId('pw-modal');
-  await expect(modalIngredient).toBeVisible({ timeout: 10000 });
 
   // проверяем наличие строк названия и кол-ва калорий, чтобы убедиться, что данные отобразились
   const modalIngredientName = await page.getByTestId('pw-ingredient-name');
@@ -54,9 +54,8 @@ test('тест перемещения ингредиента в заказ и с
   expect(modalIngredientCaloriesText?.length).toBeGreaterThan(0);
 
   // закрываем модальное окно состава ингредиента и проверяем, что его нет в html
-  const modalIngredientClose = await page.getByTestId('pw-modal-close');
-  await modalIngredientClose.click();
-  await expect(modalIngredient).toHaveCount(0);
+  await modalIngredient.closeModal();
+  modalIngredient = null;
 
   // проверяем дроп зону, чтобы убедиться, что до перетаскивания там ничего нет
   const orderZone = await page.locator('.pw-drop-zone');
@@ -82,14 +81,9 @@ test('тест перемещения ингредиента в заказ и с
   await expect(Array.isArray(orderState.ingredients)).toBe(true);
   await expect(orderState.ingredients.length).toBeGreaterThan(0);
 
-  // находим кнопку отправки заказа и нажимаем её
-  const btn = await page.getByTestId('pw-send-order');
-  await expect(btn).toBeVisible({ timeout: 10000 });
-  await btn.click();
-
-  // проверяем, что модальное окно заказа появилось в html
-  const modalOrder = await page.getByTestId('pw-modal');
-  await expect(modalOrder).toBeVisible({ timeout: 10000 });
+  // находим кнопку отправки заказа и нажимаем её и проверяем, что модальное окно заказа появилось в html
+  let modalOrder: PlaywrightModal | null = new PlaywrightModal(page, '.pw-send-order');
+  await modalOrder.openModal();
 
   // проверяем, что модальное окно заказа содержит номер заказа
   const modalOrderNumber = await page.getByTestId('pw-modal-order-number');
@@ -97,8 +91,7 @@ test('тест перемещения ингредиента в заказ и с
   expect(modalOrderNumberText?.length).toBeGreaterThan(0);
 
   // закрываем модальное окно заказа и проверяем, что его нет в html
-  const modalOrderClose = await page.getByTestId('pw-modal-close');
-  await modalOrderClose.click();
-  await expect(modalOrder).toHaveCount(0);
+  await modalOrder.closeModal();
+  modalOrder = null;
 });
 

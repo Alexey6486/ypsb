@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import {
   fetchIngredientsThunk,
   ingredientsSlice,
-  type TIngredientsState,
+  initialState,
 } from '@services/slices/ingredients-slice';
 import {
   ingredient_main_test,
@@ -13,16 +13,6 @@ import {
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { TIngredientsSorted, TIngredientUI } from '@utils/types';
-
-const initState: TIngredientsState = {
-  ingredients: null,
-  order: {
-    bun: null,
-    ingredients: [],
-  },
-  isLoading: true,
-  error: null,
-};
 
 describe('ingredients-slice', () => {
   it('тест начального состояния state', () => {
@@ -34,7 +24,7 @@ describe('ingredients-slice', () => {
     const result = ingredientsSlice.reducer(initTestState, action);
 
     // 3. Assert: Проверяем результат
-    expect(result).toEqual(initState);
+    expect(result).toEqual(initialState);
   });
   it('тест добавления ингредиента в order', () => {
     // 1. Arrange: Готовим входные данные
@@ -52,7 +42,7 @@ describe('ingredients-slice', () => {
     } as PayloadAction<TIngredientUI>;
 
     // 2. Act: Запускаем редьюсеры
-    const nextState = ingredientsSlice.reducer(initState, ingredientsAction);
+    const nextState = ingredientsSlice.reducer(initialState, ingredientsAction);
     const bunState = ingredientsSlice.reducer(nextState, bunAction);
     const finalState = ingredientsSlice.reducer(bunState, mainAction);
 
@@ -72,7 +62,7 @@ describe('ingredients-slice', () => {
     } as PayloadAction<TIngredientUI>;
 
     // 2. Act: Запускаем редьюсеры
-    const nextState = ingredientsSlice.reducer(initState, ingredientsAction);
+    const nextState = ingredientsSlice.reducer(initialState, ingredientsAction);
     const finalState = ingredientsSlice.reducer(nextState, mainAction);
 
     // 3. Assert: Проверяем результат
@@ -98,7 +88,7 @@ describe('ingredients-slice', () => {
     } as PayloadAction<undefined>;
 
     // 2. Act: Запускаем редьюсеры
-    const nextState = ingredientsSlice.reducer(initState, ingredientsAction);
+    const nextState = ingredientsSlice.reducer(initialState, ingredientsAction);
     const bunState = ingredientsSlice.reducer(nextState, bunAction);
     const mainState = ingredientsSlice.reducer(bunState, mainAction);
     const finalState = ingredientsSlice.reducer(mainState, resetAction);
@@ -113,7 +103,7 @@ describe('ingredients-slice', () => {
     const action = fetchIngredientsThunk.pending(undefined, undefined);
 
     // 2. Act: Запускаем редьюсер
-    const nextState = ingredientsSlice.reducer(initState, action);
+    const nextState = ingredientsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(nextState.isLoading).toBeTruthy();
@@ -128,7 +118,7 @@ describe('ingredients-slice', () => {
     } as PayloadAction<TIngredientsSorted>;
 
     // 2. Act: Запускаем редьюсер
-    const nextState = ingredientsSlice.reducer(initState, action);
+    const nextState = ingredientsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(nextState.isLoading).toBeFalsy();
@@ -144,7 +134,7 @@ describe('ingredients-slice', () => {
     } as PayloadAction<{ error: { message: string } }>;
 
     // 2. Act: Запускаем редьюсер
-    const nextState = ingredientsSlice.reducer(initState, action);
+    const nextState = ingredientsSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(nextState.isLoading).toBeFalsy();

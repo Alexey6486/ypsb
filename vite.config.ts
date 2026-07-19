@@ -19,7 +19,7 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
-  base: '',
+  base: '/',
   test: {
     globals: true,
     environment: 'jsdom',

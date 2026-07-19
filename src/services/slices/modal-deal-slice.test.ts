@@ -3,13 +3,11 @@ import { describe, it, expect } from 'vitest';
 import {
   fetchOrderByIdThunk,
   modalDealSlice,
-  type TModalDealState,
+  initialState,
 } from '@services/slices/modal-deal-slice';
 import { order_card_test } from '@utils/constants';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
-
-const initState: TModalDealState = { order: null, isLoading: false, error: null };
 
 describe('modal-deal-slice', () => {
   it('тест начального состояния state', () => {
@@ -21,7 +19,7 @@ describe('modal-deal-slice', () => {
     const result = modalDealSlice.reducer(initTestState, action);
 
     // 3. Assert: Проверяем результат
-    expect(result).toEqual(initState);
+    expect(result).toEqual(initialState);
   });
   it('тест изменения state при статусе выполнения запроса pending', () => {
     // 1. Arrange: Готовим входные данные
@@ -29,7 +27,7 @@ describe('modal-deal-slice', () => {
     const action = fetchOrderByIdThunk.pending(id, undefined);
 
     // 2. Act: Запускаем редьюсер
-    const nextState = modalDealSlice.reducer(initState, action);
+    const nextState = modalDealSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(nextState.isLoading).toBeTruthy();
@@ -44,7 +42,7 @@ describe('modal-deal-slice', () => {
     } as PayloadAction<typeof order_card_test>;
 
     // 2. Act: Запускаем редьюсер
-    const nextState = modalDealSlice.reducer(initState, action);
+    const nextState = modalDealSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(nextState.isLoading).toBeFalsy();
@@ -60,7 +58,7 @@ describe('modal-deal-slice', () => {
     } as PayloadAction<string>;
 
     // 2. Act: Запускаем редьюсер
-    const nextState = modalDealSlice.reducer(initState, action);
+    const nextState = modalDealSlice.reducer(initialState, action);
 
     // 3. Assert: Проверяем результат
     expect(nextState.isLoading).toBeFalsy();
